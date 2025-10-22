@@ -6,7 +6,7 @@ import MenuIcon from "../icons/XIcon.tsx"
 import XIcon from "../icons/MenuIcon.tsx"
 
 export default function Navbar() {
-    const [isMenuOpen, setIsMenuOpen] = useState(true)
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
     const location = useLocation()
 
 

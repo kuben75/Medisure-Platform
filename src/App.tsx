@@ -4,6 +4,7 @@ import HomePage from "./views/home/HomePage.tsx";
 import Footer from "./components/layout/Footer.tsx";
 import PatientGuidePage from "./views/guide/PatientGuidePage.tsx";
 import ContactPage from "./views/contact/ContactPage.tsx";
+import CalculatorPage from "./views/calculator/CalculatorPage.tsx";
 
 function AppLayout() {
     return (
@@ -23,6 +24,7 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path="przewodnik-pacjenta" element={<PatientGuidePage />} />
              <Route path="kontakt" element={<ContactPage />} />
+             <Route path="kalkulator" element={<CalculatorPage />}/>
          </Route>
      </Routes>
   )
