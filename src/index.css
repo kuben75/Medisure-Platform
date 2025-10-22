@@ -2,3 +2,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .h2-primary {
+        @apply text-3xl md:text-4xl font-bold text-gray-800 mb-12;
+    }
+    .button-header {
+        @apply hover:text-white transition-colors text-blue-200 flex flex-row justify-center items-center gap-5 font-semibold text-lg;
+    }
+}
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-25%);
+    }
+}
+.animate-scroll {
+    animation: scroll 20s linear infinite;
+}
+
+
