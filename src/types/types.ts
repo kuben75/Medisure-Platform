@@ -1,5 +1,8 @@
+import React from "react";
+
 export type IconProps = {
     className?: string;
+    props?: React.SVGProps<SVGSVGElement>;
 }
 export interface IPricingPlan  {
     name: string,

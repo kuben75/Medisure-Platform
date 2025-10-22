@@ -2,7 +2,7 @@ import {pricingPlans} from "../../tests/MockData.ts";
 import Button from "../../components/ui/Button.tsx";
 export default function HeroSection() {
     return (
-        <section className="relative w-full text-center text-white py-20 md:pb-32 px-4 bg-gradient-to-br from-[#3B4EDC] to-[#6A7BFF]">
+        <section className="relative w-full text-center text-white py-20 md:pb-32 px-4 bg-gradient-to-br from-blue-600 to-indigo-800">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-4xl text-white md:text-5xl font-bold mb-4">Porównywarka Pakietów Medycznych</h1>
                 <p className="text-lg md:text-xl text-blue-100 max-2-3x1 mx-auto mb-12">Zestaw oferty czołowych usługodawców w Polsce i wybierz pakiet
