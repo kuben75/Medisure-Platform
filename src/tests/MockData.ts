@@ -1,4 +1,5 @@
-import type {IPricingPlan, IReview, IPartner} from "../types/types.ts";
+import type {IPricingPlan, IReview, IPartner} from "../types/types.ts"
+
 export const pricingPlans: IPricingPlan[]  = [
     {
         name: 'Pakiet podstawowy',
@@ -10,8 +11,8 @@ export const pricingPlans: IPricingPlan[]  = [
             "Umowa na X miesięcy"
         ],
         description: "Idealny wybór dla osób szukających podstawowej opieki zdrowotnej",
-        averageRating: "4.5/5",
-        reviews: "(69 opinii)"
+        averageRating: 4.5,
+        reviews: 68
     },
     {
         name: 'Pakiet Premium',
@@ -19,16 +20,16 @@ export const pricingPlans: IPricingPlan[]  = [
         features: ['Konsultacje lekarskie', 'Badania labolatoryjne', 'Opieka stomatologiczna', 'Umowa na X miesięcy'],
         description: 'Najszersza opieka medyczna na wysokim poziomie',
         isFeatured: true,
-        averageRating: "4.7/5",
-        reviews: "(70 opinii)"
+        averageRating: 4.7,
+        reviews: 70
     },
     {
         name: 'Pakiet Rozszerzony',
         price: '299 zł',
         features: ['Konsultacje lekarskie', 'Badania labolatoryjne', 'Opieka stomatologiczna', 'Umowa na X miesięcy'],
         description: 'Dobry wybór dla osób szukających podstawowej opieki zdrowotnej',
-        averageRating: "4.7/5",
-        reviews: "(75 opinii)"
+        averageRating: 4.6,
+        reviews: 75
     },
 ]
 export const reviews: IReview[] = [

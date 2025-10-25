@@ -1,3 +1,4 @@
+import {Link} from "react-router-dom";
 
 export default function HelpSection() {
     return (
@@ -6,7 +7,7 @@ export default function HelpSection() {
                 <h2 className="h2-primary">Potrzebujesz Pomocy?</h2>
                 <div className="text-center my-8">
                     <div className="text-gray-700 text-xl md:text-2xl font-medium">
-                        Skorzystaj z naszego <a href="#" className="text-blue-600 hover:underline hover:cursor-pointer">formularza kontaktowego</a> lub z innych sposobów kontaktu do nas a napewno ci pomozemy!
+                        Skorzystaj z naszego <Link className="text-blue-600 hover:underline hover:cursor-pointer" to="/kontakt">formularza kontaktowego</Link> lub z innych sposobów kontaktu do nas a napewno ci pomozemy!
                     </div>
                 </div>
             </div>

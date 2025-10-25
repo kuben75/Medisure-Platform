@@ -10,7 +10,7 @@ export default function HeroSectionCalculator() {
     const [packageType, setPackageType] = useState('individual');
 
     return (
-            <section className=" relative py-8 md:py-32 px-4 bg-gradient-to-br from-blue-600 to-indigo-800 text-white overflow-hidden">
+            <section className="relative py-8 md:py-32 px-4 bg-gradient-to-bl from-blue-600 to-indigo-800 text-white overflow-hidden">
                 <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center z-10 relative">
 
                     <div className="text-center md:text-left">

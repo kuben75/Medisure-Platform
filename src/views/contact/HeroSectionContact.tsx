@@ -3,7 +3,7 @@ import Button from "../../components/ui/Button.tsx";
 
 export default function HelpSection() {
     return (
-        <section className="relative bg-gradient-to-br from-blue-600 to-indigo-800 text-white overflow-hidden">
+        <section className="relative bg-gradient-to-bl from-blue-600 to-indigo-800 text-white overflow-hidden">
             <div className="container mx-auto py-32 px-4 flex flex-col md:flex-row items-center relative z-10">
                 <div className="md:w-1/2 text-center md:text-left">
                     <span className="text-sm font-bold uppercase tracking-widest text-blue-200">
