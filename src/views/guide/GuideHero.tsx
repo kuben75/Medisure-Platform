@@ -1,4 +1,4 @@
-import React from "react";
+import {Fragment} from "react";
 import ChevronRightIcon from "../../components/icons/ChevronRightIcon.tsx";
 
 
@@ -21,7 +21,7 @@ export default function GuideHero() {
                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Jak działa porównywarka?</h2>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-y-8 md:gap-x-5">
                     {steps.map((step, index) => (
-                        <React.Fragment key={step.number}>
+                        <Fragment key={step.number}>
                             <div
                                 className="flex-1 bg-white/90 text-gray-800 p-10 rounded-2xl flex flex-col h-full w-80 md:w-full text-left shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                                 <div
@@ -30,7 +30,7 @@ export default function GuideHero() {
                             </div>
                             {index < steps.length - 1 && (
                                 <div className="text-blue-300 hidden md:block px-2"><ChevronRightIcon/></div>)}
-                        </React.Fragment>
+                        </Fragment>
                     ))}
                 </div>
             </div>

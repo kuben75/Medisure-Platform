@@ -10,8 +10,8 @@ export interface IPricingPlan  {
     features: string[],
     description: string,
     isFeatured?: boolean,
-    averageRating: string,
-    reviews: string
+    averageRating: number,
+    reviews: number
 }
 export interface IReview {
     name: string,
@@ -22,4 +22,13 @@ export interface IReview {
 export interface IPartner {
     name: string,
     src: string
+}
+export type TModalProps = {
+    isOpen: boolean,
+    onClose: () => void,
+    children: React.ReactNode
+}
+export type TRatingProps = {
+    rating: number,
+    reviews: number
 }
