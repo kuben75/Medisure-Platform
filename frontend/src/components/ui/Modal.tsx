@@ -1,5 +1,5 @@
-import type {TModalProps} from "../../types/types.ts";
 import XIcon from "../icons/XIcon.tsx";
+import type {TModalProps} from "../../types/ui.types.ts";
 
 export default function Modal({isOpen, onClose, children}: TModalProps) {
     if (!isOpen)

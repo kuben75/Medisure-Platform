@@ -1,5 +1,6 @@
 import StarItem from "../icons/StarItem.tsx";
-import type {TRatingProps} from "../../types/types.ts";
+
+import type {TRatingProps} from "../../types/ui.types.ts";
 
 export default function Rating({rating, reviews}: TRatingProps){
     const full :number = Math.floor(rating)

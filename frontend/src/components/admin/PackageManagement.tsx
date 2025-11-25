@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react"
-import type {IPricingPlan} from "../../types/types.ts"
 import {useAuth} from "../../context/AuthContext.tsx"
 import Button from "../ui/Button.tsx";
 import EditIcon from "../icons/EditIcon.tsx";
 import DeleteIcon from "../icons/DeleteIcon.tsx";
 import {PackageFormModal} from "./PackageFormModal.tsx";
+import type {IPricingPlan} from "../../types/pricing.types.ts";
 
 const API_URL = "https://localhost:44333/api/packages"
 
@@ -138,8 +138,14 @@ export default function PackageManagement() {
                     </table>
                 </div>
             </div>
-            <PackageFormModal isOpen={isModalOpen} onClose={handleCloseModal} onSaveSuccess={handleSaveSuccess}
-                token={token} packageToEdit={editingPackage}/>
+
+            <PackageFormModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onPackageAdded={handleSaveSuccess}
+                token={token}
+                packageToEdit={editingPackage}
+            />
         </>
     )
 }

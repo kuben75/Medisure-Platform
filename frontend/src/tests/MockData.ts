@@ -1,4 +1,4 @@
-import type { IReview, IPartner} from "../types/types.ts"
+import type {IPartner, IReview} from "../types/partners.types.ts";
 
 export const reviews: IReview[] = [
     {
@@ -19,7 +19,7 @@ export const reviews: IReview[] = [
         rating: 5,
         comment: "Świetne doświadczenie, polecam każdemu!",
         img: "https://placehold.co/64x64/E4E7FE/4E61F6?text=M",
-    },
+    }
 ]
 
 export const partners: IPartner[] = [
