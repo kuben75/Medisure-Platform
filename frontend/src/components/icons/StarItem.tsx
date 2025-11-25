@@ -1,4 +1,4 @@
-import type {IconProps} from "../../types/types.ts"
+import type {IconProps} from "../../types/ui.types.ts";
 
 export default function StarItem({className}: IconProps) {
     return (

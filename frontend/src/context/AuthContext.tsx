@@ -1,65 +1,116 @@
-import { createContext, useContext, useState } from 'react'
-import type {AuthProviderProps, DecodedToken, IAuthContext, IUser} from "../types/types.ts"
-import {jwtDecode} from "jwt-decode";
+import {createContext, type ReactNode, useContext, useEffect, useState} from 'react'
+import type {IAuthContext} from "../types/auth.types.ts";
+import type {IUser} from "../types/user.types.ts";
 
 const LOGIN_API_URL = "https://localhost:44333/api/auth/login"
 const AuthContext = createContext<IAuthContext>(null as any)
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+function parseJwt(token: string) {
+    try {
+        const base64Url = token.split('.')[1]
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        }).join(''))
+        return JSON.parse(jsonPayload)
+    } catch (e) {
+        return null
+    }
+}
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<IUser | null>(null)
     const [token, setToken] = useState<string | null>(null)
     const [roles, setRoles] = useState<string[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
 
-    const login = async (email: string, password: string): Promise<boolean> => {
+    useEffect(() => {
+        const storedToken = localStorage.getItem('auth_token')
+        const storedUser = localStorage.getItem('auth_user')
+
+        if (storedToken && storedUser) {
+            try {
+                setToken(storedToken)
+                setUser(JSON.parse(storedUser))
+
+                const decodedToken = parseJwt(storedToken)
+                let finalRoles: string[] = []
+                if (decodedToken) {
+                    const tokenRoles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+                    if (Array.isArray(tokenRoles)) {
+                        finalRoles = tokenRoles
+                    } else if (typeof tokenRoles === 'string') {
+                        finalRoles = [tokenRoles]
+                    }
+                }
+                setRoles(finalRoles)
+            } catch (e) {
+                console.error("Błąd przywracania sesji", e)
+                localStorage.removeItem('auth_token')
+                localStorage.removeItem('auth_user')
+            }
+        }
+        setIsLoading(false)
+    }, [])
+
+    const login = async (email: string, password: string): Promise<string[] | null> => {
         setIsLoading(true)
         setError(null)
 
         try {
             const response = await fetch(LOGIN_API_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             })
 
             const data = await response.json()
-
             if (!response.ok) throw new Error(data.message || 'Błąd logowania')
 
+            setUser(data.user)
+            setToken(data.token)
 
-            setUser(data.user);
-            setToken(data.token);
-            try {
-                const decodedToken = jwtDecode<DecodedToken>(data.token);
-                const tokenRoles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+            localStorage.setItem('auth_token', data.token);
+            localStorage.setItem('auth_user', JSON.stringify(data.user));
 
-                Array.isArray(tokenRoles)
-                    ? setRoles(tokenRoles)
-                    : tokenRoles
-                        ? setRoles([tokenRoles])
-                        : setRoles([])
-            } catch (e) {
-                console.error("Błąd dekodowania tokena:", e)
-                setRoles([]);
+            let finalRoles: string[] = []
+            const decodedToken = parseJwt(data.token)
+            if (decodedToken) {
+                const tokenRoles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+                if (Array.isArray(tokenRoles)) finalRoles = tokenRoles
+                else if (typeof tokenRoles === 'string') finalRoles = [tokenRoles]
             }
-            return true;
+            setRoles(finalRoles)
+
+            return finalRoles
 
         } catch (err: any) {
             console.error(err)
             setError(err.message)
-            return false
+            return null
         } finally {
             setIsLoading(false)
         }
-    };
+    }
 
     const logout = () => {
-        setUser(null)
-        setToken(null)
-        setRoles([])
+        setUser(null);
+        setToken(null);
+        setRoles([]);
+
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+    };
+
+    const updateUser = (userData: IUser) => {
+        setUser(prev => {
+            if (!prev) return null;
+            const newUser = { ...prev, ...userData };
+
+            localStorage.setItem('auth_user', JSON.stringify(newUser));
+
+            return newUser;
+        })
     }
 
     const value = {
@@ -68,18 +119,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         roles,
         login,
         logout,
+        updateUser,
         isLoading,
         error
     }
 
     return (
         <AuthContext.Provider value={value}>
-            {children}
+            {!isLoading && children}
         </AuthContext.Provider>
     )
 }
+
 export const useAuth = () => {
-    const context = useContext(AuthContext);
+    const context = useContext(AuthContext)
+
     if (context === undefined) throw new Error('useAuth must be used within an AuthProvider')
 
     return context

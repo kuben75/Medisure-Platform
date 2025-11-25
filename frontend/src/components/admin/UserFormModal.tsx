@@ -1,7 +1,8 @@
 import Button from "../ui/Button";
 import Modal from "../ui/Modal";
 import {useEffect, useState} from "react";
-import type {IUpdateUserDto, IUserDto} from "../../types/types.ts";
+
+import type {IUpdateUserDto, IUserDto} from "../../types/user.types.ts";
 
 export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdit }: {
     isOpen: boolean;

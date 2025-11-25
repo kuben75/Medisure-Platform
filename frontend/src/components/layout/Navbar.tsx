@@ -4,10 +4,13 @@ import {Link, useLocation} from "react-router-dom"
 import {useState} from "react"
 import MenuIcon from "../icons/XIcon.tsx"
 import XIcon from "../icons/MenuIcon.tsx"
+import Button from '../ui/Button.tsx'
+import {useAuth} from "../../context/AuthContext.tsx";
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const location = useLocation()
+    const { user, logout } = useAuth()
 
 
     const navLinks = [
@@ -36,13 +39,42 @@ export default function Navbar() {
                     </ul>
 
                     <div className="hidden md:flex items-center space-x-4">
-                        <button className="hover:text-blue-200 hover:cursor-pointer transition-colors"><UserIcon /></button>
-                        <button className="hover:text-blue-200 hover:cursor-pointer transition-colors"><CartIcon /></button>
+                        {user ? (
+                            <div className="flex items-center gap-4">
+                             <span className="text-sm font-medium text-blue-100">
+                                Witaj, {user.firstName}
+                             </span>
+                                <Link to="/profile" className="hover:text-blue-200 transition-colors"
+                                      title="Twój profil">
+                                    <UserIcon className="w-8 h-8"/>
+                                </Link>
+                                <button onClick={logout} className="text-sm text-white hover:underline">
+                                    Wyloguj
+                                </button>
+                                <button className="hover:text-blue-200 transition-colors">
+                                    <CartIcon/>
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3">
+                                <Link to="/login">
+                                    <Button variant="secondary" className="!py-2 !px-4 !text-base shadow-none">
+                                        Logowanie
+                                    </Button>
+                                </Link>
+                                <Link to="/rejestracja">
+                                    <Button variant="outline"
+                                            className="!py-2 !px-4 !text-base shadow-none border-blue-200 hover:bg-blue-200">
+                                        Rejestracja
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
                     </div>
 
                     <div className="md:hidden lg:hidden">
                         <button onClick={() => setIsMenuOpen(true)}>
-                            <XIcon />
+                            <XIcon/>
                         </button>
                     </div>
                 </nav>
@@ -53,10 +85,11 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
             />
 
-            <div className={`fixed top-0 right-0 h-screen w-[70vw] max-w-xs bg-[#3B4EDC] z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
+            <div
+                className={`fixed top-0 right-0 h-screen w-[70vw] max-w-xs bg-[#3B4EDC] z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
                 <div className="flex justify-end p-5">
                     <button onClick={() => setIsMenuOpen(false)}>
-                        <MenuIcon className="w-7 h-7 text-white" />
+                        <MenuIcon className="w-7 h-7 text-white"/>
                     </button>
                 </div>
                 <ul className="flex flex-col p-4">

@@ -1,49 +1,76 @@
-import React, {useEffect, useState} from "react";
-import type {IPricingPlan} from "../../types/types.ts";
-import Modal from "../ui/Modal.tsx";
-import Button from "../ui/Button.tsx";
+import React, {useState, useEffect} from "react"
+import Modal from "../ui/Modal.tsx"
+import Button from "../ui/Button.tsx"
+import type {IPricingPlan} from "../../types/pricing.types.ts";
 
-export const PackageFormModal = ({ isOpen, onClose, onSaveSuccess, token, packageToEdit }: {
-    isOpen: boolean;
-    onClose: () => void;
-    onSaveSuccess: () => void;
-    token: string | null;
-    packageToEdit: IPricingPlan | null;
+const API_URL = "https://localhost:44333/api/packages"
+
+export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packageToEdit }: {
+    isOpen: boolean
+    onClose: () => void
+    onPackageAdded: () => void
+    token: string | null
+    packageToEdit: IPricingPlan | null
 }) => {
+    const isEditMode = packageToEdit !== null
 
-    const isEditing = packageToEdit !== null;
-    const API_URL = "https://localhost:44333/api/packages";
+    const [name, setName] = useState('')
 
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [description, setDescription] = useState('');
-    const [features, setFeatures] = useState('');
-    const [averageRating, setAverageRating] = useState(0);
-    const [reviews, setReviews] = useState(0);
-    const [isFeatured, setIsFeatured] = useState(false);
+    const [price, setPrice] = useState('')
+    const [priceValue, setPriceValue] = useState(0)
 
-    const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [category, setCategory] = useState('Individual')
+    const [description, setDescription] = useState('')
+    const [features, setFeatures] = useState('')
+
+    const [averageRating, setAverageRating] = useState(0)
+    const [reviews, setReviews] = useState(0)
+    const [specialistsCount, setSpecialistsCount] = useState(0)
+    const [facilitiesCount, setFacilitiesCount] = useState(0)
+
+    const [hasDentalCare, setHasDentalCare] = useState(false)
+    const [hasHospitalization, setHasHospitalization] = useState(false)
+    const [hasRehabilitation, setHasRehabilitation] = useState(false)
+    const [isFeatured, setIsFeatured] = useState(false)
+
+    const [error, setError] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        if (isEditing) {
+        if (isEditMode && packageToEdit) {
             setName(packageToEdit.name)
             setPrice(packageToEdit.price)
+            setPriceValue(packageToEdit.priceValue || 0)
+            setCategory(packageToEdit.category || 'Individual')
             setDescription(packageToEdit.description)
-            setFeatures(packageToEdit.features.join(', '))
+            setFeatures(packageToEdit.features ? packageToEdit.features.join(', ') : '')
             setAverageRating(packageToEdit.averageRating)
             setReviews(packageToEdit.reviews)
+
+            setSpecialistsCount(packageToEdit.specialistsCount || 0)
+            setFacilitiesCount(packageToEdit.facilitiesCount || 0)
+
+            setHasDentalCare(packageToEdit.hasDentalCare || false)
+            setHasHospitalization(packageToEdit.hasHospitalization || false)
+            setHasRehabilitation(packageToEdit.hasRehabilitation || false)
             setIsFeatured(packageToEdit.isFeatured || false)
         } else {
-            setName('')
-            setPrice('')
-            setDescription('')
-            setFeatures('')
-            setAverageRating(0)
-            setReviews(0)
+            setName(''); setPrice(''); setPriceValue(0); setCategory('Individual')
+            setDescription('') ;setFeatures('')
+            setAverageRating(4.5); setReviews(0)
+            setSpecialistsCount(10) ;setFacilitiesCount(100)
+            setHasDentalCare(false); setHasHospitalization(false); setHasRehabilitation(false)
             setIsFeatured(false)
         }
-    }, [packageToEdit, isEditing, isOpen]);
+    }, [packageToEdit, isOpen])
+
+    const handlePriceValueChange = (val: string) => {
+        const num = parseFloat(val)
+        setPriceValue(num)
+        if (!isEditMode) {
+            setPrice(`${num} zł`)
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -58,92 +85,137 @@ export const PackageFormModal = ({ isOpen, onClose, onSaveSuccess, token, packag
         const packageData = {
             name,
             price,
+            priceValue,
+            category,
             description,
             features: features.split(',').map(f => f.trim()).filter(f => f),
+
             averageRating: Number(averageRating),
             reviews: Number(reviews),
+            specialistsCount: Number(specialistsCount),
+            facilitiesCount: Number(facilitiesCount),
+
+            hasDentalCare,
+            hasHospitalization,
+            hasRehabilitation,
             isFeatured
         }
 
-        const method = isEditing ? 'PUT' : 'POST'
-        const url = isEditing ? `${API_URL}/${packageToEdit.id}` : API_URL
-
-        const bodyPayload = isEditing
-            ? JSON.stringify({ id: packageToEdit.id, ...packageData })
-            : JSON.stringify(packageData);
+        const url = isEditMode ? `${API_URL}/${packageToEdit!.id}` : API_URL
+        const method = isEditMode ? 'PUT' : 'POST'
 
         try {
+            const bodyData = isEditMode ? { ...packageData, id: packageToEdit!.id } : packageData
+
             const response = await fetch(url, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: bodyPayload
+                body: JSON.stringify(bodyData)
             })
 
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Błąd z backendu:", errorData);
-                throw new Error(errorData.title || 'Nie udało się zapisać pakietu. Sprawdź dane.')
+                const errorData = await response.json()
+                let msg = "Wystąpił błąd zapisu."
+                if (errorData.errors) {
+                    msg = Object.values(errorData.errors).flat().join(', ')
+                } else if (errorData.title) {
+                    msg = errorData.title
+                }
+                throw new Error(msg)
             }
 
-            onSaveSuccess();
+            onPackageAdded()
+            onClose()
 
         } catch (err: any) {
-            setError(err.message);
+            console.error(err)
+            setError(err.message)
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
     }
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                {isEditing ? "Edytuj pakiet" : "Dodaj nowy pakiet"}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {error && <div className="text-red-500 text-center">{error}</div>}
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">{isEditMode ? "Edytuj pakiet" : "Dodaj nowy pakiet"}</h2>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Nazwa pakietu</label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
+                {error && <div className="text-red-500 text-sm bg-red-50 p-2 rounded">{error}</div>}
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Cena (np. "199 zł")</label>
-                    <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} required className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Funkcje (oddzielone przecinkami)</label>
-                    <input type="text" value={features} onChange={(e) => setFeatures(e.target.value)} placeholder="Funkcja 1, Funkcja 2" className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Opis</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
-                </div>
-
-                <div className="flex gap-4">
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700">Rating (0-5)</label>
-                        <input type="number" step="0.1" value={averageRating} onChange={(e) => setAverageRating(parseFloat(e.target.value))} className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase">Nazwa</label>
+                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500" />
                     </div>
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700">Liczba opinii</label>
-                        <input type="number" value={reviews} onChange={(e) => setReviews(parseInt(e.target.value))} className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase">Kategoria</label>
+                        <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full mt-1 px-3 py-2 border rounded-lg bg-white">
+                            <option value="Individual">Indywidualny</option>
+                            <option value="Family">Rodzinny</option>
+                            <option value="Company">Dla Firmy</option>
+                            <option value="Senior">Senior</option>
+                        </select>
                     </div>
                 </div>
 
-                <div className="flex items-center">
-                    <input id="isFeatured" type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                    <label htmlFor="isFeatured" className="ml-2 block text-sm text-gray-900">Wyróżniony?</label>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase">Cena (Wartość)</label>
+                        <input type="number" value={priceValue} onChange={(e) => handlePriceValueChange(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase">Cena (Tekst)</label>
+                        <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="np. 199 zł" />
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase">Opis</label>
+                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="w-full mt-1 px-3 py-2 border rounded-lg" rows={2} />
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase">Cechy (po przecinku)</label>
+                    <input type="text" value={features} onChange={(e) => setFeatures(e.target.value)} className="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Lekarz 24h, Badania krwi..." />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-3 rounded-lg">
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500">Liczba Specjalistów</label>
+                        <input type="number" value={specialistsCount} onChange={(e) => setSpecialistsCount(parseInt(e.target.value))} className="w-full mt-1 px-2 py-1 border rounded" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500">Liczba Placówek</label>
+                        <input type="number" value={facilitiesCount} onChange={(e) => setFacilitiesCount(parseInt(e.target.value))} className="w-full mt-1 px-2 py-1 border rounded" />
+                    </div>
+                </div>
+
+                {/* Sekcja Checkboxów */}
+                <div className="grid grid-cols-2 gap-2">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" checked={hasDentalCare} onChange={(e) => setHasDentalCare(e.target.checked)} className="text-blue-600 rounded focus:ring-blue-500" />
+                        <span className="text-sm text-gray-700">Stomatologia</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" checked={hasHospitalization} onChange={(e) => setHasHospitalization(e.target.checked)} className="text-blue-600 rounded focus:ring-blue-500" />
+                        <span className="text-sm text-gray-700">Szpital</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" checked={hasRehabilitation} onChange={(e) => setHasRehabilitation(e.target.checked)} className="text-blue-600 rounded focus:ring-blue-500" />
+                        <span className="text-sm text-gray-700">Rehabilitacja</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer bg-yellow-50 p-1 rounded -ml-1">
+                        <input type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} className="text-yellow-600 rounded focus:ring-yellow-500" />
+                        <span className="text-sm font-bold text-yellow-800">WYRÓŻNIONY (Hero)</span>
+                    </label>
                 </div>
 
                 <div className="pt-2">
                     <Button type="submit" variant="primary" className="w-full !py-3" disabled={isLoading}>
-                        {isLoading ? "Zapisywanie..." : (isEditing ? "Zapisz zmiany" : "Stwórz pakiet")}
+                        {isLoading ? "Zapisywanie..." : (isEditMode ? "Zapisz zmiany" : "Stwórz pakiet")}
                     </Button>
                 </div>
             </form>
