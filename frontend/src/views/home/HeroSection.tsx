@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import type {IPricingPlan} from "../../types/pricing.types.ts";
 import {useNotification} from "../../context/NotificationContext.tsx";
 import {useConfirm} from "../../context/ConfirmationContext.tsx";
+import ReviewsList from "../../components/ui/ReviewList.tsx";
 
 export default function HeroSection() {
     const [selectedPlan, setSelectedPlan] = useState<IPricingPlan | null>(null)
@@ -17,8 +18,8 @@ export default function HeroSection() {
     const [isBuying, setIsBuying] = useState(false)
     const navigate = useNavigate()
     const {notify} = useNotification()
-    const API_URL = "https://localhost:44333/api/packages"
-    const SUBSCRIBE_URL = "https://localhost:44333/api/subscriptions"
+    const API_URL = `${import.meta.env.VITE_API_URL}/packages`
+    const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL}/subscriptions`
     const confirm = useConfirm()
 
     useEffect(() => {
@@ -149,6 +150,7 @@ export default function HeroSection() {
                         >
                             {isBuying ? "Przetwarzanie..." : "Wybieram ten pakiet"}
                         </Button>
+                        <ReviewsList packageId={selectedPlan.id} />
                     </div>
                 )}
             </Modal>

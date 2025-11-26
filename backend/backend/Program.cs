@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,23 +9,23 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-builder.Services.AddControllers(); 
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Moje API", Version = "v1" });
-    
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        In = ParameterLocation.Header, 
+        In = ParameterLocation.Header,
         Description = "Wprowadź token JWT w formacie: Bearer [TwójToken]",
-        Name = "Authorization", 
-        Type = SecuritySchemeType.Http, 
-        Scheme = "Bearer", 
-        BearerFormat = "JWT" 
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT"
     });
-    
+
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -35,21 +34,24 @@ builder.Services.AddSwaggerGen(options =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer" 
+                    Id = "Bearer"
                 }
             },
-            new string[] {}
+            new string[] { }
         }
     });
 });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy  =>
+        policy =>
         {
-            policy.WithOrigins("http://localhost:5173") 
-                .AllowAnyHeader() 
-                .AllowAnyMethod(); 
+            policy.WithOrigins(
+                    "http://localhost:5173",
+                    "http://localhost:3000"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
 });
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -57,14 +59,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
-        options.Password.RequireDigit = false;
-        options.Password.RequiredLength = 4;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireLowercase = false;
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 8;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
     })
-    .AddEntityFrameworkStores<ApplicationDbContext>() 
-    .AddDefaultTokenProviders(); 
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -75,14 +77,14 @@ builder.Services.AddAuthentication(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true, 
+            ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = true, 
-            ValidateIssuerSigningKey = true, 
-            
-            ValidIssuer = builder.Configuration["Jwt:Issuer"], 
-            ValidAudience = builder.Configuration["Jwt:Audience"], 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])) 
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
 builder.Services.AddAuthorization();
@@ -97,8 +99,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
-app.UseAuthentication(); 
-app.UseAuthorization();  
+app.UseAuthentication();
+app.UseAuthorization();
 
 SeedDatabase(app);
 
@@ -111,49 +113,107 @@ void SeedDatabase(IHost app)
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
-        
         var dbContext = services.GetRequiredService<ApplicationDbContext>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        
+
         dbContext.Database.EnsureCreated();
 
         if (!dbContext.Packages.Any())
         {
             var mockPackages = new List<Package>
             {
-                new Package 
+                new Package
                 {
-                    Name = "Pakiet podstawowy",
-                    Price = "199 zł",
-                    Features = new List<string> { "Konsultacje lekarskie", "Badania labolatoryjne", "Opieka stomatologiczna" },
-                    Description = "Idealny wybór dla osób szukających podstawowej opieki zdrowotnej",
-                    AverageRating = 4.5,
-                    Reviews = 69,
+                    Name = "Pakiet Podstawowy",
+                    Category = "Individual",
+                    PriceValue = 59.00m,
+                    Price = "59 zł",
+                    Description = "Podstawowa opieka dla młodych i zdrowych.",
+                    Features = new List<string> { "Internista", "Pediatra", "Podstawowe badania krwi" },
+                    HasDentalCare = false,
+                    HasHospitalization = false,
+                    HasRehabilitation = false,
+                    SpecialistsCount = 5,
+                    FacilitiesCount = 200,
+                    AverageRating = 4.2,
+                    Reviews = 12,
                     IsFeatured = false
                 },
-                new Package 
+                new Package
                 {
-                    Name = "Pakiet Premium",
-                    Price = "399 zł",
-                    Features = new List<string> { "Konsultacje lekarskie", "Badania labolatoryjne", "Opieka stomatologiczna", "Umowa na X miesięcy" },
-                    Description = "Najszersza opieka medyczna na wysokim poziomie",
-                    AverageRating = 4.7,
-                    Reviews = 70,
+                    Name = "Pakiet Komfort",
+                    Category = "Individual",
+                    PriceValue = 129.00m,
+                    Price = "129 zł",
+                    Description = "Szeroki dostęp do specjalistów bez skierowań.",
+                    Features = new List<string>
+                        { "30 Specjalistów", "Badania obrazowe (RTG, USG)", "Prowadzenie ciąży" },
+                    HasDentalCare = true,
+                    HasHospitalization = false,
+                    HasRehabilitation = true,
+                    SpecialistsCount = 30,
+                    FacilitiesCount = 800,
+                    AverageRating = 4.8,
+                    Reviews = 45,
                     IsFeatured = true
                 },
-                new Package 
+                new Package
                 {
-                    Name = "Pakiet Rozszerzony",
-                    Price = "299 zł",
-                    Features = new List<string> { "Konsultacje lekarskie", "Badania labolatoryjne", "Opieka stomatologiczna" },
-                    Description = "Dobry wybór dla osób szukających podstawowej opieki zdrowotnej",
-                    AverageRating = 4.7,
-                    Reviews = 75,
+                    Name = "Pakiet VIP Prestige",
+                    Category = "Individual",
+                    PriceValue = 399.00m,
+                    Price = "399 zł",
+                    Description = "Pełna opieka medyczna, stomatologia i wizyty domowe.",
+                    Features = new List<string>
+                        { "Wszyscy specjaliści", "Stomatologia zachowawcza", "Wizyty domowe", "Szczepienia" },
+                    HasDentalCare = true,
+                    HasHospitalization = true,
+                    HasRehabilitation = true,
+                    SpecialistsCount = 65,
+                    FacilitiesCount = 1500,
+                    AverageRating = 5.0,
+                    Reviews = 10,
+                    IsFeatured = false
+                },
+                new Package
+                {
+                    Name = "Rodzina 2+2",
+                    Category = "Family",
+                    PriceValue = 250.00m,
+                    Price = "250 zł",
+                    Description = "Ekonomiczne rozwiązanie dla całej rodziny.",
+                    Features = new List<string>
+                        { "Pediatrzy bez limitu", "Szczepienia dla dzieci", "Opieka dyżurowa 24h" },
+                    HasDentalCare = false,
+                    HasHospitalization = false,
+                    HasRehabilitation = false,
+                    SpecialistsCount = 15,
+                    FacilitiesCount = 500,
+                    AverageRating = 4.6,
+                    Reviews = 120,
+                    IsFeatured = true
+                },
+                new Package
+                {
+                    Name = "Senior Aktywny",
+                    Category = "Senior",
+                    PriceValue = 180.00m,
+                    Price = "180 zł",
+                    Description = "Pakiet dostosowany do potrzeb osób 65+.",
+                    Features = new List<string>
+                        { "Geriatra", "Kardiolog", "Rehabilitacja (10 zabiegów)", "Brak limitu wieku" },
+                    HasDentalCare = false,
+                    HasHospitalization = true,
+                    HasRehabilitation = true,
+                    SpecialistsCount = 20,
+                    FacilitiesCount = 600,
+                    AverageRating = 4.9,
+                    Reviews = 30,
                     IsFeatured = false
                 }
             };
-            
+
             dbContext.Packages.AddRange(mockPackages);
             dbContext.SaveChanges();
         }
@@ -162,13 +222,15 @@ void SeedDatabase(IHost app)
         {
             var roles = new List<IdentityRole>
             {
-                new IdentityRole { Name = "Admin" }, 
-                new IdentityRole { Name = "User" }  
+                new IdentityRole { Name = "Admin" },
+                new IdentityRole { Name = "User" }
             };
-            foreach (var role in roles) {
+            foreach (var role in roles)
+            {
                 roleManager.CreateAsync(role).GetAwaiter().GetResult();
             }
         }
+
         if (!dbContext.Users.Any())
         {
             var adminUser = new ApplicationUser
@@ -177,7 +239,7 @@ void SeedDatabase(IHost app)
                 Email = "admin@admin.com",
                 FirstName = "Super",
                 LastName = "Admin",
-                EmailConfirmed = true 
+                EmailConfirmed = true
             };
 
             var result = userManager.CreateAsync(adminUser, "Admin123!").GetAwaiter().GetResult();

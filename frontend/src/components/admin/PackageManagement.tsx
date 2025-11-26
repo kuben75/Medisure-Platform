@@ -5,8 +5,10 @@ import EditIcon from "../icons/EditIcon.tsx";
 import DeleteIcon from "../icons/DeleteIcon.tsx";
 import {PackageFormModal} from "./PackageFormModal.tsx";
 import type {IPricingPlan} from "../../types/pricing.types.ts";
+import {useConfirm} from "../../context/ConfirmationContext.tsx";
+import {useNotification} from "../../context/NotificationContext.tsx";
 
-const API_URL = "https://localhost:44333/api/packages"
+const API_URL = `${import.meta.env.VITE_API_URL}/packages`
 
 export default function PackageManagement() {
     const [packages, setPackages] = useState<IPricingPlan[]>([])
@@ -14,8 +16,9 @@ export default function PackageManagement() {
     const [error, setError] = useState<string | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [editingPackage, setEditingPackage] = useState<IPricingPlan | null>(null)
-
-    const { token } = useAuth();
+    const confirm = useConfirm()
+    const { token } = useAuth()
+    const {notify} = useNotification()
 
     const fetchPackages = async () => {
         try {
@@ -57,10 +60,16 @@ export default function PackageManagement() {
     }
 
     const handleDelete = async (id: number) => {
-        if (!window.confirm("Czy na pewno chcesz usunąć ten pakiet?")) return
+        const isConfirmed = await confirm({
+            title: "Usuwanie pakietu",
+            description: "Czy na pewno chcesz usunąć ten pakiet?",
+            confirmText: "Usuń",
+            variant: 'danger'
+        })
+        if(!isConfirmed) return
 
         if (!token) {
-            setError("Błąd: Brak autoryzacji. Zaloguj się ponownie.")
+            notify.error("Błąd: Brak autoryzacji. Zaloguj się ponownie.")
             return
         }
 

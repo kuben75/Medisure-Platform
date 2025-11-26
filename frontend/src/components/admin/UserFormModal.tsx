@@ -3,6 +3,7 @@ import Modal from "../ui/Modal";
 import {useEffect, useState} from "react";
 
 import type {IUpdateUserDto, IUserDto} from "../../types/user.types.ts";
+import {useNotification} from "../../context/NotificationContext.tsx";
 
 export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdit }: {
     isOpen: boolean;
@@ -15,9 +16,10 @@ export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdi
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const API_URL_USERS = "https://localhost:44333/api/admin/users";
+    const API_URL_USERS = `${import.meta.env.VITE_API_URL}/admin/users`
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const {notify} = useNotification()
 
     useEffect(() => {
         if (userToEdit) {
@@ -31,7 +33,7 @@ export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdi
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!token || !userToEdit) {
-            setError("Błąd autoryzacji lub brak danych użytkownika.");
+            notify.error("Błąd autoryzacji lub brak danych użytkownika.");
             return
         }
 
