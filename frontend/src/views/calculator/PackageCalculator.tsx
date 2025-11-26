@@ -1,23 +1,25 @@
 import{ useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.tsx';
-import PackageFilters from '../../components/packages/PackageFilters.tsx';
+import PackageFilters from '../../components/ui/PackageFilters.tsx';
 import Button from '../../components/ui/Button.tsx';
 import Rating from '../../components/ui/Rating.tsx';
 import Modal from '../../components/ui/Modal.tsx';
 import type {IFilterState, IPricingPlan} from "../../types/pricing.types.ts";
 import {useNotification} from "../../context/NotificationContext.tsx";
+import {useConfirm} from "../../context/ConfirmationContext.tsx";
 
 const CheckIcon = () => <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
 
-const API_URL = "https://localhost:44333/api/packages"
-const SUBSCRIBE_URL = "https://localhost:44333/api/subscriptions"
+const API_URL = `${import.meta.env.VITE_API_URL}/packages`
+const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL}/subscriptions`
 
 export default function PackageCatalog() {
     const [allPackages, setAllPackages] = useState<IPricingPlan[]>([])
     const [filteredPackages, setFilteredPackages] = useState<IPricingPlan[]>([])
     const [loading, setLoading] = useState(true)
     const {notify} = useNotification()
+    const confirm = useConfirm()
 
     const [filters, setFilters] = useState<IFilterState>({
         category: 'all',
@@ -55,12 +57,27 @@ export default function PackageCatalog() {
     const handleBuyPackage = async () => {
         if (!selectedPlan) return;
         if (!token || !user) {
-            if(window.confirm("Musisz się zalogować, aby kupić pakiet. Przejść do logowania?")) navigate('/login');
+            const shouldLogin = await confirm({
+                title: "Wymagane logowanie",
+                description: "Musisz być zalogowany, aby kupić pakiet. Czy chcesz się zalogować teraz?",
+                confirmText: "Zaloguj się",
+                cancelText: "Anuluj",
+                variant: 'info'
+            })
+            if(shouldLogin) navigate('/login')
+
             return;
         }
-        if (!window.confirm(`Kupujesz: ${selectedPlan.name}?`)) return;
+        const isConfirmed = await confirm({
+            title: "Potwierdzenie zakupu",
+            description: `Czy na pewno chcesz wykupić pakiet "${selectedPlan.name}" za ${selectedPlan.price}?`,
+            confirmText: "Kupuję",
+            cancelText: "Anuluj",
+            variant: 'info'
+        })
+        if (!isConfirmed) return
 
-        setIsBuying(true);
+        setIsBuying(true)
         try {
             const response = await fetch(`${SUBSCRIBE_URL}/${selectedPlan.id}`, {
                 method: 'POST',

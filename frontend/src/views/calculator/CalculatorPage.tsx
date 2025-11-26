@@ -4,7 +4,7 @@ import CalculationResults from "./CalculationResults.tsx";
 import PackageCatalog from "./PackageCalculator.tsx";
 import type {IPricingPlan} from "../../types/pricing.types.ts";
 
-const API_URL = "https://localhost:44333/api/packages";
+const API_URL = `${import.meta.env.VITE_API_URL}/packages`
 
 export default function CalculatorPage() {
     const [isCalculated, setIsCalculated] = useState(false);

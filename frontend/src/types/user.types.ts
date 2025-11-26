@@ -20,3 +20,14 @@ export interface IUpdateUserDto {
     email: string;
     phoneNumber: string;
 }
+
+export interface IUserSubscription {
+    id: number
+    packageId: number
+    packageName: string
+    price: string
+    startDate: string
+    endDate: string
+    status: string
+    features: string[]
+}

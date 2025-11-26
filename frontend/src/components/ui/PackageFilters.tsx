@@ -1,12 +1,12 @@
-import Button from '../ui/Button.tsx';
+import Button from './Button.tsx';
 
 import type {IFilterState, IPackageFiltersProps} from "../../types/pricing.types.ts";
 
 export default function PackageFilters({ filters, setFilters }: IPackageFiltersProps) {
 
     const handleChange = (key: keyof IFilterState, value: any) => {
-        setFilters((prev: any) => ({ ...prev, [key]: value }));
-    };
+        setFilters((prev: any) => ({ ...prev, [key]: value }))
+    }
 
     return (
         <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 space-y-8">

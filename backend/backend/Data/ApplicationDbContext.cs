@@ -11,4 +11,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     
     public DbSet<Package> Packages { get; set; }
     
+    public DbSet<UserPackage> UserPackages { get; set; }
+    public DbSet<Review> Reviews { get; set; } 
+    
 }

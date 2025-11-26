@@ -1,51 +1,47 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext.tsx';
-import { useNavigate } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useAuth} from '../context/AuthContext.tsx';
+import {useNavigate} from 'react-router-dom';
 import Button from '../components/ui/Button.tsx';
 import EditProfileModal from "../components/admin/EditProfileModal.tsx";
 import EditIcon from "../components/icons/EditIcon.tsx";
-
-interface UserSubscription {
-    id: number
-    packageName: string
-    price: string
-    startDate: string
-    endDate: string
-    status: string
-    features: string[]
-}
+import type {IUserSubscription} from "../types/user.types.ts";
+import StarIconOutline from "../components/icons/StarIconOutline.tsx";
+import AddReviewModal from "../components/ui/AddReviewModal.tsx";
 
 export default function UserProfile() {
     const { user, logout, token } = useAuth()
     const navigate = useNavigate()
-
-    const [subscriptions, setSubscriptions] = useState<UserSubscription[]>([])
+    const [subscriptions, setSubscriptions] = useState<IUserSubscription[]>([])
     const [loading, setLoading] = useState(true)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
+    const [reviewTarget, setReviewTarget] = useState<{ id: number, name: string } | null>(null)
+
     const handleLogout = () => {
-        logout();
+        logout()
         navigate('/login')
+    }
+
+    const handleOpenReview = (pkgId: number, pkgName: string) => {
+        setReviewTarget({ id: pkgId, name: pkgName })
+        setIsReviewModalOpen(true)
     }
 
     useEffect(() => {
         const fetchSubscriptions = async () => {
             if (!token) return
-
             try {
-                const response = await fetch("https://localhost:44333/api/subscriptions", {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/subscriptions`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 })
-
                 if (response.ok) {
                     const data = await response.json()
                     setSubscriptions(data)
                 }
             } catch (error) {
-                console.error("Błąd pobierania subskrypcji", error);
+                console.error(error)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
         }
         fetchSubscriptions()
@@ -72,7 +68,7 @@ export default function UserProfile() {
                                 onClick={() => setIsEditModalOpen(true)}
                                 className="text-[#4E61F6] text-sm font-medium hover:underline flex items-center gap-1 hover:cursor-pointer"
                             >
-                                <EditIcon /> Edytuj
+                                <EditIcon/> Edytuj
                             </button>
                         </div>
 
@@ -98,8 +94,10 @@ export default function UserProfile() {
                         ) : subscriptions.length > 0 ? (
                             <div className="space-y-4">
                                 {subscriptions.map(sub => (
-                                    <div key={sub.id} className="border border-blue-100 bg-blue-50/30 rounded-xl p-5 relative overflow-hidden hover:shadow-md transition-shadow">
-                                        <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                                    <div key={sub.id}
+                                         className="border border-blue-100 bg-blue-50/30 rounded-xl p-5 relative overflow-hidden hover:shadow-md transition-shadow">
+                                        <div
+                                            className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
                                             AKTYWNY
                                         </div>
                                         <div className="flex justify-between items-start mb-2">
@@ -107,14 +105,18 @@ export default function UserProfile() {
                                             <span className="text-[#4E61F6] font-bold text-lg pr-16">{sub.price}</span>
                                         </div>
                                         <p className="text-sm text-gray-600 mb-4">
-                                            Ważny od: <span className="font-medium">{new Date(sub.startDate).toLocaleDateString()}</span> do <span className="font-medium">{new Date(sub.endDate).toLocaleDateString()}</span>
+                                            Ważny od: <span
+                                            className="font-medium">{new Date(sub.startDate).toLocaleDateString()}</span> do <span
+                                            className="font-medium">{new Date(sub.endDate).toLocaleDateString()}</span>
                                         </p>
-                                        <div className="text-sm text-gray-500 bg-white p-3 rounded-lg border border-blue-100">
-                                            <p className="font-semibold mb-1 text-blue-800">Zawiera:</p>
-                                            <ul className="list-disc list-inside space-y-1">
-                                                {sub.features?.slice(0, 3).map((f, i) => <li key={i}>{f}</li>)}
-                                                {sub.features?.length > 3 && <li>...i więcej</li>}
-                                            </ul>
+
+                                        <div className="mt-4 pt-4 border-t border-blue-100 flex justify-end">
+                                            <button
+                                                onClick={() => handleOpenReview(sub.packageId || 0, sub.packageName)}
+                                                className="text-sm font-medium text-yellow-600 hover:text-yellow-700 flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-lg hover:bg-yellow-100 transition-colors hover:cursor-pointer"
+                                            >
+                                                <StarIconOutline className="h-6 w-6"/> Oceń ten pakiet
+                                            </button>
                                         </div>
                                     </div>
                                 ))}
@@ -122,7 +124,8 @@ export default function UserProfile() {
                         ) : (
                             <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
                                 <p className="text-gray-500 mb-4">Nie masz jeszcze aktywnych pakietów.</p>
-                                <Button onClick={() => navigate('/kalkulator')} variant="primary" className="!text-sm !py-2">
+                                <Button onClick={() => navigate('/kalkulator')} variant="primary"
+                                        className="!text-sm !py-2">
                                     Przeglądaj ofertę
                                 </Button>
                             </div>
@@ -131,7 +134,8 @@ export default function UserProfile() {
                 </div>
 
                 <div className="mt-10 pt-6 border-t border-gray-100 flex justify-end">
-                    <Button onClick={handleLogout} variant="secondary" className="bg-red-50 text-red-600 hover:bg-red-100 shadow-none">
+                    <Button onClick={handleLogout} variant="secondary"
+                            className="bg-red-50 text-red-600 hover:bg-red-100 shadow-none">
                         Wyloguj się
                     </Button>
                 </div>
@@ -141,6 +145,14 @@ export default function UserProfile() {
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
             />
+            {reviewTarget && (
+                <AddReviewModal
+                    isOpen={isReviewModalOpen}
+                    onClose={() => setIsReviewModalOpen(false)}
+                    packageId={reviewTarget.id}
+                    packageName={reviewTarget.name}
+                />
+            )}
         </div>
     );
 }
