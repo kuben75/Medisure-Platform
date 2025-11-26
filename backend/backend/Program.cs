@@ -174,7 +174,7 @@ void SeedDatabase(IHost app)
                     FacilitiesCount = 1500,
                     AverageRating = 5.0,
                     Reviews = 10,
-                    IsFeatured = false
+                    IsFeatured = true
                 },
                 new Package
                 {
