@@ -3,7 +3,7 @@ import Modal from "../ui/Modal.tsx"
 import Button from "../ui/Button.tsx"
 import type {IPricingPlan} from "../../types/pricing.types.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/packages`
+const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/packages`
 
 export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packageToEdit }: {
     isOpen: boolean
@@ -130,9 +130,9 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
             onPackageAdded()
             onClose()
 
-        } catch (err: any) {
+        } catch (err) {
             console.error(err)
-            setError(err.message)
+            setError(err instanceof Error ? err.message : String(err))
         } finally {
             setIsLoading(false)
         }

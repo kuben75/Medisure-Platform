@@ -1,70 +1,103 @@
-import UserIcon from "../icons/UserIcon.tsx"
-import CartIcon from "../icons/CartIcon.tsx"
-import {Link, useLocation} from "react-router-dom"
-import {useState} from "react"
-import MenuIcon from "../icons/XIcon.tsx"
-import XIcon from "../icons/MenuIcon.tsx"
+import { useState, useEffect } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import {useAuth} from "../../hooks/useAuth.ts"
 import Button from '../ui/Button.tsx'
-import {useAuth} from "../../context/AuthContext.tsx";
+import UserIcon from "../icons/UserIcon.tsx";
+import LogoutIcon from "../icons/LogoutIcon.tsx";
+import MenuIcon from "../icons/MenuIcon.tsx";
+import XIcon from "../icons/XIcon.tsx";
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [scrolled, setScrolled] = useState(false)
     const location = useLocation()
-    const { user, logout } = useAuth()
+    const navigate = useNavigate()
 
+    const { user, logout, roles } = useAuth()
+    const isAdmin = roles.includes('Admin')
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20)
+
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
+
+    useEffect(() => {
+        document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto'
+    }, [isMenuOpen])
+
+    const handleLogout = () => {
+        logout()
+        setIsMenuOpen(false)
+        navigate('/login')
+    }
 
     const navLinks = [
         { to: "/", label: "Strona główna" },
-        { to: "/przewodnik-pacjenta", label: "Przewodnik pacjenta" },
-        { to: "/kalkulator", label: "Kalkulator ubezpieczeń" },
+        { to: "/przewodnik-pacjenta", label: "Przewodnik" },
+        { to: "/kalkulator", label: "Kalkulator" },
         { to: "/kontakt", label: "Kontakt" },
-    ];
+    ]
 
     return (
         <>
-            <header className="bg-[#3B4EDC] text-white sticky top-0 z-50 shadow-md">
-                <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
-                    <Link to="/" className="flex space-x-2 items-center font-bold text-lg">
-                        <span>Nazwa Firmy</span>
+            <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md py-3' : 'bg-white py-5'}`}>
+                <nav className="container mx-auto px-4 flex justify-between items-center">
+                    <Link to="/" className="flex items-center gap-2 group">
+                        <div className="w-10 h-10 bg-[#4E61F6] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">M</div>
+                        <span className="text-xl font-bold text-gray-800 tracking-tight">Medisure<span className="text-[#4E61F6]">.pl</span>
+                        </span>
                     </Link>
 
-                    <ul className="hidden md:flex items-center space-x-6">
+                    <ul className="hidden lg:flex items-center space-x-8">
                         {navLinks.map((link) => (
                             <li key={link.label}>
-                                <Link to={link.to} className={`transition-colors hover:text-white ${location.pathname === link.to ? "text-white font-semibold" : "text-blue-200"}`}>
+                                <Link to={link.to} className={`text-sm font-medium transition-colors hover:text-[#4E61F6] ${location.pathname === link.to ? "text-[#4E61F6] font-bold" : "text-gray-600"}`}>
                                     {link.label}
                                 </Link>
                             </li>
                         ))}
+
+                        {isAdmin && (<li>
+                            <Link to="/admin" className="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full hover:bg-yellow-200 transition-colors border border-yellow-200 uppercase tracking-wide">Panel Admina</Link>
+                            </li>)}
                     </ul>
 
-                    <div className="hidden md:flex items-center space-x-4">
+                    <div className="hidden lg:flex items-center gap-4">
                         {user ? (
-                            <div className="flex items-center gap-4">
-                             <span className="text-sm font-medium text-blue-100">
-                                Witaj, {user.firstName}
-                             </span>
-                                <Link to="/profile" className="hover:text-blue-200 transition-colors"
-                                      title="Twój profil">
-                                    <UserIcon className="w-8 h-8"/>
+                            <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
+                                <Link
+                                    to="/profile"
+                                    className="flex items-center gap-2 text-gray-700 hover:text-[#4E61F6] transition-colors group"
+                                    title="Twój profil"
+                                >
+                                    <div className="w-9 h-9 bg-blue-50 rounded-full flex items-center justify-center text-[#4E61F6] group-hover:bg-[#4E61F6] group-hover:text-white transition-colors">
+                                        <UserIcon className="w-5 h-5" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-gray-400 leading-none">Witaj,</span>
+                                        <span className="text-sm font-bold leading-none">{user.firstName}</span>
+                                    </div>
                                 </Link>
-                                <button onClick={logout} className="text-sm text-white hover:underline">
-                                    Wyloguj
-                                </button>
-                                <button className="hover:text-blue-200 transition-colors">
-                                    <CartIcon/>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="p-2 text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors"
+                                    title="Wyloguj"
+                                >
+                                    <LogoutIcon className="w-5 h-5"/>
                                 </button>
                             </div>
                         ) : (
                             <div className="flex items-center gap-3">
                                 <Link to="/login">
-                                    <Button variant="secondary" className="!py-2 !px-4 !text-base shadow-none">
+                                    <span className="text-sm font-semibold text-gray-600 hover:text-[#4E61F6] transition-colors cursor-pointer">
                                         Logowanie
-                                    </Button>
+                                    </span>
                                 </Link>
                                 <Link to="/rejestracja">
-                                    <Button variant="outline"
-                                            className="!py-2 !px-4 !text-base shadow-none border-blue-200 hover:bg-blue-200">
+                                    <Button variant="primary" className="!py-2 !px-5 !text-sm !rounded-full shadow-none hover:shadow-lg">
                                         Rejestracja
                                     </Button>
                                 </Link>
@@ -72,45 +105,81 @@ export default function Navbar() {
                         )}
                     </div>
 
-                    <div className="md:hidden lg:hidden">
-                        <button onClick={() => setIsMenuOpen(true)}>
-                            <XIcon/>
+                    <div className="lg:hidden">
+                        <button
+                            onClick={() => setIsMenuOpen(true)}
+                            className="p-2 text-gray-600 hover:text-[#4E61F6] transition-colors"
+                        >
+                            <MenuIcon className="w-8 h-8" />
                         </button>
                     </div>
                 </nav>
             </header>
 
-            <div
-                className={`fixed inset-0 bg-black/60 z-40 transition-opacity duration-300 md:hidden ${isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-                onClick={() => setIsMenuOpen(false)}
-            />
+            <div className={`fixed inset-0 bg-black/60 z-[60] transition-opacity duration-300 lg:hidden ${isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`} onClick={() => setIsMenuOpen(false)}/>
 
-            <div
-                className={`fixed top-0 right-0 h-screen w-[70vw] max-w-xs bg-[#3B4EDC] z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
-                <div className="flex justify-end p-5">
-                    <button onClick={() => setIsMenuOpen(false)}>
-                        <MenuIcon className="w-7 h-7 text-white"/>
+            <div className={`fixed top-0 right-0 h-screen w-[85vw] max-w-sm bg-white z-[70] transform transition-transform duration-300 ease-in-out lg:hidden shadow-2xl flex flex-col ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
+                <div className="p-5 flex justify-between items-center border-b border-gray-100">
+                    <span className="font-bold text-lg text-gray-800">Menu</span>
+                    <button onClick={() => setIsMenuOpen(false)} className="p-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition-colors">
+                        <XIcon className="w-6 h-6" />
                     </button>
                 </div>
-                <ul className="flex flex-col p-4">
+
+                <ul className="flex-grow overflow-y-auto py-4 px-2">
                     {navLinks.map((link) => (
-                        <li key={link.label} className="border-b border-blue-500/30">
-                            <Link
-                                to={link.to}
-                                onClick={() => setIsMenuOpen(false)}
-                                className={`block py-5 text-center text-lg transition-colors ${location.pathname === link.to ? "text-white font-bold bg-white/10" : "text-blue-200"}`}
-                            >
+                        <li key={link.label}>
+                            <Link to={link.to} onClick={() => setIsMenuOpen(false)} className={`block px-4 py-3.5 rounded-xl mb-1 font-medium transition-all ${
+                                    location.pathname === link.to
+                                        ? "bg-blue-50 text-[#4E61F6]"
+                                        : "text-gray-600 hover:bg-gray-50"}`}>
                                 {link.label}
                             </Link>
                         </li>
                     ))}
-                    <li className="flex flex-col justify-center items-center space-y-8 pt-8 mt-4">
-                        <button className="button-header"><UserIcon className="w-8 h-8" />Moje konto</button>
-                        <button className="button-header"><CartIcon className="w-8 h-8" />Koszyk</button>
-                    </li>
+
+                    {isAdmin && (
+                        <li>
+                            <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block px-4 py-3.5 rounded-xl mb-1 font-bold text-yellow-700 bg-yellow-50 border border-yellow-100 mt-4">
+                                Panel Administratora
+                            </Link>
+                        </li>
+                    )}
                 </ul>
+
+                <div className="p-6 border-t border-gray-100 bg-gray-50">
+                    {user ? (
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 bg-[#4E61F6] rounded-full flex items-center justify-center text-white text-xl font-bold">
+                                    {user.firstName.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500">Zalogowano jako</p>
+                                    <p className="font-bold text-gray-900">{user.firstName} {user.lastName}</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
+                                    <Button variant="primary" className="w-full !py-2.5 !text-sm">Profil</Button>
+                                </Link>
+                                <Button variant="secondary" className="w-full !py-2.5 !text-sm bg-red-100 text-red-600 hover:bg-red-200" onClick={handleLogout}>
+                                    Wyloguj
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                                <Button variant="outline" className="w-full !py-3">Zaloguj się</Button>
+                            </Link>
+                            <Link to="/rejestracja" onClick={() => setIsMenuOpen(false)}>
+                                <Button variant="primary" className="w-full !py-3">Utwórz konto</Button>
+                            </Link>
+                        </div>
+                    )}
+                </div>
             </div>
         </>
-    );
+    )
 }
-

@@ -1,18 +1,20 @@
 import{ useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext.tsx';
 import PackageFilters from '../../components/ui/PackageFilters.tsx';
 import Button from '../../components/ui/Button.tsx';
 import Rating from '../../components/ui/Rating.tsx';
 import Modal from '../../components/ui/Modal.tsx';
 import type {IFilterState, IPricingPlan} from "../../types/pricing.types.ts";
-import {useNotification} from "../../context/NotificationContext.tsx";
-import {useConfirm} from "../../context/ConfirmationContext.tsx";
+
+import {useConfirm} from "../../hooks/UseConfrim.ts";
+import {useNotification} from "../../hooks/UseNotification.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
+import FavoriteButton from "../../components/ui/FavouriteButton.tsx";
 
 const CheckIcon = () => <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>;
 
-const API_URL = `${import.meta.env.VITE_API_URL}/packages`
-const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL}/subscriptions`
+const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/packages`
+const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/subscriptions`
 
 export default function PackageCatalog() {
     const [allPackages, setAllPackages] = useState<IPricingPlan[]>([])
@@ -87,8 +89,8 @@ export default function PackageCatalog() {
             notify.success(`Pomyślnie wykupiłeś pakiet: ${selectedPlan.name}`);
             setSelectedPlan(null);
             navigate('/profile');
-        } catch (err: any) {
-            notify.error(err.message);
+        } catch (err) {
+            notify.error(err instanceof Error ? err.message : String(err));
         } finally {
             setIsBuying(false);
         }
@@ -119,7 +121,11 @@ export default function PackageCatalog() {
                         ) : (
                             <div className="space-y-6">
                                 {filteredPackages.map((pkg) => (
-                                    <div key={pkg.id} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex flex-col md:flex-row gap-6">
+                                    <div key={pkg.id}
+                                         className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex flex-col md:flex-row gap-6">
+                                        <div className="absolute top-4 right-4">
+                                            <FavoriteButton packageId={pkg.id}/>
+                                        </div>
                                         <div className="flex-grow">
                                             <div className="flex justify-between items-start">
                                                 <div>
@@ -133,14 +139,19 @@ export default function PackageCatalog() {
                                             </div>
                                             <p className="text-gray-600 my-4">{pkg.description}</p>
                                             <div className="flex flex-wrap gap-2 mb-4">
-                                                {pkg.hasDentalCare && <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">🦷 Stomatolog</span>}
-                                                {pkg.hasHospitalization && <span className="bg-red-50 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">🏥 Szpital</span>}
-                                                <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">👨‍⚕️ {pkg.specialistsCount} Specjalistów</span>
+                                                {pkg.hasDentalCare && <span
+                                                    className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">🦷 Stomatolog</span>}
+                                                {pkg.hasHospitalization && <span
+                                                    className="bg-red-50 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">🏥 Szpital</span>}
+                                                <span
+                                                    className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">👨‍⚕️ {pkg.specialistsCount} Specjalistów</span>
                                             </div>
-                                            <Rating rating={pkg.averageRating} reviews={pkg.reviews} />
+                                            <Rating rating={pkg.averageRating} reviews={pkg.reviews}/>
                                         </div>
-                                        <div className="flex-shrink-0 flex flex-col justify-center gap-3 md:w-48 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
-                                            <Button variant="primary" className="w-full text-sm" onClick={() => setSelectedPlan(pkg)}>Szczegóły</Button>
+                                        <div
+                                            className="flex-shrink-0 flex flex-col justify-center gap-3 md:w-48 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6">
+                                            <Button variant="primary" className="w-full text-sm"
+                                                    onClick={() => setSelectedPlan(pkg)}>Szczegóły</Button>
                                         </div>
                                     </div>
                                 ))}

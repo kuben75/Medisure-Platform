@@ -36,7 +36,7 @@ export default function HeroSectionCalculator({ onCalculate, isCalculating }: He
                         </li>
                         <li className="flex items-center text-blue-100 text-lg">
                             <CheckCircleIcon className="w-6 h-6 mr-3 text-green-300 flex-shrink-0" />
-                            Natychmiastowy wynik on-line
+                            Natychmiastowy wynik online
                         </li>
                         <li className="flex items-center text-blue-100 text-lg">
                             <CheckCircleIcon className="w-6 h-6 mr-3 text-green-300 flex-shrink-0" />

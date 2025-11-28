@@ -1,5 +1,5 @@
-import { useAuth } from '../../context/AuthContext.tsx'
 import { Navigate, Outlet } from 'react-router-dom'
+import {useAuth} from "../../hooks/useAuth.ts";
 
 const AdminRoute = () => {
     const { user, roles, isLoading } = useAuth()

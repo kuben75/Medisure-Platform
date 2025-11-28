@@ -1,4 +1,3 @@
-import { useAuth } from '../context/AuthContext.tsx'
 import { useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button.tsx'
 import PackageManagement from "../components/admin/PackageManagement.tsx"
@@ -6,6 +5,7 @@ import UserManagement from "../components/admin/UserManagement.tsx";
 import {useState} from "react";
 import {Dashboard} from "../components/admin/Dashboard.tsx";
 import ReviewManagement from "../components/admin/ReviewManagement.tsx";
+import {useAuth} from "../hooks/useAuth.ts";
 
 export default function AdminPanel() {
     const { user, logout } = useAuth()
@@ -27,9 +27,14 @@ export default function AdminPanel() {
                         <h1 className="text-3xl font-bold text-gray-800">Panel Administratora</h1>
                         <p className="text-gray-600 mt-1">Witaj, {user?.firstName || user?.email}!</p>
                     </div>
+                    <div className="flex gap-4">
+                        <Button variant="secondary" className="!py-2 !px-4 !border-gray-300 !text-gray-600 hover:!bg-gray-50 text-[16px]" onClick={() => navigate('/')}>
+                            Wróć na stronę
+                        </Button>
                     <Button variant="primary" className="!py-2 !px-3 text-[16px]" onClick={handleLogout}>
                         Wyloguj się
                     </Button>
+                    </div>
                 </div>
 
                 <div className="border-b border-gray-200 mb-6 overflow-x-auto">

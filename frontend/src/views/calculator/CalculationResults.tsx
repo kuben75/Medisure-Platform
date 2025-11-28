@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import Button from '../../components/ui/Button';
 
 import type {ICalculationResultsProps} from "../../types/pricing.types.ts";
+import FavoriteButton from "../../components/ui/FavouriteButton.tsx";
 
 export default function CalculationResults({ estimatedPrice, packageType, age, recommendedPlan }: ICalculationResultsProps) {
     return (
@@ -29,8 +30,13 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
                         </Link>
                     </div>
 
-                    <div className="bg-gradient-to-br from-[#3B4EDC] to-[#6A7BFF] p-8 rounded-2xl shadow-lg text-white flex flex-col justify-between">
+                    <div className="bg-gradient-to-br from-[#3B4EDC] to-[#6A7BFF] p-8 rounded-2xl shadow-lg text-white flex flex-col justify-between relative">
                         <div>
+                            {recommendedPlan && (
+                                <div className="absolute top-6 right-6">
+                                    <FavoriteButton packageId={recommendedPlan.id} className="bg-white/20 text-white/70 hover:text-red-400 hover:bg-white/20" />
+                                </div>
+                            )}
                             <div className="inline-block bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold mb-4 uppercase tracking-wider">
                                 Rekomendacja
                             </div>

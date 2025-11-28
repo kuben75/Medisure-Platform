@@ -1,9 +1,8 @@
-import {createContext, type ReactNode, useContext, useEffect, useState} from 'react'
-import type {IAuthContext} from "../types/auth.types.ts";
+import {type ReactNode, useEffect, useState} from 'react'
 import type {IUser} from "../types/user.types.ts";
+import {AuthContext as AuthContext1} from "../hooks/useAuth.ts";
 
-const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/auth/login`
-const AuthContext = createContext<IAuthContext>(null as any)
+const LOGIN_API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/auth/login`
 
 function parseJwt(token: string) {
     try {
@@ -13,7 +12,7 @@ function parseJwt(token: string) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
         }).join(''))
         return JSON.parse(jsonPayload)
-    } catch (e) {
+    } catch (e ) {
         return null
     }
 }
@@ -84,9 +83,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             return finalRoles
 
-        } catch (err: any) {
+        } catch (err) {
             console.error(err)
-            setError(err.message)
+            setError(err instanceof Error ? err.message : String(err))
             return null
         } finally {
             setIsLoading(false)
@@ -125,16 +124,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext1 value={value}>
             {!isLoading && children}
-        </AuthContext.Provider>
+        </AuthContext1>
     )
 }
 
-export const useAuth = () => {
-    const context = useContext(AuthContext)
-
-    if (context === undefined) throw new Error('useAuth must be used within an AuthProvider')
-
-    return context
-}

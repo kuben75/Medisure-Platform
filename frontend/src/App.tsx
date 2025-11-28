@@ -14,6 +14,8 @@ import UserProfile from "./pages/UserProfile.tsx"
 import UserRoute from "./components/auth/UserRoute.tsx"
 import {NotificationProvider} from "./context/NotificationContext.tsx"
 import {ConfirmationProvider} from "./context/ConfirmationContext.tsx"
+import {FavoritesProvider} from "./context/FavouritesContext.tsx";
+import {ComparisonProvider} from "./context/ComparisonContext.tsx";
 
 function AppLayout() {
     return (
@@ -30,26 +32,30 @@ function AppLayout() {
 function App() {
     return (
         <NotificationProvider>
-            <AuthProvider>
-                <ConfirmationProvider>
-                    <Routes>
-                        <Route path="/" element={<AppLayout/>}>
-                            <Route index element={<HomePage/>}/>
-                            <Route path="przewodnik-pacjenta" element={<PatientGuidePage/>}/>
-                            <Route path="kontakt" element={<ContactPage/>}/>
-                            <Route path="kalkulator" element={<CalculatorPage/>}/>
-                            <Route element={<UserRoute/>}>
-                                <Route path="profile" element={<UserProfile/>}/>
-                            </Route>
-                        </Route>
-                        <Route path="/login" element={<LoginPage/>}/>
-                        <Route path="/admin" element={<AdminRoute/>}>
-                            <Route index element={<AdminPanel/>}/>
-                        </Route>
-                        <Route path="/rejestracja" element={<RegisterPage/>}/>
-                    </Routes>
-                </ConfirmationProvider>
-            </AuthProvider>
+            <ConfirmationProvider>
+                <AuthProvider>
+                    <FavoritesProvider>
+                        <ComparisonProvider>
+                            <Routes>
+                                <Route path="/" element={<AppLayout/>}>
+                                    <Route index element={<HomePage/>}/>
+                                    <Route path="przewodnik-pacjenta" element={<PatientGuidePage/>}/>
+                                    <Route path="kontakt" element={<ContactPage/>}/>
+                                    <Route path="kalkulator" element={<CalculatorPage/>}/>
+                                    <Route element={<UserRoute/>}>
+                                        <Route path="profile" element={<UserProfile/>}/>
+                                    </Route>
+                                </Route>
+                                <Route path="/login" element={<LoginPage/>}/>
+                                <Route path="/admin" element={<AdminRoute/>}>
+                                    <Route index element={<AdminPanel/>}/>
+                                </Route>
+                                <Route path="/rejestracja" element={<RegisterPage/>}/>
+                            </Routes>
+                        </ComparisonProvider>
+                    </FavoritesProvider>
+                </AuthProvider>
+            </ConfirmationProvider>
         </NotificationProvider>
     )
 }

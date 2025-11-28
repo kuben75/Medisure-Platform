@@ -1,10 +1,7 @@
-import type {ReactNode} from "react";
 
 import type {IUser} from "./user.types.ts";
+import type {IPricingPlan} from "./pricing.types.ts";
 
-export type TAuthProviderProps = {
-    children: ReactNode
-}
 
 export interface IAuthContext {
     user: IUser | null
@@ -17,10 +14,10 @@ export interface IAuthContext {
     error: string | null
 }
 
-export interface IDecodedToken {
-    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string | string[]
-    exp: number
-    iat: number
-    iss: string
-    aud: string
+export interface IComparisonContext {
+    selectedPackages: IPricingPlan[]
+    addToComparison: (pkg: IPricingPlan) => void
+    removeFromComparison: (packageId: number) => void
+    isInComparison: (packageId: number) => boolean
+    clearComparison: () => void
 }

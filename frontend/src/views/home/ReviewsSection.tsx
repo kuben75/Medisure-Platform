@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import StarItem from "../../components/icons/StarItem.tsx";
 import type {IReviewDisplay} from "../../types/review.types.ts";
-const API_URL = `${import.meta.env.VITE_API_URL}/reviews/latest`
+const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/reviews/latest`
 
 export default function ReviewsSection() {
     const [reviews, setReviews] = useState<IReviewDisplay[]>([])

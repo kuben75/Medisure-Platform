@@ -1,6 +1,7 @@
 ﻿using backend.Data;
 using backend.DTOs;
 using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace backend.Controllers;
 public class ReviewsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogService _logService;
 
-    public ReviewsController(ApplicationDbContext context)
+    public ReviewsController(ApplicationDbContext context, ILogService logService)
     {
         _context = context;
+        _logService = logService;
     }
 
     [HttpPost]
@@ -53,7 +56,12 @@ public class ReviewsController : ControllerBase
 
         _context.Reviews.Add(review);
         await _context.SaveChangesAsync();
-
+        await _logService.LogAsync(
+            "ADD_REVIEW",
+            $"Użytkownik {user.Email} dodał opinię dla pakietu ID {dto.PackageId}.",
+            user.Email ?? "Unknown",
+            user.Id,
+            "Info");
         return Ok(new { Message = "Dziękujemy! Twoja opinia czeka na zatwierdzenie przez moderatora." });
     }
 
@@ -98,7 +106,6 @@ public class ReviewsController : ControllerBase
                 CreatedAt = r.CreatedAt
             })
             .ToListAsync();
-
         return Ok(reviews);
     }
     [HttpPut("{id}/approve")]
@@ -125,7 +132,12 @@ public class ReviewsController : ControllerBase
             }
             await _context.SaveChangesAsync();
         }
-
+        await _logService.LogAsync(
+            "APPROVE_REVIEW",
+            $"Opinia ID {id} została zatwierdzona.",
+            User.Identity?.Name ?? "Admin",
+            User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null,
+            "Info");
         return Ok(new { Message = "Opinia została zatwierdzona." });
     }
     [HttpDelete("{id}")]
@@ -137,7 +149,12 @@ public class ReviewsController : ControllerBase
 
         _context.Reviews.Remove(review);
         await _context.SaveChangesAsync();
-
+        await _logService.LogAsync(
+            "REJECT_REVIEW",
+            $"Opinia ID {id} została odrzucona i usunięta.",
+            User.Identity?.Name ?? "Admin",
+            User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null,
+            "Info");
         return Ok(new { Message = "Opinia została usunięta." });
     }
     [HttpGet("latest")]

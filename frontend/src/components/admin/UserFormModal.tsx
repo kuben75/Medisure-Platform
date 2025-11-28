@@ -3,7 +3,8 @@ import Modal from "../ui/Modal";
 import {useEffect, useState} from "react";
 
 import type {IUpdateUserDto, IUserDto} from "../../types/user.types.ts";
-import {useNotification} from "../../context/NotificationContext.tsx";
+
+import {useNotification} from "../../hooks/UseNotification.ts";
 
 export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdit }: {
     isOpen: boolean;
@@ -16,7 +17,7 @@ export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdi
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const API_URL_USERS = `${import.meta.env.VITE_API_URL}/admin/users`
+    const API_URL_USERS = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/admin/users`
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const {notify} = useNotification()
@@ -62,11 +63,12 @@ export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdi
                 throw new Error(errorData.message || 'Nie udało się zaktualizować użytkownika.');
             }
 
-            onSaveSuccess();
+            onSaveSuccess()
+            notify.success("Użytkownik zaktualizowany pomyślnie.")
             onClose()
 
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err))
         } finally {
             setIsLoading(false)
         }

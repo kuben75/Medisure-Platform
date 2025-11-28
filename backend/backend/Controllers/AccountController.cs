@@ -1,5 +1,6 @@
 ﻿using backend.DTOs;
 using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace backend.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogService _logService;
 
-        public AccountController(UserManager<ApplicationUser> userManager)
+        public AccountController(UserManager<ApplicationUser> userManager, ILogService logService)
         {
             _userManager = userManager;
+            _logService = logService;
         }
 
         [HttpPut("profile")]
@@ -32,7 +35,7 @@ namespace backend.Controllers
             
             var user = await _userManager.Users
                 .FirstOrDefaultAsync(u => u.Id == userIdOrEmail || u.Email == userIdOrEmail);
-
+            
             if (user == null) return Unauthorized();
 
             user.FirstName = updateDto.FirstName;
@@ -42,10 +45,18 @@ namespace backend.Controllers
             if (user.Email != updateDto.Email)
             {
                 var emailExists = await _userManager.FindByEmailAsync(updateDto.Email);
+
                 if (emailExists != null && emailExists.Id != user.Id)
                 {
+                    await _logService.LogAsync(
+                        "UPDATE_PROFILE_FAILED", 
+                        $"Nieudana próba aktualizacji profilu użytkownika '{user.UserName}' z powodu zajętego e-maila '{updateDto.Email}'.", 
+                        user.UserName, 
+                        user.Id,
+                        "Warning");
                     return BadRequest(new { Message = "Ten adres e-mail jest już zajęty." });
                 }
+
                 user.Email = updateDto.Email;
             }
 
@@ -53,6 +64,11 @@ namespace backend.Controllers
 
             if (result.Succeeded)
             {
+                await _logService.LogAsync(
+                    "UPDATE_PROFILE", 
+                    $"Profil użytkownika '{user.UserName}' został zaktualizowany.", 
+                    user.UserName, 
+                    user.Id);
                 return Ok(new { 
                     email = user.Email, 
                     firstName = user.FirstName, 
@@ -60,6 +76,12 @@ namespace backend.Controllers
                     phoneNumber = user.PhoneNumber 
                 });
             }
+            await _logService.LogAsync(
+                "UPDATE_PROFILE_FAILED", 
+                $"Nieudana próba aktualizacji profilu użytkownika '{user.UserName}'.", 
+                user.UserName, 
+                user.Id,
+                "Warning");
 
             return BadRequest(result.Errors);
         }

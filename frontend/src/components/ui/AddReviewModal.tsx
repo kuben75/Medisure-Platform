@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Modal from '../ui/Modal.tsx';
 import Button from '../ui/Button.tsx';
-import { useAuth } from '../../context/AuthContext.tsx';
-import { useNotification } from '../../context/NotificationContext.tsx';
 import type {AddReviewModalProps} from "../../types/review.types.ts";
 import StarIcon from "../icons/StarIcon.tsx";
+import {useNotification} from "../../hooks/UseNotification.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/reviews`
+const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/reviews`
 
 export default function AddReviewModal({ isOpen, onClose, packageId, packageName }: AddReviewModalProps) {
     const { token } = useAuth()
@@ -56,8 +56,8 @@ export default function AddReviewModal({ isOpen, onClose, packageId, packageName
             onClose()
             setRating(0)
             setComment('')
-        } catch (err: any) {
-            notify.error(err.message)
+        } catch (err) {
+            notify.error(err instanceof Error ? err.message : String(err))
         } finally {
             setIsLoading(false)
         }

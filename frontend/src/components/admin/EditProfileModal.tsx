@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import {useAuth} from "../../context/AuthContext.tsx"
 import Modal from '../ui/Modal.tsx'
 import Button from '../ui/Button.tsx'
 
 import type {IEditProfileModalProps} from "../../types/ui.types.ts";
-import {useNotification} from "../../context/NotificationContext.tsx";
+
+import {useNotification} from "../../hooks/UseNotification.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalProps) {
     const { user, token, updateUser } = useAuth()
@@ -33,29 +34,44 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
         setIsLoading(true)
         setError(null)
 
+        if(!firstName.trim() || !lastName.trim() || !email.trim()) {
+            setError("Proszę wypełnić wszystkie wymagane pola.")
+            return
+        }
+        setIsLoading(true)
+        const payload = {
+            firstName,
+            lastName,
+            email,
+            phoneNumber: phoneNumber.trim() === '' ? null : phoneNumber.trim()
+        }
+
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/account/profile`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/account/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ firstName, lastName, email, phoneNumber })
+                body: JSON.stringify(payload)
             })
 
             if (!response.ok) {
                 const errData = await response.json()
-                throw new Error(errData.Message || "Nie udało się zaktualizować profilu.")
+                let msg = errData.message || "Nie udało się zaaktualizować profilu."
+                if(errData.errors) {
+                    msg = Object.values(errData.errors).flat().join(', ')
+                }
+                throw new Error(msg)
             }
 
             const updatedUser = await response.json()
 
             updateUser(updatedUser)
-
             notify.success("Profil zaktualizowany!")
             onClose()
-        } catch (err: any) {
-            notify.error(err.message)
+        } catch (err) {
+            notify.error(err instanceof Error ? err.message : String(err))
         } finally {
             setIsLoading(false)
         }
@@ -64,7 +80,7 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Edytuj swoje dane</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" onClick={(e) => e.stopPropagation()} >
                 {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
                 <div className="grid grid-cols-2 gap-4">

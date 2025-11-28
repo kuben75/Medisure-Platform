@@ -15,9 +15,10 @@ export default function ReviewsList({ packageId }: { packageId: number }) {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/reviews/package/${packageId}`)
+                const response = await fetch(`${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/reviews/package/${packageId}`)
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data)
                     setReviews(data);
                 }
             } catch (error) {

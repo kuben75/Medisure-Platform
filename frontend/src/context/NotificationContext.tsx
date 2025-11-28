@@ -1,14 +1,12 @@
-import {createContext, useContext, useState, useCallback, type ReactNode} from 'react';
+import {type ReactNode, useCallback, useState} from 'react';
 import CheckIcon from "../components/icons/CheckIcon.tsx";
 import ErrorIcon from "../components/icons/ErrorIcon.tsx";
 import InfoIcon from "../components/icons/InfoIcon.tsx";
 import XIcon from "../components/icons/XIcon.tsx";
 
-import type {INotification, INotificationContextType, TNotificationType} from "../types/notifications.types.ts";
+import type {INotification, TNotificationType} from "../types/notifications.types.ts";
+import {NotificationContext as NotificationContext1} from "../hooks/UseNotification.ts";
 
-
-
-const NotificationContext = createContext<INotificationContextType | undefined>(undefined);
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     const [notifications, setNotifications] = useState<INotification[]>([])
@@ -33,10 +31,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return (
-        <NotificationContext.Provider value={{ notify }}>
+        <NotificationContext1 value={{ notify }}>
             {children}
 
-            <div className="fixed bottom-5 right-5 z-[9999] flex flex-col gap-3">
+            <div className="fixed top-22 right-5 z-[9999] flex flex-col gap-3">
                 {notifications.map((n) => (
                     <div
                         key={n.id}
@@ -74,14 +72,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
                     animation: slideIn 0.3s ease-out forwards;
                 }
             `}</style>
-        </NotificationContext.Provider>
+        </NotificationContext1>
     );
 };
 
-export const useNotification = () => {
-    const context = useContext(NotificationContext);
-    if (context === undefined) {
-        throw new Error('useNotification must be used within a NotificationProvider');
-    }
-    return context;
-};
