@@ -12,7 +12,7 @@ export default function GuideHero() {
     return (
         <section
             className="text-white w-full min-h-72 py-25 md:pb-32 px-4 bg-gradient-to-br from-blue-600 to-indigo-800">
-            <div className="max-w-4xl mx-auto text-center">
+            <div className="max-w-4xl mx-auto text-center pt-10">
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">Przewodnik Pacjenta</h1>
                 <p className="text-lg md:text-xl text-blue-100">Dowiedz się, jak wybrać najlepszy pakiet medyczny dla
                     siebie.<br/> Przewodnik krok po kroku dla każdego pacjenta.</p>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LockIcon from "../components/icons/LockIcon.tsx"
-import { useAuth } from '../context/AuthContext.tsx'
+
+import {useAuth} from "../hooks/useAuth.ts";
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')

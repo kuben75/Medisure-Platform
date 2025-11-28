@@ -1,5 +1,6 @@
 ﻿using backend.Data;
 using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace backend.Controllers
     public class SubscriptionsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogService _logService;
 
-        public SubscriptionsController(ApplicationDbContext context)
+        public SubscriptionsController(ApplicationDbContext context, ILogService logService)
         {
             _context = context;
+            _logService = logService;
         }
 
         [HttpPost("{packageId}")]
@@ -34,6 +37,13 @@ namespace backend.Controllers
 
             if (user == null)
             {
+                await _logService.LogAsync(
+                    "SUBSCRIBE_PACKAGE_FAILED",
+                    $"Nie znaleziono użytkownika dla identyfikatora: {userIdOrEmail}",
+                    "System",
+                    null,
+                    "Error"
+                );
                 return BadRequest(new { Message = $"Nie znaleziono użytkownika dla identyfikatora: {userIdOrEmail}" });
             }
 
@@ -55,7 +65,13 @@ namespace backend.Controllers
 
             _context.UserPackages.Add(subscription);
             await _context.SaveChangesAsync();
-
+            await _logService.LogAsync(
+                "SUBSCRIBE_PACKAGE",
+                $"Użytkownik {user.Email} (ID: {user.Id}) zakupił pakiet '{package.Name}' (ID: {package.Id}).",
+                user.Email,
+                user.Id,
+                "Success"
+            );
             return Ok(new { Message = $"Sukces! Zakupiłeś pakiet: {package.Name}" });
         }
 
@@ -88,7 +104,7 @@ namespace backend.Controllers
                     Features = up.Package.Features 
                 })
                 .ToListAsync();
-
+    
             return Ok(myPackages);
         }
     }

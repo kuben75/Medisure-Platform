@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
-import { useAuth } from "../../context/AuthContext.tsx"
-import { useNotification } from "../../context/NotificationContext.tsx"
 import Button from "../ui/Button.tsx"
 import type {IPendingReview} from "../../types/review.types.ts"
-import {useConfirm} from "../../context/ConfirmationContext.tsx"
 import CheckIcon from "../icons/CheckIcon.tsx"
 import StarItem from "../icons/StarItem.tsx"
+import {useConfirm} from "../../hooks/UseConfrim.ts";
+import {useNotification} from "../../hooks/UseNotification.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/reviews`
+const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/reviews`
 
 function XIcon() {
     return null;
@@ -54,7 +54,7 @@ export default function ReviewManagement() {
             notify.success("Opinia zatwierdzona i opublikowana!")
             fetchPendingReviews();
         } catch (err) {
-            notify.error("Nie udało się zatwierdzić opinii.")
+            notify.error("Nie udało się zatwierdzić opinii." + err)
         }
     };
 
@@ -78,7 +78,7 @@ export default function ReviewManagement() {
             notify.success("Opinia usunięta.")
             fetchPendingReviews();
         } catch (err) {
-            notify.error("Nie udało się usunąć opinii.");
+            notify.error("Nie udało się usunąć opinii." + err);
         }
     }
 

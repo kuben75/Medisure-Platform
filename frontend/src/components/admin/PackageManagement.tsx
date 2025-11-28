@@ -1,14 +1,14 @@
 import {useEffect, useState} from "react"
-import {useAuth} from "../../context/AuthContext.tsx"
 import Button from "../ui/Button.tsx";
 import EditIcon from "../icons/EditIcon.tsx";
 import DeleteIcon from "../icons/DeleteIcon.tsx";
 import {PackageFormModal} from "./PackageFormModal.tsx";
 import type {IPricingPlan} from "../../types/pricing.types.ts";
-import {useConfirm} from "../../context/ConfirmationContext.tsx";
-import {useNotification} from "../../context/NotificationContext.tsx";
+import {useConfirm} from "../../hooks/UseConfrim.ts";
+import {useNotification} from "../../hooks/UseNotification.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/packages`
+const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/packages`
 
 export default function PackageManagement() {
     const [packages, setPackages] = useState<IPricingPlan[]>([])
@@ -28,8 +28,8 @@ export default function PackageManagement() {
 
             const data = await response.json()
             setPackages(data)
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err))
         } finally {
             setLoading(false)
         }
@@ -83,8 +83,8 @@ export default function PackageManagement() {
             if (!response.ok) throw new Error('Nie udało się usunąć pakietu.')
 
             await fetchPackages()
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err))
         }
     }
 

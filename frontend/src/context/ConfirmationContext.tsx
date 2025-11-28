@@ -1,8 +1,7 @@
-import {createContext, type ReactNode, useContext, useRef, useState} from 'react'
+import {type ReactNode, useRef, useState} from 'react'
 import Button from '../components/ui/Button.tsx'
-import type {ConfirmationContextType, ConfirmOptions} from "../types/notifications.types.ts"
-
-const ConfirmationContext = createContext<ConfirmationContextType | undefined>(undefined)
+import type {ConfirmOptions} from "../types/notifications.types.ts"
+import {ConfirmationContext as ConfirmationContext1} from "../hooks/UseConfrim.ts";
 
 export const ConfirmationProvider = ({ children }: { children: ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false)
@@ -20,15 +19,13 @@ export const ConfirmationProvider = ({ children }: { children: ReactNode }) => {
         })
         setIsOpen(true)
 
-        return new Promise((resolve) => {
-            resolver.current = resolve
-        })
+        return new Promise((resolve) => resolver.current = resolve)
     }
 
     const handleConfirm = () => {
         resolver.current?.(true)
         setIsOpen(false)
-    };
+    }
 
     const handleCancel = () => {
         resolver.current?.(false)
@@ -36,7 +33,7 @@ export const ConfirmationProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return (
-        <ConfirmationContext.Provider value={{ confirm }}>
+        <ConfirmationContext1 value={{ confirm }}>
             {children}
 
             {isOpen && (
@@ -99,13 +96,7 @@ export const ConfirmationProvider = ({ children }: { children: ReactNode }) => {
                 .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
                 .animate-scale-in { animation: scaleIn 0.2s ease-out forwards; }
             `}</style>
-        </ConfirmationContext.Provider>
+        </ConfirmationContext1>
     )
 }
 
-export const useConfirm = () => {
-    const context = useContext(ConfirmationContext)
-    if (!context) throw new Error('useConfirm must be used within a ConfirmationProvider')
-
-    return context.confirm
-}

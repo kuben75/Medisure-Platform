@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react"
-import {useAuth} from "../../context/AuthContext.tsx"
 import Button from "../ui/Button.tsx"
 import EditIcon from "../icons/EditIcon.tsx"
 import DeleteIcon from "../icons/DeleteIcon.tsx"
 import {UserFormModal} from "./UserFormModal.tsx"
 import type {IUserDto} from "../../types/user.types.ts";
-import {useConfirm} from "../../context/ConfirmationContext.tsx";
-import {useNotification} from "../../context/NotificationContext.tsx";
+import {useConfirm} from "../../hooks/UseConfrim.ts";
+import {useNotification} from "../../hooks/UseNotification.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 export default function UserManagement() {
     const [users, setUsers] = useState<IUserDto[]>([])
@@ -18,7 +18,7 @@ export default function UserManagement() {
     const [userToEdit, setUserToEdit] = useState<IUserDto | null>(null)
     const confirm  = useConfirm()
     const { notify } = useNotification()
-    const API_URL_USERS = `${import.meta.env.VITE_API_URL}/users`
+    const API_URL_USERS = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/admin/users`
 
     const fetchUsers = async () => {
         if (!token) { setError("Brak autoryzacji."); setLoading(false); return; }
@@ -28,7 +28,7 @@ export default function UserManagement() {
             if (!response.ok) throw new Error('Błąd pobierania danych użytkowników');
             const data = await response.json();
             setUsers(data);
-        } catch (err: any) { setError(err.message); }
+        } catch (err) { setError(err instanceof Error ? err.message : String(err)); }
         finally { setLoading(false); }
     }
 
@@ -53,12 +53,14 @@ export default function UserManagement() {
             });
             if (!response.ok) {
                 let errorData = { message: 'Nie udało się usunąć użytkownika.' }
-                try { errorData = await response.json() } catch(e) {}
+                try { errorData = await response.json() }
+                catch(err)
+                {setError(err instanceof Error ? err.message : String(err))}
                 throw new Error(errorData.message)
             }
             notify.success("Użytkownik usunięty pomyślnie.")
             fetchUsers()
-        } catch (err: any) { setError(err.message) }
+        } catch (err) { setError(err instanceof Error ? err.message : String(err)) }
     };
 
     const handleOpenEditModal = (user: IUserDto) => {

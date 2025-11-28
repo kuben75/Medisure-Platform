@@ -3,12 +3,13 @@ import Button from "../../components/ui/Button.tsx"
 import {useEffect, useState} from "react";
 import Modal from "../../components/ui/Modal.tsx";
 import Rating from "../../components/ui/Rating.tsx";
-import {useAuth} from "../../context/AuthContext.tsx";
 import { useNavigate } from 'react-router-dom';
 import type {IPricingPlan} from "../../types/pricing.types.ts";
-import {useNotification} from "../../context/NotificationContext.tsx";
-import {useConfirm} from "../../context/ConfirmationContext.tsx";
 import ReviewsList from "../../components/ui/ReviewList.tsx";
+import {useConfirm} from "../../hooks/UseConfrim.ts";
+import {useNotification} from "../../hooks/UseNotification.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
+import FavoriteButton from "../../components/ui/FavouriteButton.tsx";
 
 export default function HeroSection() {
     const [selectedPlan, setSelectedPlan] = useState<IPricingPlan | null>(null)
@@ -18,8 +19,8 @@ export default function HeroSection() {
     const [isBuying, setIsBuying] = useState(false)
     const navigate = useNavigate()
     const {notify} = useNotification()
-    const API_URL = `${import.meta.env.VITE_API_URL}/packages`
-    const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL}/subscriptions`
+    const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/packages`
+    const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/subscriptions`
     const confirm = useConfirm()
 
     useEffect(() => {
@@ -31,12 +32,12 @@ export default function HeroSection() {
 
                 const data: IPricingPlan[] = await response.json()
                 const featuredPlans = data.filter(p => p.isFeatured).slice(0, 3)
+                if(featuredPlans.length === 0)
+                    setPricingPlans(data.slice(0, 3))
+                else
+                    setPricingPlans(featuredPlans)
 
-                featuredPlans.length === 0
-                    ? setPricingPlans(data.slice(0, 3))
-                    : setPricingPlans(featuredPlans)
-
-
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (e) {
                 notify.error("Nie udało się pobrać ofert.")
             } finally {
@@ -44,7 +45,7 @@ export default function HeroSection() {
             }
         }
         fetchPackages()
-    }, [])
+    }, [API_URL, notify])
 
     const handleBuyPackage = async () => {
         if (!selectedPlan) return;
@@ -78,8 +79,8 @@ export default function HeroSection() {
             notify.success("Gratulacje! Pakiet został pomyślnie wykupiony. Sprawdź swój profil.")
             setSelectedPlan(null)
 
-        } catch (err: any) {
-            notify.error(`Błąd: ${err.message}`)
+        } catch (err) {
+            notify.error(`Błąd: ${err instanceof Error ? err.message : String(err)}`)
         } finally {
             setIsBuying(false)
         }
@@ -87,7 +88,7 @@ export default function HeroSection() {
 
     return (
         <section className="relative w-full text-center text-white py-20 md:pb-32 px-4 bg-gradient-to-br from-blue-600 to-indigo-800">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto pt-10">
                 <h1 className="text-4xl text-white md:text-5xl font-bold mb-4">Porównywarka Pakietów Medycznych</h1>
                 <p className="text-lg md:text-xl text-blue-100 max-2-3x1 mx-auto mb-12">Zestaw oferty czołowych usługodawców w Polsce i wybierz pakiet
                     medyczny dopasowany do swoich potrzeb – szybko i wygodnie.</p>
@@ -98,20 +99,24 @@ export default function HeroSection() {
             {!loading && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {pricingPlans.map((plan) => (
-                        <div key={plan.id} className="bg-white backdrop-blur-lg rounded-xl p-6 text-center shadow-lg border border-white/20 flex flex-col">
+                        <div key={plan.id}
+                             className="bg-white backdrop-blur-lg rounded-xl p-6 text-center shadow-lg border border-white/20 flex flex-col">
+                            <div className="absolute top-4 left-4 z-20">
+                                <FavoriteButton packageId={plan.id} className="bg-slate-100 text-red-400 hover:text-red-700"/>
+                            </div>
 
                             <h3 className="text-xl text-gray-800 font-semibold mb-2">{plan.name}</h3>
                             <p className="text-3xl text-gray-800 font-bold mb-1">{plan.price}
                                 <span className="text-base font-normal"> / miesiąc</span>
                             </p>
                             <ul className="space-y-2 my-6 text-gray-800 flex-grow">
-                                {plan.features.map((feature, i )=> (
+                                {plan.features.map((feature, i) => (
                                     <li key={i} className="flex items-center justify-center">
                                         <span>{feature}</span>
                                     </li>
                                 ))}
                             </ul>
-                            <Rating rating={plan.averageRating} reviews={plan.reviews} />
+                            <Rating rating={plan.averageRating} reviews={plan.reviews}/>
                             <p className="text-sm text-gray-600 mb-6 flex-grow">{plan.description}</p>
                             <Button variant="primary" className="w-full" onClick={() => setSelectedPlan(plan)}>
                                 Zobacz szczegóły
@@ -122,12 +127,13 @@ export default function HeroSection() {
             )}
             <div className="mt-12">
                 <Button variant="secondary" onClick={() => navigate('/kalkulator')}>
-                    Kliknij, aby zobaczyć więcej pakietów
+                Kliknij, aby zobaczyć więcej pakietów
                 </Button>
             </div>
             <Modal isOpen={selectedPlan !== null} onClose={() => setSelectedPlan(null)}>
                 {selectedPlan && (
                     <div className="text-gray-800">
+
                         <h2 className="text-3xl font-bold mb-4">{selectedPlan.name}</h2>
                         <p className="text-4xl font-bold text-blue-600 mb-6">{selectedPlan.price}
                             <span className="text-lg font-normal text-gray-600"> / miesiąc</span>
@@ -148,7 +154,7 @@ export default function HeroSection() {
                             onClick={handleBuyPackage}
                             disabled={isBuying}
                         >
-                            {isBuying ? "Przetwarzanie..." : "Wybieram ten pakiet"}
+                            {isBuying ? "Przetwarzanie..." : "Kup pakiet"}
                         </Button>
                         <ReviewsList packageId={selectedPlan.id} />
                     </div>

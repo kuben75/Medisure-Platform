@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import UserPlusIcon from "../components/icons/UserPlusIcon.tsx";
-import {useNotification} from "../context/NotificationContext.tsx";
+
+import {useNotification} from "../hooks/UseNotification.ts";
 
 export default function RegisterPage() {
     const navigate = useNavigate()
@@ -34,7 +35,7 @@ export default function RegisterPage() {
         setIsLoading(true)
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -61,8 +62,8 @@ export default function RegisterPage() {
 
             notify.success("Rejestracja zakończona sukcesem. Możesz się teraz zalogować.")
             navigate('/login')
-        } catch (err: any) {
-            notify.error(err.message)
+        } catch (err) {
+            notify.error(err instanceof Error ? err.message : String(err))
         } finally {
             setIsLoading(false)
         }
