@@ -2,20 +2,21 @@ import XIcon from "../icons/XIcon.tsx";
 import type {TModalProps} from "../../types/ui.types.ts";
 import React from "react";
 
-export default function Modal({isOpen, onClose, children}: TModalProps) {
+export default function Modal({isOpen, onClose, children, className}: TModalProps) {
     if (!isOpen) return null
 
     const handleBackdropMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         if(e.target === e.currentTarget)
             onClose()
     }
+    const widthClass = className || "max-w-lg"
 
     return (
         <div
             className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 transition-opacity duration-300 overflow-y-auto"
             onMouseDown={handleBackdropMouseDown} >
             <div
-                className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-8 relative transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale"
+                className={`bg-white rounded-2xl shadow-xl w-full ${widthClass} p-8 relative transform transition-all duration-300 scale-95 opacity-0 animate-fade-in-scale`}
                 onClick={(e) => e.stopPropagation()} style={{animation: 'fadeInScale 0.3s forwards'}}>
                 <button className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors hover:cursor-pointer"
                         onClick={onClose}>

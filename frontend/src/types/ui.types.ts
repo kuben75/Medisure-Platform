@@ -8,7 +8,8 @@ export type IconProps = {
 export type TModalProps = {
     isOpen: boolean,
     onClose: () => void,
-    children?: React.ReactNode
+    children?: React.ReactNode,
+    className?: string
 }
 
 export interface IEditProfileModalProps {
