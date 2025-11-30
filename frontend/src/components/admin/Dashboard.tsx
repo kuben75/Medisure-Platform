@@ -44,7 +44,6 @@ export const Dashboard = () => {
     if (loading) return <div>Ładowanie statystyk...</div>
     if (error) return <div className="text-red-500">Błąd: {error}</div>
     if (!stats) return null
-console.log(stats)
     return (
         <div className="mt-8 bg-slate-50 p-6 rounded-lg">
             <h2 className="text-2xl font-semibold text-gray-700 mb-4">Panel Główny</h2>

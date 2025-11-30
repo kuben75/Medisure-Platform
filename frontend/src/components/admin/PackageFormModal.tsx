@@ -193,7 +193,6 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
                     </div>
                 </div>
 
-                {/* Sekcja Checkboxów */}
                 <div className="grid grid-cols-2 gap-2">
                     <label className="flex items-center space-x-2 cursor-pointer">
                         <input type="checkbox" checked={hasDentalCare} onChange={(e) => setHasDentalCare(e.target.checked)} className="text-blue-600 rounded focus:ring-blue-500" />

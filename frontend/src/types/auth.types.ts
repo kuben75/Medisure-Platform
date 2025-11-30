@@ -20,4 +20,5 @@ export interface IComparisonContext {
     removeFromComparison: (packageId: number) => void
     isInComparison: (packageId: number) => boolean
     clearComparison: () => void
+    limit: number
 }

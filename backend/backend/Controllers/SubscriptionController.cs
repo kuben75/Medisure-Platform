@@ -1,6 +1,7 @@
 ﻿using backend.Data;
 using backend.Models;
 using backend.Services;
+using backend.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("{packageId}")]
-        public async Task<IActionResult> Subscribe(int packageId)
+        public async Task<IActionResult> Subscribe(int packageId, [FromBody] SubscribeDto dto)
         {
             var userIdOrEmail = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
@@ -52,13 +53,34 @@ namespace backend.Controllers
             {
                 return NotFound(new { Message = "Taki pakiet nie istnieje." });
             }
+            DateTime startTime = DateTime.UtcNow;
+            DateTime endTime;
+
+            switch (dto.Duration.ToLower())
+            {
+                case "7d":
+                    endTime = startTime.AddDays(7);
+                    break;
+                case "3m":
+                    endTime = startTime.AddMonths(3);
+                    break;
+                case "6m":
+                    endTime = startTime.AddMonths(6);
+                    break;
+                case "1y":
+                    endTime = startTime.AddYears(1);
+                    break;
+                default:
+                    endTime = startTime.AddYears(1);
+                    break;
+            }
 
             var subscription = new UserPackage
             {
                 User = user,      
                 PackageId = packageId,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddMonths(12),
+                StartDate = startTime,
+                EndDate = endTime,
                 Status = "Active",
                 PriceAtPurchase = package.Price
             };

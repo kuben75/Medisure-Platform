@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import LockIcon from "../components/icons/LockIcon.tsx"
 
 import {useAuth} from "../hooks/useAuth.ts";
+import Navbar from "../components/layout/Navbar.tsx";
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -25,6 +26,8 @@ export default function LoginPage() {
     }
 
     return (
+        <>
+        <Navbar />
         <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4 py-12">
             <div className="w-full max-w-md">
                 <div className="bg-white p-8 md:p-10 rounded-2xl shadow-xl border border-gray-200">
@@ -98,5 +101,6 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+        </>
     )
 }

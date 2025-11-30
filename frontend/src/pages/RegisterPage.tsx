@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import UserPlusIcon from "../components/icons/UserPlusIcon.tsx";
 
 import {useNotification} from "../hooks/UseNotification.ts";
+import Navbar from "../components/layout/Navbar.tsx";
 
 export default function RegisterPage() {
     const navigate = useNavigate()
@@ -70,7 +71,9 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4 py-12">
+        <>
+            <Navbar />
+        <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4 py-25">
             <div className="w-full max-w-lg">
                 <div className="bg-white p-8 md:p-10 rounded-2xl shadow-xl border border-gray-200">
 
@@ -181,5 +184,6 @@ export default function RegisterPage() {
                 </div>
             </div>
         </div>
-    );
+        </>
+    )
 }
