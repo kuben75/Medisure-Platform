@@ -5,95 +5,144 @@ const CheckIcon = () => <span className="text-green-500 font-bold text-xl">✓</
 const CrossIcon = () => <span className="text-red-300 font-bold text-xl">-</span>
 export default function ComparisonModal({isOpen, onClose, packages}: IComparisonModalProps) {
     if (packages.length === 0) return null
+    let modalWidthClass
+   switch (packages.length) {
+         case 2: modalWidthClass = "max-w-4xl"
+             break
+         case 3: modalWidthClass = "max-w-5xl"
+             break
+         case 4: modalWidthClass = "max-w-6xl"
+             break
+         case 5: modalWidthClass = "max-w-7xl"
+             break
+         case 6: modalWidthClass = "max-w-[80vw]"
+             break
+         default: modalWidthClass = "max-w-[95vw]"
+             break
+   }
+    const labelCellClass = "p-4 text-sm font-semibold text-gray-600 bg-gray-50 border-b border-gray-200 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[150px]";
 
-
+    const dataCellClass = "p-4 text-sm text-gray-700 border-b border-gray-200 text-center min-w-[200px] border-l border-gray-100";
     return(
-        <Modal isOpen={isOpen} onClose={onClose} className={"max-w-5xl"}>
-            <div className="w-full overflow-x-auto">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-                    Porównanie {packages.length} pakietów
-                </h2>
+        <Modal isOpen={isOpen} onClose={onClose} className={modalWidthClass}>
+            <div className="w-full flex flex-col h-full">
 
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                    <tr>
-                        <th className="p-4 border-b-2 border-gray-200 bg-gray-50 w-1/4 text-gray-500 uppercase text-xs font-bold">Cecha</th>
-                        {packages.map(pkg => (
-                            <th key={pkg.id} className="p-4 border-b-2 border-gray-200 bg-white text-center w-1/4 align-bottom">
-                                <div className="font-bold text-lg text-gray-800 leading-tight mb-2">{pkg.name}</div>
-                                <div className="text-[#4E61F6] font-bold text-xl">{pkg.price}</div>
+                <div className="text-center pb-2">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                        Porównanie ofert
+                    </h2>
+                    <p className="text-gray-500 text-sm mt-1">
+                        Wybrałeś {packages.length} pakiety do zestawienia
+                    </p>
+                </div>
+
+                <div className="w-full overflow-x-auto py-5 custom-scrollbar">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                        <tr>
+                            <th className={`${labelCellClass} bg-white align-bottom pb-6 text-gray-400 uppercase text-xs`}>
+                                Cecha / Pakiet
                             </th>
-                        ))}
-                    </tr>
-                    </thead>
-                    <tbody className="text-sm">
-                    <tr className="hover:bg-gray-50">
-                        <td className="td-modal">Kategoria</td>
-                        {packages.map(pkg => (
-                            <td key={pkg.id} className="p-3 border-b border-gray-100 text-center text-gray-600">
-                                {pkg.category}
-                            </td>
-                        ))}
-                    </tr>
 
-                    <tr className="hover:bg-gray-50">
-                        <td className="td-modal">Stomatologia</td>
-                        {packages.map(pkg => (
-                            <td key={pkg.id} className="p-3 border-b border-gray-100 text-center">
-                                {pkg.hasDentalCare ? <CheckIcon /> : <CrossIcon />}
-                            </td>
-                        ))}
-                    </tr>
-                    <tr className="hover:bg-gray-50">
-                        <td className="td-modal">Szpital</td>
-                        {packages.map(pkg => (
-                            <td key={pkg.id} className="p-3 border-b border-gray-100 text-center">
-                                {pkg.hasHospitalization ? <CheckIcon /> : <CrossIcon />}
-                            </td>
-                        ))}
-                    </tr>
-                    <tr className="hover:bg-gray-50">
-                        <td className="td-modal">Rehabilitacja</td>
-                        {packages.map(pkg => (
-                            <td key={pkg.id} className="p-3 border-b border-gray-100 text-center">
-                                {pkg.hasRehabilitation ? <CheckIcon /> : <CrossIcon />}
-                            </td>
-                        ))}
-                    </tr>
+                            {packages.map(pkg => (
+                                <th key={pkg.id} className="p-4 border-b-2 border-[#4E61F6] bg-white text-center min-w-[200px] align-bottom pb-6 relative">
+                                    {pkg.isFeatured && (
+                                        <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                                                Polecany
+                                            </span>
+                                    )}
+                                    <div className="font-bold text-lg text-gray-900 leading-tight mb-1">
+                                        {pkg.name}
+                                    </div>
+                                    <div className="text-[#4E61F6] font-bold text-2xl">
+                                        {pkg.price}
+                                    </div>
+                                    <div className="text-xs text-gray-400 font-normal">/ miesiąc</div>
+                                </th>
+                            ))}
+                        </tr>
+                        </thead>
 
-                    <tr className="hover:bg-gray-50">
-                        <td className="td-modal">Liczba specjalistów</td>
-                        {packages.map(pkg => (
-                            <td key={pkg.id} className="p-3 border-b border-gray-100 text-center font-bold text-gray-800">
-                                {pkg.specialistsCount}
-                            </td>
-                        ))}
-                    </tr>
-                    <tr className="hover:bg-gray-50">
-                        <td className="td-modal">Liczba placówek</td>
-                        {packages.map(pkg => (
-                            <td key={pkg.id} className="p-3 border-b border-gray-100 text-center font-bold text-gray-800">
-                                {pkg.facilitiesCount}
-                            </td>
-                        ))}
-                    </tr>
+                        <tbody>
+                        <tr className="hover:bg-blue-50/30 transition-colors group">
+                            <td className={labelCellClass}>Kategoria</td>
+                            {packages.map(pkg => (
+                                <td key={pkg.id} className={`${dataCellClass} font-medium text-blue-600 group-hover:bg-blue-50/30`}>
+                                    {pkg.category}
+                                </td>
+                            ))}
+                        </tr>
 
-                    <tr className="hover:bg-gray-50 bg-yellow-50/30">
-                        <td className="td-modal">Ocena użytkowników</td>
-                        {packages.map(pkg => (
-                            <td key={pkg.id} className="p-3 border-b border-gray-100 text-center">
-                                <span className="text-yellow-500 font-bold">★ {pkg.averageRating.toFixed(1)}</span>
-                                <span className="text-xs text-gray-400 ml-1">({pkg.reviews})</span>
-                            </td>
-                        ))}
-                    </tr>
-                    </tbody>
-                </table>
+                        <tr className="hover:bg-blue-50/30 transition-colors group">
+                            <td className={labelCellClass}>Stomatologia</td>
+                            {packages.map(pkg => (
+                                <td key={pkg.id} className={`${dataCellClass} group-hover:bg-blue-50/30`}>
+                                    {pkg.hasDentalCare ? <CheckIcon /> : <CrossIcon />}
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="hover:bg-blue-50/30 transition-colors group">
+                            <td className={labelCellClass}>Szpital</td>
+                            {packages.map(pkg => (
+                                <td key={pkg.id} className={`${dataCellClass} group-hover:bg-blue-50/30`}>
+                                    {pkg.hasHospitalization ? <CheckIcon /> : <CrossIcon />}
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="hover:bg-blue-50/30 transition-colors group">
+                            <td className={labelCellClass}>Rehabilitacja</td>
+                            {packages.map(pkg => (
+                                <td key={pkg.id} className={`${dataCellClass} group-hover:bg-blue-50/30`}>
+                                    {pkg.hasRehabilitation ? <CheckIcon /> : <CrossIcon />}
+                                </td>
+                            ))}
+                        </tr>
 
-                <div className="mt-8 flex justify-end">
-                    <Button variant="outline" onClick={onClose}>Zamknij</Button>
+                        <tr className="hover:bg-blue-50/30 transition-colors group">
+                            <td className={labelCellClass}>Liczba specjalistów</td>
+                            {packages.map(pkg => (
+                                <td key={pkg.id} className={`${dataCellClass} font-bold text-gray-800 group-hover:bg-blue-50/30`}>
+                                    {pkg.specialistsCount}
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="hover:bg-blue-50/30 transition-colors group">
+                            <td className={labelCellClass}>Liczba placówek</td>
+                            {packages.map(pkg => (
+                                <td key={pkg.id} className={`${dataCellClass} font-bold text-gray-800 group-hover:bg-blue-50/30`}>
+                                    {pkg.facilitiesCount}
+                                </td>
+                            ))}
+                        </tr>
+
+                        <tr className="bg-yellow-50/30 hover:bg-yellow-50 transition-colors group border-t-2 border-gray-100">
+                            <td className={`${labelCellClass} bg-yellow-50/50`}>Ocena użytkowników</td>
+                            {packages.map(pkg => (
+                                <td key={pkg.id} className={`${dataCellClass} bg-yellow-50/30 group-hover:bg-yellow-50`}>
+                                    <div className="flex flex-col items-center justify-center">
+                                        <span className="text-yellow-500 font-bold text-lg">★ {pkg.averageRating.toFixed(1)}</span>
+                                        <span className="text-xs text-gray-400">({pkg.reviews} opinii)</span>
+                                    </div>
+                                </td>
+                            ))}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="mt-8 flex justify-end pt-4 border-t border-gray-200">
+                    <Button variant="primary" onClick={onClose} className="!px-8">
+                        Zamknij porównanie
+                    </Button>
                 </div>
             </div>
+
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar { height: 10px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; border-radius: 5px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; border: 2px solid #f8fafc; }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+            `}</style>
         </Modal>
     )
 }

@@ -2,11 +2,12 @@ import StarItem from "../icons/StarItem.tsx";
 
 import type {TRatingProps} from "../../types/ui.types.ts";
 
-export default function Rating({rating, reviews}: TRatingProps){
+export default function Rating({rating, reviews, className}: TRatingProps){
     const full :number = Math.floor(rating)
     const hasHalf: boolean = rating - full >= 0.5
+    const containerClass = className || "mt-auto mb-2 flex items-center justify-center gap-3"
     return (
-        <div className="mt-auto mb-2 flex items-center justify-center gap-3">
+        <div className={containerClass}>
 
             <div className="flex items-center bg-yellow-100 text-yellow-500 px-3 py-1 rounded-full">
                 <StarItem className="w-4 h-4" />

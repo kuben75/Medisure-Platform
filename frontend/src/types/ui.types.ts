@@ -19,7 +19,8 @@ export interface IEditProfileModalProps {
 
 export type TRatingProps = {
     rating: number,
-    reviews: number
+    reviews: number,
+    className?: string
 }
 export interface IFavoritesContext {
     favoriteIds: number[]

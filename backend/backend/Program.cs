@@ -186,6 +186,56 @@ void SeedDatabase(IHost app)
                     Features = new List<string> { "Geriatra", "Kardiolog", "Rehabilitacja (10 zabiegów)", "Brak limitu wieku" },
                     HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
                     SpecialistsCount = 20, FacilitiesCount = 600, AverageRating = 4.9, Reviews = 30, IsFeatured = false
+                },
+                new Package
+                {
+                    Name = "Pakiet Biznes Premium",
+                    Category = "Business",
+                    PriceValue = 499.00m, Price = "499 zł",
+                    Description = "Kompleksowa opieka medyczna dla pracowników firm.",
+                    Features = new List<string> { "Pełny dostęp do specjalistów", "Badania okresowe", "Opieka medycyny pracy" },
+                    HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
+                    SpecialistsCount = 80, FacilitiesCount = 2000, AverageRating = 4.7, Reviews = 25, IsFeatured = true
+                },
+                new Package
+                {
+                    Name = "Pakiet Podstawowy Plus",
+                    Category = "Individual",
+                    PriceValue = 79.00m, Price = "79 zł",
+                    Description = "Rozszerzona opieka podstawowa z dodatkowymi korzyściami.",
+                    Features = new List<string> { "Internista", "Pediatra", "Podstawowe badania krwi", "Konsultacja dietetyczna" },
+                    HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
+                    SpecialistsCount = 7, FacilitiesCount = 250, AverageRating = 4.3, Reviews = 8, IsFeatured = false
+                },
+                new Package
+                {
+                    Name = "Pakiet Rodzinny Premium",
+                    Category = "Family",
+                    PriceValue = 350.00m, Price = "350 zł",
+                    Description = "Kompleksowa opieka medyczna dla całej rodziny z dodatkowymi usługami.",
+                    Features = new List<string> { "Pediatrzy bez limitu", "Szczepienia dla dzieci", "Opieka dyżurowa 24h", "Konsultacje psychologiczne" },
+                    HasDentalCare = true, HasHospitalization = false, HasRehabilitation = true,
+                    SpecialistsCount = 25, FacilitiesCount = 700, AverageRating = 4.8, Reviews = 60, IsFeatured = true
+                },
+                new Package
+                {
+                    Name = "Pakiet Senior Plus",
+                    Category = "Senior",
+                    PriceValue = 220.00m, Price = "220 zł",
+                    Description = "Rozszerzona opieka dla seniorów z dodatkowymi korzyściami.",
+                    Features = new List<string> { "Geriatra", "Kardiolog", "Rehabilitacja (15 zabiegów)", "Konsultacja dietetyczna" },
+                    HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
+                    SpecialistsCount = 25, FacilitiesCount = 700, AverageRating = 5.0, Reviews = 15, IsFeatured = false     
+                },
+                new Package
+                {
+                    Name = "Pakiet Biznes Standard",
+                    Category = "Business",
+                    PriceValue = 299.00m, Price = "299 zł",
+                    Description = "Podstawowa opieka medyczna dla pracowników firm.",
+                    Features = new List<string> { "Dostęp do specjalistów", "Badania okresowe", "Opieka medycyny pracy" },
+                    HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
+                    SpecialistsCount = 50, FacilitiesCount = 1500, AverageRating = 4.5, Reviews = 40, IsFeatured = false
                 }
             };
 
