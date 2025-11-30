@@ -47,7 +47,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddCors(options =>
+builder.Services.AddCors(options => 
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
