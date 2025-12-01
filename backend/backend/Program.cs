@@ -14,7 +14,7 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<ILogService, LogService>(); 
-
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
@@ -52,9 +52,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.AllowAnyOrigin() 
+            policy
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .SetIsOriginAllowed(origin => true) 
+                .AllowCredentials(); 
         });
 });
 
@@ -109,7 +111,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-// app.UseHttpsRedirection(); 
+app.UseHttpsRedirection(); 
 
 
 app.UseCors(MyAllowSpecificOrigins);
@@ -159,7 +161,7 @@ void SeedDatabase(IHost app)
                 },
                 new Package
                 {
-                    Name = "Pakiet VIP Prestige",
+                    Name = "Pakiet Prestige",
                     Category = "Individual",
                     PriceValue = 399.00m, Price = "399 zł",
                     Description = "Pełna opieka medyczna, stomatologia i wizyty domowe.",
@@ -187,29 +189,19 @@ void SeedDatabase(IHost app)
                 {
                     Name = "Rodzina 2+3 Premium", Category = "Family", PriceValue = 450.00m, Price = "450 zł",
                     Description = "Pełna ochrona dla dużej rodziny z nielimitowanym dostępem.",
-                    Features = new List<string> { "Wszyscy specjaliści bez skierowań", "Stomatologia dla dzieci", "Rehabilitacja", "Szczepienia premium" },
+                    Features = new List<string> { "Wszyscy specjaliści bez skierowań", "Stomatologia dla dzieci", "Rehabilitacja", "Szczepienia" },
                     HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
                     SpecialistsCount = 50, FacilitiesCount = 1200, AverageRating = 4.9, Reviews = 60, IsFeatured = true
                 },
                 new Package
                 {
-                    Name = "Senior Aktywny",
+                    Name = "Senior",
                     Category = "Senior",
                     PriceValue = 180.00m, Price = "180 zł",
                     Description = "Pakiet dostosowany do potrzeb osób 65+.",
                     Features = new List<string> { "Geriatra", "Kardiolog", "Rehabilitacja (10 zabiegów)", "Brak limitu wieku" },
                     HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
                     SpecialistsCount = 20, FacilitiesCount = 600, AverageRating = 4.9, Reviews = 30, IsFeatured = false
-                },
-                new Package
-                {
-                    Name = "Pakiet Biznes Premium",
-                    Category = "Business",
-                    PriceValue = 499.00m, Price = "499 zł",
-                    Description = "Kompleksowa opieka medyczna dla pracowników firm.",
-                    Features = new List<string> { "Pełny dostęp do specjalistów", "Badania okresowe", "Opieka medycyny pracy" },
-                    HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
-                    SpecialistsCount = 80, FacilitiesCount = 2000, AverageRating = 4.7, Reviews = 25, IsFeatured = true
                 },
                 new Package
                 {

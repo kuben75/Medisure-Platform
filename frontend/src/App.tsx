@@ -14,10 +14,16 @@ import UserProfile from "./components/users/UserProfile.tsx"
 import UserRoute from "./components/auth/UserRoute.tsx"
 import {NotificationProvider} from "./context/NotificationContext.tsx"
 import {ConfirmationProvider} from "./context/ConfirmationContext.tsx"
-import {FavoritesProvider} from "./context/FavouritesContext.tsx";
-import {ComparisonProvider} from "./context/ComparisonContext.tsx";
-import OnboardingModal from "./components/users/OnboardingModal.tsx";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx";
+import {FavoritesProvider} from "./context/FavouritesContext.tsx"
+import {ComparisonProvider} from "./context/ComparisonContext.tsx"
+import OnboardingModal from "./components/users/OnboardingModal.tsx"
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx"
+import FaqPage from "./pages/FaqPage.tsx"
+import ScrollToTop from "./utils/ScrollToTop.tsx"
+import CookieConsent from "./components/ui/CookieConsent.tsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
+import ConfirmEmailPage from "./pages/ConfirmEmailPage.tsx";
 
 function AppLayout() {
     return (
@@ -27,7 +33,8 @@ function AppLayout() {
                 <Outlet/>
             </main>
             <Footer/>
-            <OnboardingModal />
+            <OnboardingModal/>
+            <CookieConsent />
         </div>
     )
 }
@@ -39,23 +46,28 @@ function App() {
                 <AuthProvider>
                     <FavoritesProvider>
                         <ComparisonProvider>
-                            <Routes>
-                                <Route path="/" element={<AppLayout/>}>
-                                    <Route index element={<HomePage/>}/>
-                                    <Route path="przewodnik-pacjenta" element={<PatientGuidePage/>}/>
-                                    <Route path="kontakt" element={<ContactPage/>}/>
-                                    <Route path="kalkulator" element={<CalculatorPage/>}/>
-                                    <Route element={<UserRoute/>}>
-                                        <Route path="profile" element={<UserProfile/>}/>
+                                <ScrollToTop/>
+                                <Routes>
+                                    <Route path="/rejestracja" element={<RegisterPage/>}/>
+                                    <Route path="/login" element={<LoginPage/>}/>
+                                    <Route path="/polityka-prywatnosci" element={<PrivacyPolicyPage/>}/>
+                                    <Route path="/faq" element={<FaqPage/>}/>
+                                    <Route path="/reset-hasla" element={<ResetPasswordPage />} />
+                                    <Route path="/potwierdz-email" element={<ConfirmEmailPage />} />
+                                    <Route path="/zapomnialem-hasla" element={<ForgotPasswordPage />} />
+                                    <Route path="/" element={<AppLayout/>}>
+                                        <Route index element={<HomePage/>}/>
+                                        <Route path="przewodnik-pacjenta" element={<PatientGuidePage/>}/>
+                                        <Route path="kontakt" element={<ContactPage/>}/>
+                                        <Route path="kalkulator" element={<CalculatorPage/>}/>
+                                        <Route element={<UserRoute/>}>
+                                            <Route path="profile" element={<UserProfile/>}/>
+                                        </Route>
                                     </Route>
-                                </Route>
-                                <Route path="/login" element={<LoginPage/>}/>
-                                <Route path="/admin" element={<AdminRoute/>}>
-                                    <Route index element={<AdminPanel/>}/>
-                                </Route>
-                                <Route path="/rejestracja" element={<RegisterPage/>}/>
-                                <Route path="/polityka-prywatnosci" element={<PrivacyPolicyPage />} />
-                            </Routes>
+                                    <Route path="/admin" element={<AdminRoute/>}>
+                                        <Route index element={<AdminPanel/>}/>
+                                    </Route>
+                                </Routes>
                         </ComparisonProvider>
                     </FavoritesProvider>
                 </AuthProvider>

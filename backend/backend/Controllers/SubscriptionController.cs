@@ -47,7 +47,13 @@ namespace backend.Controllers
                 );
                 return BadRequest(new { Message = $"Nie znaleziono użytkownika dla identyfikatora: {userIdOrEmail}" });
             }
-
+            if (string.IsNullOrEmpty(user.Pesel))
+            {
+                return BadRequest(new { 
+                    Message = "Brak numeru PESEL. Uzupełnij dane w profilu, aby dokonać zakupu.",
+                    Code = "MISSING_PESEL" 
+                });
+            }
             var package = await _context.Packages.FindAsync(packageId);
             if (package == null)
             {
