@@ -117,8 +117,8 @@ export default function PackageCatalog() {
         <section className="py-20 px-4 bg-slate-50 border-t border-gray-200" id="full-catalog">
             <div className="container mx-auto max-w-7xl">
                 <div className="text-center mb-12">
-                    <span className="text-[#4E61F6] font-bold tracking-wider uppercase text-sm">Pełna oferta</span>
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">Znajdź idealne ubezpieczenie</h2>
+                    <span className="text-[#4E61F6] font-bold tracking-wider uppercase text-sm">Oferta opieki medycznej</span>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">Wybierz pakiet dla siebie i swoich bliskich</h2>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
