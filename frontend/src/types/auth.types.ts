@@ -1,4 +1,3 @@
-
 import type {IUser} from "./user.types.ts";
 import type {IPricingPlan} from "./pricing.types.ts";
 
@@ -21,4 +20,9 @@ export interface IComparisonContext {
     isInComparison: (packageId: number) => boolean
     clearComparison: () => void
     limit: number
+}
+
+export interface ChangePasswordModalProps {
+    isOpen: boolean
+    onClose: () => void
 }

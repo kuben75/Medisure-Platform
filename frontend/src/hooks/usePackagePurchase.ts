@@ -37,9 +37,24 @@ export const usePackagePurchase = () => {
                 confirmText: "Zaloguj się",
                 cancelText: "Anuluj",
                 variant: 'info'
-            });
+            })
             if (shouldLogin) navigate('/login')
             return
+        }
+        if (!user.pesel) {
+            const goToProfile = await confirm({
+                title: "Wymagane uzupełnienie danych",
+                description: "Aby zakupić ubezpieczenie, musimy znać Twój numer PESEL (wymóg prawny). Przejdź do profilu, aby go uzupełnić.",
+                confirmText: "Uzupełnij PESEL",
+                cancelText: "Anuluj",
+                variant: 'info'
+            });
+
+            if (goToProfile) {
+                closeModal();
+                navigate('/profile');
+            }
+            return;
         }
 
         const durationLabel = DURATION_OPTIONS.find(d => d.value === selectedDuration)?.label

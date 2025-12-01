@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../hooks/useAuth.ts"
 import Button from '../ui/Button.tsx'
-// Importujemy ikonę Admina
 import DashboardIcon from "../icons/DashboardIcon.tsx";
 import UserIcon from "../icons/UserIcon.tsx";
 import LogoutIcon from "../icons/LogoutIcon.tsx";
@@ -38,7 +37,7 @@ export default function Navbar() {
     const navLinks = [
         { to: "/", label: "Strona główna" },
         { to: "/przewodnik-pacjenta", label: "Przewodnik" },
-        { to: "/kalkulator", label: "Kalkulator" },
+        { to: "/kalkulator", label: "Kalkulator pakietów medycznych" },
         { to: "/kontakt", label: "Kontakt" },
     ]
 
@@ -116,14 +115,14 @@ export default function Navbar() {
                         ) : (
                             <div className="flex items-center gap-3">
                                 <Link to="/login">
-                                    <span className="text-sm font-semibold text-gray-600 hover:text-[#4E61F6] transition-colors cursor-pointer px-3 py-2">
+                                    <Button variant="primary" className="!py-2 !px-5 !text-sm !rounded-full shadow-none hover:shadow-lg">
                                         Logowanie
-                                    </span>
+                                    </Button>
                                 </Link>
                                 <Link to="/rejestracja">
-                                    <Button variant="primary" className="!py-2 !px-5 !text-sm !rounded-full shadow-none hover:shadow-lg">
+                                    <span className="text-sm font-semibold text-gray-600 hover:text-[#4E61F6] transition-colors cursor-pointer px-3 py-2">
                                         Rejestracja
-                                    </Button>
+                                    </span>
                                 </Link>
                             </div>
                         )}

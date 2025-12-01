@@ -28,6 +28,15 @@ export const ComparisonProvider = ({children}: {children: ReactNode}) => {
         if (selectedPackages.some(p => p.id === pkg.id))
             return
 
+        if(selectedPackages.length > 0) {
+            const currentCategory = selectedPackages[0].category
+
+            if(pkg.category.toLowerCase() !== currentCategory.toLowerCase()) {
+                notify.error(`Nie można mieszać kategorii. Obecnie porównujesz pakiety: ${currentCategory}. Usuń je, aby wybrać inną kategorię.`)
+                return
+            }
+        }
+
         setSelectedPackages(prev => [...prev, pkg])
         notify.success(`Dodano pakiet "${pkg.name}" do porównania.`)
     }

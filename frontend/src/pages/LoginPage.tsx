@@ -76,9 +76,10 @@ export default function LoginPage() {
                         </div>
 
                         <div className="text-right text-sm">
-                            <a href="#" className="font-medium text-[#4E61F6] hover:text-[#3B4EDC] transition-colors">
-                                Nie pamiętasz hasła?
-                            </a>
+
+                            <Link to="/zapomnialem-hasla" className="font-medium text-[#4E61F6] hover:text-[#3B4EDC] transition-colors">
+                               Nie pamiętasz hasła?
+                            </Link>
                         </div>
 
                         <div>

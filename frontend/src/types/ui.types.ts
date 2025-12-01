@@ -4,6 +4,7 @@ import type {IPricingPlan} from "./pricing.types.ts";
 export type IconProps = {
     className?: string
     props?: React.SVGProps<SVGSVGElement>
+    isFilled?: string
 }
 export type TModalProps = {
     isOpen: boolean,
@@ -43,4 +44,9 @@ export interface HeroCalcProps {
     onCalculate: (data: { type: string; age: number; familySize?: string; companySize?: number }) => void
     isCalculating: boolean
     initialAge?: number
+}
+
+export interface IFaqItem {
+    q: string;
+    a: string;
 }

@@ -1,26 +1,32 @@
 import Accordion from "../../components/ui/Accordion.tsx";
+import {FAQ_DATA} from "../../constants/faq.ts";
+import {Link} from "react-router-dom";
+import Button from "../../components/ui/Button.tsx";
 
-interface IFaqItem {
-    q: string;
-    a: string;
-}
 export default function FaqSection() {
-    const faqs: IFaqItem[] = [
-        { q: "Czym różni się ubezpieczenie medyczne od zdrowotnego NFZ?",
-            a: "Nasze ubezpiecznie zapewnia szybki dostęp do prywatnych lekarzy i badań, bez kolejek, co stanowi główną różnicę w stosunku do publicznej służby zdrowia NFZ." },
-        { q: "Czy muszę mieć badania, żeby zawrzeć umowę?",
-            a: "Nie, w większości przypadków nie wymagamy wstępnych badań lekarskich. Umowę można zawrzeć na podstawie wypełnionej ankiety medycznej." },
-        { q: "Kto może wykupić ubezpieczenie w Medisure?",
-            a: "Każda osoba powyżej 18. roku życia, również rodziny i firmy. Oferujemy pakiety indywidualne, rodzinne oraz dla małych i dużych przedsiębiorstw." },
-    ]
+
+    const featuredFaqs = FAQ_DATA.slice(0, 4);
+
     return (
         <section className="py-20 px-4 bg-white">
             <div className="max-w-lg md:max-w-3xl mx-auto">
-                <h2 className="h2-primary">FAQ - Najczęściej zadawane pytania</h2>
-                <div>
-                    {faqs.map((f, i) => (
+                <div className="text-center mb-10">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">FAQ - Najczęściej zadawane pytania</h2>
+                    <p className="text-gray-500">Znajdź szybkie odpowiedzi na kluczowe pytania.</p>
+                </div>
+
+                <div className="mb-8">
+                    {featuredFaqs.map((f, i) => (
                         <Accordion key={i} question={f.q} answer={f.a} />
                     ))}
+                </div>
+
+                <div className="text-center">
+                    <Link to="/faq">
+                        <Button variant="secondary" className="!px-8 !py-3 border-gray-300 text-gray-600 hover:border-[#4E61F6] hover:text-[#4E61F6]">
+                            Zobacz wszystkie pytania ({FAQ_DATA.length})
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </section>

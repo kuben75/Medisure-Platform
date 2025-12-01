@@ -61,7 +61,7 @@ export default function RegisterPage() {
                 throw new Error(errorMsg)
             }
 
-            notify.success("Rejestracja zakończona sukcesem. Możesz się teraz zalogować.")
+            notify.success("Link aktywacyjny został wysłany na podany adres email. Sprawdź swoją skrzynkę pocztową.")
             navigate('/login')
         } catch (err) {
             notify.error(err instanceof Error ? err.message : String(err))

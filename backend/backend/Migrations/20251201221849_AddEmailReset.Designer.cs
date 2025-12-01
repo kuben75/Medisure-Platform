@@ -13,8 +13,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251130220459_AddBirthDateColumnUpdate")]
-    partial class AddBirthDateColumnUpdate
+    [Migration("20251201221849_AddEmailReset")]
+    partial class AddEmailReset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -203,6 +203,9 @@ namespace backend.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Pesel")
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")

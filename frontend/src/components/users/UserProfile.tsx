@@ -8,20 +8,11 @@ import AddReviewModal from "../ui/AddReviewModal.tsx"
 import type {IPricingPlan} from "../../types/pricing.types.ts"
 import FavoriteButton from "../ui/FavouriteButton.tsx"
 import {useAuth} from "../../hooks/useAuth.ts"
+import HeartIcon from "../icons/HeartIcon.tsx";
+import EditIcon from "../icons/EditIcon.tsx";
+import LockIcon from "../icons/LockIcon.tsx";
+import ChangePasswordModal from "./ChangePasswordModal.tsx";
 
-const PencilIcon = ({className = "w-4 h-4"}) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-         className={className}>
-        <path strokeLinecap="round" strokeLinejoin="round"
-              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 7.125l-2.688-2.688"/>
-    </svg>)
-const HeartIcon = ({className = "w-4 h-4"}) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-         className={className}>
-        <path strokeLinecap="round" strokeLinejoin="round"
-              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
-    </svg>)
 const BriefcaseIcon = ({className = "w-4 h-4"}) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
          className={className}>
@@ -41,6 +32,8 @@ export default function UserProfile() {
     const [loading, setLoading] = useState(true)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+
     const [reviewTarget, setReviewTarget] = useState<{ id: number, name: string } | null>(null)
 
     const handleLogout = () => {
@@ -70,6 +63,7 @@ export default function UserProfile() {
         }
         fetchData()
     }, [token, activeTab])
+    const isPeselMissing = !user?.pesel
 
     return (
         <div className="container mx-auto px-4 py-25">
@@ -84,15 +78,33 @@ export default function UserProfile() {
                         {user?.firstName?.charAt(0).toUpperCase()}
                     </div>
                 </div>
-
+                {isPeselMissing && (
+                    <div onClick={() => setIsEditModalOpen(true)} className="mb-8 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg flex items-start gap-3 cursor-pointer hover:bg-yellow-100 transition-colors group">
+                        <div className="text-yellow-600 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                                <path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" /></svg>
+                        </div>
+                        <div>
+                            <h4 className="text-yellow-800 font-bold">Uzupełnij dane, aby kupować pakiety</h4>
+                            <p className="text-yellow-700 text-sm mt-1">
+                                Prawo wymaga podania numeru PESEL przy zakupie ubezpieczenia.
+                                <span className="underline font-semibold ml-1 group-hover:text-yellow-900">Kliknij tutaj, aby uzupełnić profil.</span></p>
+                        </div>
+                    </div>
+                )}
                 <div className="grid md:grid-cols-3 gap-8">
-
                     <div className="md:col-span-1 space-y-6">
                         <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
                             <div className="flex justify-between items-center mb-3">
                                 <h3 className="font-semibold text-gray-700">Twoje dane</h3>
-                                <button onClick={() => setIsEditModalOpen(true)} className="text-[#4E61F6] text-sm font-medium hover:underline">
-                                    <PencilIcon className="w-4 h-4"/>
+                                <button onClick={() => setIsEditModalOpen(true)}
+                                        className="text-[#4E61F6] text-sm font-medium hover:underline">
+                                    <EditIcon className="w-4 h-4"/>
+                                </button>
+                                <button onClick={() => setIsPasswordModalOpen(true)}
+                                        className="text-gray-400 hover:text-red-500 transition-colors"
+                                        title="Zmień hasło">
+                                    <LockIcon className="w-4 h-4"/>
                                 </button>
                             </div>
                             <div className="space-y-3">
@@ -102,7 +114,8 @@ export default function UserProfile() {
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-500 uppercase font-bold">Email</p>
-                                    <p className="font-medium text-gray-800 truncate" title={user?.email}>{user?.email}</p>
+                                    <p className="font-medium text-gray-800 truncate"
+                                       title={user?.email}>{user?.email}</p>
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-500 uppercase font-bold">Telefon</p>
@@ -116,6 +129,12 @@ export default function UserProfile() {
                                             ? new Date(user.birthDate).toLocaleDateString('pl-PL')
                                             : 'Nie podano'
                                         }
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500 uppercase font-bold">PESEL</p>
+                                    <p className={`font-medium ${user?.pesel ? 'text-gray-800' : 'text-red-500'}`}>
+                                        {user?.pesel || 'Brak (Wymagany)'}
                                     </p>
                                 </div>
                             </div>
@@ -132,7 +151,7 @@ export default function UserProfile() {
                                 onClick={() => setActiveTab('favorites')}
                                 className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors ${activeTab === 'favorites' ? 'bg-[#4E61F6] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`}
                             >
-                                <HeartIcon className="w-5 h-5"/> Ulubione Oferty
+                                <HeartIcon className="w-5 h-5" filled={false}/> Ulubione Oferty
                             </button>
                         </div>
                     </div>
@@ -142,7 +161,7 @@ export default function UserProfile() {
                             <>
                                 {activeTab === 'subscriptions' && (
                                     <div className="space-y-4">
-                                        <h2 className="text-xl font-semibold text-gray-700 mb-4">Aktywne subskrypcje</h2>
+                                        <h2 className="text-xl font-semibold text-gray-700 mb-4">Aktywne umowy</h2>
                                         {subscriptions.length > 0 ? subscriptions.map(sub => (
                                             <div key={sub.id} className="border border-blue-100 bg-blue-50/30 rounded-xl p-5 relative hover:shadow-md transition-shadow">
                                                 <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">AKTYWNY</div>
@@ -191,7 +210,7 @@ export default function UserProfile() {
                     <Button onClick={handleLogout} variant="secondary" className="bg-red-50 text-red-600 hover:bg-red-100 shadow-none">Wyloguj się</Button>
                 </div>
             </div>
-
+            <ChangePasswordModal isOpen={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)} />
             <EditProfileModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}/>
             {reviewTarget && <AddReviewModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} packageId={reviewTarget.id} packageName={reviewTarget.name}/>}
         </div>

@@ -4,6 +4,7 @@ export interface IUser {
     lastName: string
     phoneNumber?: string
     birthDate?: string
+    pesel?: string
 }
 
 export interface IUserDto {

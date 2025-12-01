@@ -30,8 +30,11 @@ export interface IFilterState {
     category: string
     maxPrice: number
     minSpecialists: number
+    minFacilities: number
     hasDental: boolean
     hasHospital: boolean
+    hasRehabilitation: boolean;
+    sortOrder: 'default' | 'price_asc' | 'price_desc' | 'rating_desc';
 }
 
 export interface IPackageFiltersProps {

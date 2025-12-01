@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; 
 using System.Security.Claims;
+using backend.Data;
 
 namespace backend.Controllers
 {
@@ -16,11 +17,13 @@ namespace backend.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogService _logService;
+        private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<ApplicationUser> userManager, ILogService logService)
+        public AccountController(UserManager<ApplicationUser> userManager, ILogService logService, ApplicationDbContext context)
         {
             _userManager = userManager;
             _logService = logService;
+            _context = context;
         }
 
         [HttpPut("profile")]
@@ -41,6 +44,22 @@ namespace backend.Controllers
             user.FirstName = updateDto.FirstName;
             user.LastName = updateDto.LastName;
             user.PhoneNumber = updateDto.PhoneNumber;
+
+            if (!string.IsNullOrEmpty(updateDto.Pesel))
+            {
+                var peselExists = await _context.Users
+                    .AnyAsync(u => u.Pesel == updateDto.Pesel && u.Id != user.Id);
+
+                if (peselExists)
+                {
+                    await _logService.LogAsync("UPDATE_PROFILE_FAILED", $"Próba użycia zajętego PESELu: {updateDto.Pesel}", user.UserName, user.Id, "Warning");
+                    return BadRequest(new { Message = "Ten numer PESEL jest już przypisany do innego konta." });
+                }
+
+                user.Pesel = updateDto.Pesel;
+            }
+
+
             if (updateDto.BirthDate.HasValue)
             {
                 var today = DateTime.UtcNow.Date;
@@ -78,6 +97,7 @@ namespace backend.Controllers
                 }
 
                 user.Email = updateDto.Email;
+                user.UserName = updateDto.Email;
             }
 
             var result = await _userManager.UpdateAsync(user);
@@ -94,7 +114,8 @@ namespace backend.Controllers
                     firstName = user.FirstName, 
                     lastName = user.LastName,
                     phoneNumber = user.PhoneNumber, 
-                    birthDate = user.BirthDate
+                    birthDate = user.BirthDate,
+                    pesel = user.Pesel
                 });
             }
             await _logService.LogAsync(
@@ -103,6 +124,27 @@ namespace backend.Controllers
                 user.UserName, 
                 user.Id,
                 "Warning");
+
+            return BadRequest(result.Errors);
+        }
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return Unauthorized();
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                await _logService.LogAsync("PASSWORD_CHANGE_SUCCESS", $"Użytkownik {user.UserName} zmienił hasło.", user.UserName, user.Id, "Success");
+                return Ok(new { Message = "Hasło zostało pomyślnie zmienione." });
+            }
+
+            await _logService.LogAsync("PASSWORD_CHANGE_FAILED", $"Nieudana zmiana hasła dla {user.UserName}.", user.UserName, user.Id, "Security");
 
             return BadRequest(result.Errors);
         }

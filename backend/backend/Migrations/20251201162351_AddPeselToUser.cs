@@ -5,18 +5,24 @@
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class AddBirthDateColumnUpdate : Migration
+    public partial class AddPeselToUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.AddColumn<string>(
+                name: "Pesel",
+                table: "AspNetUsers",
+                type: "text",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.DropColumn(
+                name: "Pesel",
+                table: "AspNetUsers");
         }
     }
 }

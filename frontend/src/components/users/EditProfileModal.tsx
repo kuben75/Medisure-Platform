@@ -14,10 +14,12 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
     const {notify} = useNotification()
     const [birthDate, setBirthDate] = useState('')
+    const [pesel, setPesel] = useState('')
+
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         if (user && isOpen) {
@@ -25,11 +27,12 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
             setLastName(user.lastName || '')
             setEmail(user.email || '')
             setPhoneNumber(user.phoneNumber || '')
-            if (user.birthDate) {
+            setPesel(user.pesel || '')
+            if (user.birthDate)
                 setBirthDate(user.birthDate.split('T')[0])
-            } else {
+             else
                 setBirthDate('')
-            }
+
         }
     }, [user, isOpen])
 
@@ -38,7 +41,11 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
         if (!token) return
 
         if(!firstName.trim() || !lastName.trim() || !email.trim()) {
-            setError("Imię, Nazwisko i Email są wymagane.");
+            setError("Imię, Nazwisko i Email są wymagane.")
+            return
+        }
+        if (pesel && !/^\d{11}$/.test(pesel)) {
+            setError("Numer PESEL musi składać się z 11 cyfr.")
             return
         }
 
@@ -50,6 +57,7 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
             lastName,
             email,
             phoneNumber: phoneNumber.trim() === '' ? null : phoneNumber.trim(),
+            pesel: pesel.trim() === '' ? null : pesel.trim(),
             birthDate: birthDate ? new Date(birthDate).toISOString() : null
         }
 
@@ -86,35 +94,47 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
     const isBirthDateLocked = !!user?.birthDate
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Edytuj swoje dane</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Edytuj dane konta</h2>
             <form onSubmit={handleSubmit} className="space-y-4" onClick={(e) => e.stopPropagation()} >
                 {error && <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">{error}</div>}
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Imię</label>
+                        <label className="block text-sm font-medium text-gray-700">Imię <span className="text-red-500">*</span></label>
                         <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Nazwisko</label>
+                        <label className="block text-sm font-medium text-gray-700">Nazwisko <span className="text-red-500">*</span></label>
                         <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Email</label>
+                    <label className="block text-sm font-medium text-gray-700">Email <span className="text-red-500">*</span></label>
                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Numer telefonu</label>
-                    <input type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Telefon</label>
+                        <input type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">PESEL</label>
+                        <input
+                            type="text"
+                            maxLength={11}
+                            value={pesel}
+                            onChange={(e) => setPesel(e.target.value.replace(/\D/g, ''))} // Tylko cyfry
+                            className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                    </div>
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 flex justify-between">
                         Data urodzenia
-                        {isBirthDateLocked && <span className="text-xs text-gray-400 font-normal flex items-center gap-1">Skontaktuj się z administratorem</span>}
+                        {isBirthDateLocked && <span className="text-xs text-gray-400 font-normal flex items-center gap-1">🔒 Tylko admin</span>}
                     </label>
                     <input
                         type="date"
@@ -123,7 +143,6 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                         disabled={isBirthDateLocked}
                         className={`w-full mt-1 px-3 py-2 border rounded-lg outline-none ${isBirthDateLocked ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'focus:ring-2 focus:ring-blue-500'}`}
                     />
-                    {!isBirthDateLocked && <p className="text-xs text-gray-400 mt-1">Wymagane 18 lat.</p>}
                 </div>
 
                 <div className="pt-4">

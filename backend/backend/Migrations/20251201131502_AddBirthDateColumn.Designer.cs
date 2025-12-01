@@ -13,7 +13,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251130215849_AddBirthDateColumn")]
+    [Migration("20251201131502_AddBirthDateColumn")]
     partial class AddBirthDateColumn
     {
         /// <inheritdoc />
