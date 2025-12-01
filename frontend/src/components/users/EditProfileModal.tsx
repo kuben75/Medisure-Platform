@@ -17,6 +17,7 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const {notify} = useNotification()
+    const [birthDate, setBirthDate] = useState('')
 
     useEffect(() => {
         if (user && isOpen) {
@@ -24,6 +25,11 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
             setLastName(user.lastName || '')
             setEmail(user.email || '')
             setPhoneNumber(user.phoneNumber || '')
+            if (user.birthDate) {
+                setBirthDate(user.birthDate.split('T')[0])
+            } else {
+                setBirthDate('')
+            }
         }
     }, [user, isOpen])
 
@@ -31,19 +37,20 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
         e.preventDefault()
         if (!token) return
 
+        if(!firstName.trim() || !lastName.trim() || !email.trim()) {
+            setError("Imię, Nazwisko i Email są wymagane.");
+            return
+        }
+
         setIsLoading(true)
         setError(null)
 
-        if(!firstName.trim() || !lastName.trim() || !email.trim()) {
-            setError("Proszę wypełnić wszystkie wymagane pola.")
-            return
-        }
-        setIsLoading(true)
         const payload = {
             firstName,
             lastName,
             email,
-            phoneNumber: phoneNumber.trim() === '' ? null : phoneNumber.trim()
+            phoneNumber: phoneNumber.trim() === '' ? null : phoneNumber.trim(),
+            birthDate: birthDate ? new Date(birthDate).toISOString() : null
         }
 
         try {
@@ -76,12 +83,12 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
             setIsLoading(false)
         }
     }
-
+    const isBirthDateLocked = !!user?.birthDate
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Edytuj swoje dane</h2>
             <form onSubmit={handleSubmit} className="space-y-4" onClick={(e) => e.stopPropagation()} >
-                {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+                {error && <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">{error}</div>}
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -102,6 +109,21 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Numer telefonu</label>
                     <input type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 flex justify-between">
+                        Data urodzenia
+                        {isBirthDateLocked && <span className="text-xs text-gray-400 font-normal flex items-center gap-1">Skontaktuj się z administratorem</span>}
+                    </label>
+                    <input
+                        type="date"
+                        value={birthDate}
+                        onChange={(e) => setBirthDate(e.target.value)}
+                        disabled={isBirthDateLocked}
+                        className={`w-full mt-1 px-3 py-2 border rounded-lg outline-none ${isBirthDateLocked ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : 'focus:ring-2 focus:ring-blue-500'}`}
+                    />
+                    {!isBirthDateLocked && <p className="text-xs text-gray-400 mt-1">Wymagane 18 lat.</p>}
                 </div>
 
                 <div className="pt-4">

@@ -1,52 +1,49 @@
-import Button from "../ui/Button";
-import Modal from "../ui/Modal";
-import {useEffect, useState} from "react";
+import React, { useState, useEffect } from 'react';
+import Modal from '../ui/Modal.tsx';
+import Button from '../ui/Button.tsx';
+import { useNotification } from "../../hooks/UseNotification.ts";
+import type {IUserFormModalProps} from "../../types/user.types.ts";
+const API_URL_USERS = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/admin/users`;
 
-import type {IUpdateUserDto, IUserDto} from "../../types/user.types.ts";
+export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdit }: IUserFormModalProps) => {
+    const { notify } = useNotification()
 
-import {useNotification} from "../../hooks/UseNotification.ts";
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
+    const [birthDate, setBirthDate] = useState('')
 
-export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdit }: {
-    isOpen: boolean;
-    onClose: () => void;
-    onSaveSuccess: () => void;
-    token: string | null;
-    userToEdit: IUserDto | null;
-}) => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const API_URL_USERS = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/admin/users`
-    const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const {notify} = useNotification()
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        if (userToEdit) {
-            setFirstName(userToEdit.firstName)
-            setLastName(userToEdit.lastName)
-            setEmail(userToEdit.email)
-            setPhoneNumber(userToEdit.phoneNumber || '')
+        if (userToEdit && isOpen) {
+            setFirstName(userToEdit.firstName);
+            setLastName(userToEdit.lastName);
+            setEmail(userToEdit.email);
+            setPhoneNumber(userToEdit.phoneNumber || '');
+
+            if (userToEdit.birthDate) {
+                setBirthDate(userToEdit.birthDate.split('T')[0]);
+            } else {
+                setBirthDate('');
+            }
         }
-    }, [userToEdit, isOpen])
+    }, [userToEdit, isOpen]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!token || !userToEdit) {
-            notify.error("Błąd autoryzacji lub brak danych użytkownika.");
-            return
-        }
+        if (!token || !userToEdit) return;
 
-        setIsLoading(true)
-        setError(null)
+        setIsLoading(true);
 
-        const updatedUserData: IUpdateUserDto = {
+        const updatedUserData = {
             firstName,
             lastName,
             email,
-            phoneNumber
-        }
+            phoneNumber,
+            birthDate: birthDate ? new Date(birthDate).toISOString() : null
+        };
 
         try {
             const response = await fetch(`${API_URL_USERS}/${userToEdit.id}`, {
@@ -56,57 +53,67 @@ export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdi
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(updatedUserData)
-            })
+            });
 
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Nie udało się zaktualizować użytkownika.');
             }
 
-            onSaveSuccess()
-            notify.success("Użytkownik zaktualizowany pomyślnie.")
-            onClose()
+            notify.success("Dane użytkownika zaktualizowane.");
+            onSaveSuccess();
+            onClose();
 
-        } catch (err) {
-            setError(err instanceof Error ? err.message : String(err))
+        } catch (err: any) {
+            notify.error(err.message);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Edytuj użytkownika</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {error && <div className="text-red-500 text-center">{error}</div>}
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Edytuj użytkownika (Admin)</h2>
+            <form onSubmit={handleSubmit} className="space-y-4" onClick={e => e.stopPropagation()}>
 
                 <div className="flex gap-4">
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-gray-700">Imię</label>
-                        <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
+                        <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4E61F6] outline-none" />
                     </div>
                     <div className="flex-1">
                         <label className="block text-sm font-medium text-gray-700">Nazwisko</label>
-                        <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
+                        <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4E61F6] outline-none" />
                     </div>
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700">Adres email</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4E61F6] outline-none" />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Numer telefonu</label>
-                    <input type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" />
+                <div className="flex gap-4">
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700">Telefon</label>
+                        <input type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4E61F6] outline-none" />
+                    </div>
+                    <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700">Data urodzenia</label>
+                        <input
+                            type="date"
+                            value={birthDate}
+                            onChange={(e) => setBirthDate(e.target.value)}
+                            className="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4E61F6] outline-none"
+                        />
+                    </div>
                 </div>
 
-                <div className="pt-2">
-                    <Button type="submit" variant="primary" className="w-full !py-3" disabled={isLoading}>
+                <div className="pt-4">
+                    <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? "Zapisywanie..." : "Zapisz zmiany"}
                     </Button>
                 </div>
             </form>
         </Modal>
-    );
-};
+    )
+}

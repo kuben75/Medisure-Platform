@@ -53,36 +53,40 @@ namespace backend.Controllers
             {
                 return NotFound(new { Message = "Taki pakiet nie istnieje." });
             }
-            DateTime startTime = DateTime.UtcNow;
-            DateTime endTime;
+            DateTime startDate = DateTime.UtcNow;
+            DateTime endDate;
+            decimal finalPrice = 0;
 
             switch (dto.Duration.ToLower())
             {
-                case "7d":
-                    endTime = startTime.AddDays(7);
+                case "7d": 
+                    endDate = startDate.AddDays(7);
+                    finalPrice = 0; 
                     break;
-                case "3m":
-                    endTime = startTime.AddMonths(3);
+
+                case "2y": 
+                    endDate = startDate.AddYears(2);
+                    decimal baseTotal2Y = package.PriceValue * 24;
+                    finalPrice = baseTotal2Y * 0.85m; 
                     break;
-                case "6m":
-                    endTime = startTime.AddMonths(6);
-                    break;
+
                 case "1y":
-                    endTime = startTime.AddYears(1);
+                    endDate = startDate.AddYears(1);
                     break;
                 default:
-                    endTime = startTime.AddYears(1);
+                    endDate = startDate.AddYears(1);
+                    finalPrice = package.PriceValue * 12;
                     break;
             }
-
+            finalPrice = Math.Round(finalPrice, 2);
             var subscription = new UserPackage
             {
                 User = user,      
                 PackageId = packageId,
-                StartDate = startTime,
-                EndDate = endTime,
+                StartDate = startDate,
+                EndDate = endDate,
                 Status = "Active",
-                PriceAtPurchase = package.Price
+                PriceAtPurchase = $"{finalPrice} zł" 
             };
 
             _context.UserPackages.Add(subscription);
@@ -119,7 +123,7 @@ namespace backend.Controllers
                     Id = up.Id,
                     PackageId = up.PackageId,
                     PackageName = up.Package.Name,
-                    Price = up.PriceAtPurchase,
+                    Price = up.PriceAtPurchase, 
                     StartDate = up.StartDate,
                     EndDate = up.EndDate,
                     Status = up.Status,

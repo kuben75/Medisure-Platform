@@ -10,12 +10,14 @@ import {AuthProvider} from "./context/AuthContext.tsx"
 import AdminRoute from './components/auth/AdminRoute.tsx'
 import AdminPanel from './pages/AdminPanel.tsx'
 import RegisterPage from "./pages/RegisterPage.tsx"
-import UserProfile from "./pages/UserProfile.tsx"
+import UserProfile from "./components/users/UserProfile.tsx"
 import UserRoute from "./components/auth/UserRoute.tsx"
 import {NotificationProvider} from "./context/NotificationContext.tsx"
 import {ConfirmationProvider} from "./context/ConfirmationContext.tsx"
 import {FavoritesProvider} from "./context/FavouritesContext.tsx";
 import {ComparisonProvider} from "./context/ComparisonContext.tsx";
+import OnboardingModal from "./components/users/OnboardingModal.tsx";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx";
 
 function AppLayout() {
     return (
@@ -25,6 +27,7 @@ function AppLayout() {
                 <Outlet/>
             </main>
             <Footer/>
+            <OnboardingModal />
         </div>
     )
 }
@@ -51,6 +54,7 @@ function App() {
                                     <Route index element={<AdminPanel/>}/>
                                 </Route>
                                 <Route path="/rejestracja" element={<RegisterPage/>}/>
+                                <Route path="/polityka-prywatnosci" element={<PrivacyPolicyPage />} />
                             </Routes>
                         </ComparisonProvider>
                     </FavoritesProvider>

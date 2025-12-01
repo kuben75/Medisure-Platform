@@ -18,4 +18,6 @@ public class UpdateUserDto
     [Phone(ErrorMessage = "Niepoprawny format numeru telefonu")]
     public string? PhoneNumber { get; set; }
     
+    public DateTime? BirthDate { get; set; }
+    
 }

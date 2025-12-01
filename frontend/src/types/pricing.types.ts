@@ -23,6 +23,7 @@ export interface ICalculationResultsProps {
     packageType: string
     age: number
     recommendedPlan: IPricingPlan | null
+    onShowDetails: (pkg: IPricingPlan) => void
 }
 
 export interface IFilterState {

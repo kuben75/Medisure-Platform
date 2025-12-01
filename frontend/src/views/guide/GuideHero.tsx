@@ -4,10 +4,10 @@ import ChevronRightIcon from "../../components/icons/ChevronRightIcon.tsx";
 
 export default function GuideHero() {
     const steps = [
-        { number: 1, text: "Wybierz swoje potrzeby zdrowotne" },
+        { number: 1, text: "Zdefiniuj swoje potrzeby zdrowotne." },
         { number: 2, text: "Wybierz zakres usług, cenę, firmę i czas trwania pakietu." },
         { number: 3, text: "Zobacz, czym różnią się pakiety i wybierz najlepszy dla siebie." },
-        { number: 4, text: "Zamów pakiet online lub skontaktuj się z nami." },
+        { number: 4, text: "Zakup pakiet online lub skontaktuj się z nami." },
     ]
     return (
         <section
