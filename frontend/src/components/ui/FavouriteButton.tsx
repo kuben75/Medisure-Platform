@@ -17,7 +17,7 @@ export default function FavoriteButton({ packageId, className = "" }: IFavoriteB
     return (
         <button
             onClick={handleClick}
-            className={`transition-all duration-200 hover:scale-110 active:scale-95 p-2 rounded-full hover:bg-slate-100 ${className} ${active ? "text-red-500" : "text-gray-400 hover:text-red-400"}`}
+            className={`transition-all duration-200 hover:scale-110 active:scale-95 p-2 rounded-full hover:cursor-pointer ${className} ${active ? "text-red-500" : "text-gray-400 hover:text-red-400"}`}
             title={active ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
         >
             <HeartIcon filled={active} className="w-6 h-6" />

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import {useAuth} from "../../hooks/useAuth.ts"
+import { useAuth } from "../../hooks/useAuth.ts"
 import Button from '../ui/Button.tsx'
+// Importujemy ikonę Admina
+import DashboardIcon from "../icons/DashboardIcon.tsx";
 import UserIcon from "../icons/UserIcon.tsx";
 import LogoutIcon from "../icons/LogoutIcon.tsx";
 import MenuIcon from "../icons/MenuIcon.tsx";
@@ -50,49 +52,71 @@ export default function Navbar() {
                         </span>
                     </Link>
 
-                    <ul className="hidden lg:flex items-center space-x-8">
-                        {navLinks.map((link) => (
-                            <li key={link.label}>
-                                <Link to={link.to} className={`text-sm font-medium transition-colors hover:text-[#4E61F6] ${location.pathname === link.to ? "text-[#4E61F6] font-bold" : "text-gray-600"}`}>
+                    <ul className="hidden lg:flex items-center gap-2">
+                        {navLinks.map((link, index) => (
+                            <li
+                                key={link.label}
+                                className={index === 0 ? "mr-12 xl:mr-16 relative" : ""}
+                            >
+                                <Link
+                                    to={link.to}
+                                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 block
+                                        ${location.pathname === link.to
+                                        ? "bg-blue-50 text-[#4E61F6]"  
+                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900" 
+                                    }`}
+                                >
                                     {link.label}
                                 </Link>
+
+                                {index === 0 && (
+                                    <span className="absolute -right-8 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-gray-300 block"></span>
+                                )}
                             </li>
                         ))}
-
-                        {isAdmin && (<li>
-                            <Link to="/admin" className="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full hover:bg-yellow-200 transition-colors border border-yellow-200 uppercase tracking-wide">Panel Admina</Link>
-                            </li>)}
                     </ul>
 
                     <div className="hidden lg:flex items-center gap-4">
                         {user ? (
-                            <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
-                                <Link
-                                    to="/profile"
-                                    className="flex items-center gap-2 text-gray-700 hover:text-[#4E61F6] transition-colors group"
-                                    title="Twój profil"
-                                >
-                                    <div className="w-9 h-9 bg-blue-50 rounded-full flex items-center justify-center text-[#4E61F6] group-hover:bg-[#4E61F6] group-hover:text-white transition-colors">
-                                        <UserIcon className="w-5 h-5" />
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-xs text-gray-400 leading-none">Witaj,</span>
-                                        <span className="text-sm font-bold leading-none">{user.firstName}</span>
-                                    </div>
-                                </Link>
+                            <div className="flex items-center gap-3">
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="p-2.5 mr-2 text-gray-500 bg-gray-50 hover:bg-blue-50 hover:text-yellow-600 hover:bg-yellow-50 rounded-xl transition-all border border-transparent hover:border-yellow-100"
+                                        title="Panel Administratora"
+                                    >
+                                        <DashboardIcon className="w-5 h-5" />
+                                    </Link>
+                                )}
 
-                                <button
-                                    onClick={handleLogout}
-                                    className="p-2 text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors"
-                                    title="Wyloguj"
-                                >
-                                    <LogoutIcon className="w-5 h-5"/>
-                                </button>
+                                <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
+                                    <Link
+                                        to="/profile"
+                                        className="flex items-center gap-2 text-gray-700 hover:text-[#4E61F6] transition-colors group"
+                                        title="Twój profil"
+                                    >
+                                        <div className="w-9 h-9 bg-blue-50 rounded-full flex items-center justify-center text-[#4E61F6] group-hover:bg-[#4E61F6] group-hover:text-white transition-colors">
+                                            <UserIcon className="w-5 h-5" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-gray-400 leading-none">Witaj,</span>
+                                            <span className="text-sm font-bold leading-none">{user.firstName}</span>
+                                        </div>
+                                    </Link>
+
+                                    <button
+                                        onClick={handleLogout}
+                                        className="p-2 text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors"
+                                        title="Wyloguj"
+                                    >
+                                        <LogoutIcon className="w-5 h-5"/>
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <div className="flex items-center gap-3">
                                 <Link to="/login">
-                                    <span className="text-sm font-semibold text-gray-600 hover:text-[#4E61F6] transition-colors cursor-pointer">
+                                    <span className="text-sm font-semibold text-gray-600 hover:text-[#4E61F6] transition-colors cursor-pointer px-3 py-2">
                                         Logowanie
                                     </span>
                                 </Link>
@@ -130,9 +154,9 @@ export default function Navbar() {
                     {navLinks.map((link) => (
                         <li key={link.label}>
                             <Link to={link.to} onClick={() => setIsMenuOpen(false)} className={`block px-4 py-3.5 rounded-xl mb-1 font-medium transition-all ${
-                                    location.pathname === link.to
-                                        ? "bg-blue-50 text-[#4E61F6]"
-                                        : "text-gray-600 hover:bg-gray-50"}`}>
+                                location.pathname === link.to
+                                    ? "bg-blue-50 text-[#4E61F6]"
+                                    : "text-gray-600 hover:bg-gray-50"}`}>
                                 {link.label}
                             </Link>
                         </li>
@@ -140,7 +164,8 @@ export default function Navbar() {
 
                     {isAdmin && (
                         <li>
-                            <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block px-4 py-3.5 rounded-xl mb-1 font-bold text-yellow-700 bg-yellow-50 border border-yellow-100 mt-4">
+                            <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3.5 rounded-xl mb-1 font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 mt-4 border border-gray-100">
+                                <DashboardIcon className="w-5 h-5 text-[#4E61F6]" />
                                 Panel Administratora
                             </Link>
                         </li>

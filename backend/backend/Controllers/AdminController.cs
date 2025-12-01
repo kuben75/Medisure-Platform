@@ -72,6 +72,7 @@ public class AdminController : ControllerBase
                 LastName = user.LastName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
+                BirthDate = user.BirthDate,
                 Roles = (await _userManager.GetRolesAsync(user)).ToList()
             });
         }
@@ -91,6 +92,10 @@ public class AdminController : ControllerBase
             user.Email = updateUserDto.Email;
             user.UserName = updateUserDto.Email; 
             user.PhoneNumber = updateUserDto.PhoneNumber;
+            if (updateUserDto.BirthDate.HasValue)
+            {
+                user.BirthDate = updateUserDto.BirthDate.Value.ToUniversalTime();
+            }
 
             var result = await _userManager.UpdateAsync(user);
 

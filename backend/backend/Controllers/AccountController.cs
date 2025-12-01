@@ -41,7 +41,27 @@ namespace backend.Controllers
             user.FirstName = updateDto.FirstName;
             user.LastName = updateDto.LastName;
             user.PhoneNumber = updateDto.PhoneNumber;
-            
+            if (updateDto.BirthDate.HasValue)
+            {
+                var today = DateTime.UtcNow.Date;
+                var birthDate = updateDto.BirthDate.Value.Date;
+                
+                var age = today.Year - birthDate.Year;
+                if (birthDate > today.AddYears(-age)) age--;
+
+                if (age < 18)
+                {
+                    await _logService.LogAsync("UPDATE_PROFILE_REJECTED", $"Próba ustawienia wieku < 18 lat ({age}).", user.UserName, user.Id, "Warning");
+                    return BadRequest(new { Message = "Musisz mieć ukończone 18 lat, aby korzystać z serwisu." });
+                }
+
+                if (age > 99)
+                {
+                    return BadRequest(new { Message = "Podana data urodzenia jest nieprawidłowa." });
+                }
+
+                user.BirthDate = DateTime.SpecifyKind(updateDto.BirthDate.Value, DateTimeKind.Utc);
+            }
             if (user.Email != updateDto.Email)
             {
                 var emailExists = await _userManager.FindByEmailAsync(updateDto.Email);
@@ -73,7 +93,8 @@ namespace backend.Controllers
                     email = user.Email, 
                     firstName = user.FirstName, 
                     lastName = user.LastName,
-                    phoneNumber = user.PhoneNumber 
+                    phoneNumber = user.PhoneNumber, 
+                    birthDate = user.BirthDate
                 });
             }
             await _logService.LogAsync(

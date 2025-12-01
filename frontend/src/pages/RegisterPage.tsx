@@ -158,9 +158,12 @@ export default function RegisterPage() {
                                     className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-[#4E61F6] text-[#4E61F6]"
                                 />
                             </div>
-                            <label htmlFor="terms" className="ml-2 text-sm font-medium text-gray-900">
-                                Akceptuję <a href="#" className="text-[#4E61F6] hover:underline">Regulamin</a> oraz <a
-                                href="#" className="text-[#4E61F6] hover:underline">Politykę Prywatności</a>.
+                            <label htmlFor="terms"
+                                   className="ml-2 text-sm font-medium text-gray-900 cursor-pointer select-none">
+                                Akceptuję <Link to="/polityka-prywatnosci"
+                                                className="text-[#4E61F6] hover:underline">Regulamin</Link> oraz <Link
+                                to="/polityka-prywatnosci" className="text-[#4E61F6] hover:underline">Politykę
+                                Prywatności</Link>.
                             </label>
                         </div>
 

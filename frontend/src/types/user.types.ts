@@ -3,6 +3,7 @@ export interface IUser {
     firstName: string,
     lastName: string
     phoneNumber?: string
+    birthDate?: string
 }
 
 export interface IUserDto {
@@ -11,6 +12,7 @@ export interface IUserDto {
     lastName: string
     email: string
     phoneNumber: string
+    birthDate?: string
     roles: string[]
 }
 
@@ -30,4 +32,11 @@ export interface IUserSubscription {
     endDate: string
     status: string
     features: string[]
+}
+export interface IUserFormModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSaveSuccess: () => void;
+    token: string | null;
+    userToEdit: IUserDto | null;
 }

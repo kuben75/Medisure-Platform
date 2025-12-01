@@ -169,13 +169,27 @@ void SeedDatabase(IHost app)
                 },
                 new Package
                 {
-                    Name = "Rodzina 2+2",
-                    Category = "Family",
-                    PriceValue = 250.00m, Price = "250 zł",
-                    Description = "Ekonomiczne rozwiązanie dla całej rodziny.",
-                    Features = new List<string> { "Pediatrzy bez limitu", "Szczepienia dla dzieci", "Opieka dyżurowa 24h" },
+                    Name = "Rodzina 2+1 Start", Category = "Family", PriceValue = 199.00m, Price = "199 zł",
+                    Description = "Ekonomiczny pakiet dla rodziców z jednym dzieckiem.",
+                    Features = new List<string> { "Pediatra bez limitu", "Internista", "Szczepienia podstawowe" },
                     HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
-                    SpecialistsCount = 15, FacilitiesCount = 500, AverageRating = 4.6, Reviews = 120, IsFeatured = true
+                    SpecialistsCount = 10, FacilitiesCount = 400, AverageRating = 4.5, Reviews = 22, IsFeatured = false
+                },
+                new Package
+                {
+                    Name = "Rodzina 2+2 Standard", Category = "Family", PriceValue = 299.00m, Price = "299 zł",
+                    Description = "Optymalna opieka dla 4-osobowej rodziny.",
+                    Features = new List<string> { "Specjaliści dziecięcy", "Opieka dyżurowa 24h", "Wizyty domowe (2/rok)" },
+                    HasDentalCare = true, HasHospitalization = false, HasRehabilitation = false,
+                    SpecialistsCount = 20, FacilitiesCount = 600, AverageRating = 4.7, Reviews = 120, IsFeatured = true
+                },
+                new Package
+                {
+                    Name = "Rodzina 2+3 Premium", Category = "Family", PriceValue = 450.00m, Price = "450 zł",
+                    Description = "Pełna ochrona dla dużej rodziny z nielimitowanym dostępem.",
+                    Features = new List<string> { "Wszyscy specjaliści bez skierowań", "Stomatologia dla dzieci", "Rehabilitacja", "Szczepienia premium" },
+                    HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
+                    SpecialistsCount = 50, FacilitiesCount = 1200, AverageRating = 4.9, Reviews = 60, IsFeatured = true
                 },
                 new Package
                 {
