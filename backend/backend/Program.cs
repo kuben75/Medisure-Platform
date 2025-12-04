@@ -112,7 +112,7 @@ builder.Services.AddAuthentication(options =>
 
                 var path = context.HttpContext.Request.Path;
                 if (!string.IsNullOrEmpty(accessToken) &&
-                    (path.StartsWithSegments("/chatHub")))
+                    (path.StartsWithSegments("/api/chatHub")))
                 {
                     context.Token = accessToken;
                 }
@@ -145,7 +145,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<backend.Hubs.ChatHub>("/chatHub");
+app.MapHub<backend.Hubs.ChatHub>("/api/chatHub");
 
 try
 {
