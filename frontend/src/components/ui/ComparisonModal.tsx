@@ -20,12 +20,12 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
          default: modalWidthClass = "max-w-[95vw]"
              break
    }
-    const labelCellClass = "p-4 text-sm font-semibold text-gray-600 bg-gray-50 border-b border-gray-200 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[150px]";
+    const labelCellClass = "p-4 text-sm font-semibold text-gray-600 bg-gray-100 border-b border-gray-200 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[150px]";
 
     const dataCellClass = "p-4 text-sm text-gray-700 border-b border-gray-200 text-center min-w-[200px] border-l border-gray-100";
     return(
         <Modal isOpen={isOpen} onClose={onClose} className={modalWidthClass}>
-            <div className="w-full flex flex-col h-full">
+            <div className="w-full flex flex-col h-full lg:overflow-x-hidden">
 
                 <div className="text-center pb-2">
                     <h2 className="text-2xl font-bold text-gray-800">
@@ -47,7 +47,7 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                             {packages.map(pkg => (
                                 <th key={pkg.id} className="p-4 border-b-2 border-[#4E61F6] bg-white text-center min-w-[200px] align-bottom pb-6 relative">
                                     {pkg.isFeatured && (
-                                        <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                                        <span className="hidden md:none md:absolute md:top-0 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bg-yellow-100 md:text-yellow-800 md:text-[10px] md:font-bold md:px-2 md:py-0.5 md:rounded-full md:uppercase">
                                                 Polecany
                                             </span>
                                     )}

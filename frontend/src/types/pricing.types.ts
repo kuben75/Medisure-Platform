@@ -1,4 +1,8 @@
 import React from "react";
+import type {IUserSubscription} from "./user.types.ts";
+
+export type TPaymentMethodType = 'card' | 'transfer' | 'paypal' | 'gpay'
+export type TBankOptionType = 'blik' | 'mbank' | 'pko' | 'ing' | 'pekao' | 'millenium' | 'alior'
 
 export interface IPricingPlan {
     id: number;
@@ -33,11 +37,46 @@ export interface IFilterState {
     minFacilities: number
     hasDental: boolean
     hasHospital: boolean
-    hasRehabilitation: boolean;
-    sortOrder: 'default' | 'price_asc' | 'price_desc' | 'rating_desc';
+    hasRehabilitation: boolean
+    searchQuery: string
+    showYearlyPrice: boolean
+    sortOrder: 'default' | 'price_asc' | 'price_desc' | 'rating_desc' | 'rating_asc'
 }
 
 export interface IPackageFiltersProps {
     filters: IFilterState
     setFilters: React.Dispatch<React.SetStateAction<IFilterState>>
+}
+
+export interface AddressData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    street: string;
+    houseNumber: string;
+    city: string;
+    zipCode: string;
+}
+
+export interface IPriceDetails {
+    total: number;
+    monthly: number;
+    months: number;
+    originalTotal: number;
+    isDiscounted: boolean;
+    discountLabel: string;
+}
+export interface ICheckoutOverlayProps {
+    isOpen: boolean;
+    onClose: () => void;
+    plan: IPricingPlan;
+    priceDetails: IPriceDetails;
+    onFinalize: (method: string, txId: string, addressData: AddressData) => void
+}
+
+export interface SubscriptionDetailsModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    subscription: IUserSubscription | null;
 }

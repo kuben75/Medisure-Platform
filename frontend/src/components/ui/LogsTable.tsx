@@ -2,7 +2,7 @@ import {useEffect, useState} from "react"
 import type {ISystemLog} from "../../types/dashboard.types.ts"
 import {useAuth} from "../../hooks/useAuth.ts";
 
-const API_URL_LOGS = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/admin/logs`
+const API_URL_LOGS = `${import.meta.env.VITE_API_URL}/admin/logs`
 
 export default function LogsTable() {
     const [logs, setLogs] = useState<ISystemLog[]>([])
@@ -47,7 +47,7 @@ export default function LogsTable() {
     }, [search, levelFilter, token, fetchLogs]);
 
     return (
-        <div className="mt-8">
+        <div className="hidden md:block mt-8">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                 <h3 className="text-xl font-semibold text-gray-700">Logi Systemowe</h3>
                 <div className="flex gap-3 w-full md:w-auto">

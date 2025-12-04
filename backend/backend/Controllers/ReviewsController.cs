@@ -15,11 +15,13 @@ public class ReviewsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogService _logService;
+    private readonly INotificationService _notificationService;
 
-    public ReviewsController(ApplicationDbContext context, ILogService logService)
+    public ReviewsController(ApplicationDbContext context, ILogService logService, INotificationService notificationService)
     {
         _context = context;
         _logService = logService;
+        _notificationService = notificationService;
     }
 
     [HttpPost]
@@ -62,6 +64,12 @@ public class ReviewsController : ControllerBase
             user.Email ?? "Unknown",
             user.Id,
             "Info");
+        
+        await _notificationService.NotifyAllAdminsAsync(
+            "Nowa opinia do moderacji", 
+            $"Użytkownik {user.Email} dodał opinię do pakietu ID {dto.PackageId}. Sprawdź panel moderacji.", 
+            "Review"
+        );
         return Ok(new { Message = "Dziękujemy! Twoja opinia czeka na zatwierdzenie przez moderatora." });
     }
 

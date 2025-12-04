@@ -8,7 +8,7 @@ import {useConfirm} from "../../hooks/UseConfrim.ts";
 import {useNotification} from "../../hooks/UseNotification.ts";
 import {useAuth} from "../../hooks/useAuth.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/packages`
+const API_URL = `${import.meta.env.VITE_API_URL}/packages`
 
 export default function PackageManagement() {
     const [packages, setPackages] = useState<IPricingPlan[]>([])

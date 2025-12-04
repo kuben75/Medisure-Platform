@@ -58,18 +58,25 @@ export default function Footer() {
                     <h4 className="font-bold mb-3 text-gray-900">Informacje</h4>
                     <ul className="text-sm space-y-2">
                         <li>
-                            <Link to="/polityka-prywatnosci" className="hover:text-[#4E61F6] hover:underline transition-colors">
+                            <Link to="/polityka-prywatnosci"
+                                  className="hover:text-[#4E61F6] hover:underline transition-colors">
                                 Regulamin serwisu
                             </Link>
                         </li>
                         <li>
-                            <Link to="/polityka-prywatnosci" className="hover:text-[#4E61F6] hover:underline transition-colors">
+                            <Link to="/polityka-prywatnosci"
+                                  className="hover:text-[#4E61F6] hover:underline transition-colors">
                                 Polityka Prywatności
                             </Link>
                         </li>
                         <li>
                             <Link to="/kontakt" className="hover:text-[#4E61F6] hover:underline transition-colors">
                                 Kontakt z nami
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/specjalisci" className="hover:text-[#4E61F6] hover:underline transition-colors">
+                                Specjaliści
                             </Link>
                         </li>
                     </ul>

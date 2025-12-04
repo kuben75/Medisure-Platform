@@ -71,7 +71,7 @@ export default function OnboardingModal() {
                 birthDate: safeDate.toISOString()
             }
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/account/profile`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/account/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

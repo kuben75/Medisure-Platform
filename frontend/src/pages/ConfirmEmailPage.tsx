@@ -18,7 +18,7 @@ export default function ConfirmEmailPage() {
             }
 
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/auth/confirm-email?userId=${userId}&token=${encodeURIComponent(token)}`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/confirm-email?userId=${userId}&token=${encodeURIComponent(token)}`, {
                     method: 'GET'
                 })
                 if (response.ok)

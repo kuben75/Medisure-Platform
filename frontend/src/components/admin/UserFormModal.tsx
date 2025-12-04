@@ -3,7 +3,7 @@ import Modal from '../ui/Modal.tsx';
 import Button from '../ui/Button.tsx';
 import { useNotification } from "../../hooks/UseNotification.ts";
 import type {IUserFormModalProps} from "../../types/user.types.ts";
-const API_URL_USERS = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/admin/users`;
+const API_URL_USERS = `${import.meta.env.VITE_API_URL}/admin/users`;
 
 export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdit }: IUserFormModalProps) => {
     const { notify } = useNotification()

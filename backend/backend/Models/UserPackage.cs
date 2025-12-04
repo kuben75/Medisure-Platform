@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema; 
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
@@ -14,11 +14,17 @@ namespace backend.Models
         [ForeignKey("PackageId")]
         public Package Package { get; set; }
 
+        public string PriceAtPurchase { get; set; }
         public DateTime StartDate { get; set; } = DateTime.UtcNow;
         public DateTime EndDate { get; set; }
         public string Status { get; set; } = "Active"; 
-        
+        public string Street { get; set; }
+        public string HouseNumber { get; set; }
+        public string City { get; set; }
+        public string ZipCode { get; set; }
 
-        public string PriceAtPurchase { get; set; }
+        public string PaymentMethod { get; set; } 
+        public string TransactionId { get; set; } 
+
     }
 }

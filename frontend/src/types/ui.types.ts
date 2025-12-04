@@ -2,7 +2,7 @@ import React from "react";
 import type {IPricingPlan} from "./pricing.types.ts";
 
 export type IconProps = {
-    className?: string
+    className?: string | "w-6 h-6"
     props?: React.SVGProps<SVGSVGElement>
     isFilled?: string
 }
@@ -47,6 +47,13 @@ export interface HeroCalcProps {
 }
 
 export interface IFaqItem {
-    q: string;
-    a: string;
+    q: string
+    a: string
+}
+
+export type AccordionProps = {
+    question: string
+    answer: string
+    isOpen?: boolean
+    onToggle?: () => void
 }

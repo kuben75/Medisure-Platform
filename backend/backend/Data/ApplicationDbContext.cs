@@ -10,10 +10,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
     
     public DbSet<Package> Packages { get; set; }
-    
+    public DbSet<ChatMessage> ChatMessages { get; set; } 
     public DbSet<UserPackage> UserPackages { get; set; }
     public DbSet<Review> Reviews { get; set; } 
     public DbSet<SystemLog> SystemLogs { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
+    public DbSet<SystemNotification> SystemNotifications { get; set; }
     
 }

@@ -18,7 +18,7 @@ export default function UserManagement() {
     const [userToEdit, setUserToEdit] = useState<IUserDto | null>(null)
     const confirm  = useConfirm()
     const { notify } = useNotification()
-    const API_URL_USERS = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/admin/users`
+    const API_URL_USERS = `${import.meta.env.VITE_API_URL}/admin/users`
 
     const fetchUsers = async () => {
         if (!token) { setError("Brak autoryzacji."); setLoading(false); return; }

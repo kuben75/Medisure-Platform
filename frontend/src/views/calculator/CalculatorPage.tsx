@@ -14,12 +14,12 @@ import FavoriteButton from "../../components/ui/FavouriteButton.tsx";
 import CalendarIcon from "../../components/icons/CalendarIcon.tsx";
 const GroupIcon = () => <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.502.152a3 3 0 01-4.682-2.72M10.5 18.72a9.094 9.094 0 013.741-.479M6.75 12.75a3 3 0 11-6 0 3 3 0 016 0zM17.25 12.75a3 3 0 11-6 0 3 3 0 016 0zM10.5 6a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
 const ListIcon = () => <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>;
-const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/packages`
+const API_URL = `${import.meta.env.VITE_API_URL}/packages`
 
 export default function CalculatorPage() {
     const {
         selectedPlan, selectedDuration, setSelectedDuration, isBuying,
-        openModal, closeModal, handleBuyPackage
+        openModal, closeModal, handleProceedToCheckout
     } = usePackagePurchase()
 
     const [isCalculated, setIsCalculated] = useState(false)
@@ -69,7 +69,7 @@ export default function CalculatorPage() {
             else if (data.type === 'family_custom') {
                 recommended = allPlans.find(p => p.name.includes("2+3") || p.name.includes("Premium") && p.category === 'Family')
                 if (!recommended) recommended = allPlans.find(p => p.category === 'Family')
-                basePrice = (recommended?.priceValue || 400) * 1.2
+                basePrice = (recommended?.priceValue || 400)
             }
 
             else if (data.type === 'family') {
@@ -84,7 +84,7 @@ export default function CalculatorPage() {
 
                 if (!recommended) recommended = allPlans.find(p => p.category === 'Family')
 
-                basePrice = (recommended?.priceValue || 250) * 0.9
+                basePrice = (recommended?.priceValue || 250)
             }
 
             else {
@@ -235,7 +235,7 @@ export default function CalculatorPage() {
                         <Button
                             variant="primary"
                             className="w-full py-4 text-lg shadow-xl shadow-blue-200/50 hover:shadow-blue-300 hover:-translate-y-1 transition-all"
-                            onClick={handleBuyPackage}
+                            onClick={handleProceedToCheckout}
                             disabled={isBuying}
                         >
                             {isBuying ? "Przetwarzanie..." : "Wybieram i płacę"}

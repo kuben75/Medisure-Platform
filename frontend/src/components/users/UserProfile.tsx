@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react'
-import {useNavigate} from 'react-router-dom'
+import {useEffect, useState, useMemo} from 'react'
+import {useLocation, useNavigate} from 'react-router-dom'
 import Button from '../ui/Button.tsx'
 import EditProfileModal from "./EditProfileModal.tsx"
 import type {IUserSubscription} from "../../types/user.types.ts"
@@ -12,47 +12,66 @@ import HeartIcon from "../icons/HeartIcon.tsx";
 import EditIcon from "../icons/EditIcon.tsx";
 import LockIcon from "../icons/LockIcon.tsx";
 import ChangePasswordModal from "./ChangePasswordModal.tsx";
-
-const BriefcaseIcon = ({className = "w-4 h-4"}) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-         className={className}>
-        <path strokeLinecap="round" strokeLinejoin="round"
-              d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0"/>
-    </svg>)
+import BriefcaseIcon from "../icons/BriefcaseIcon.tsx";
+import SubscriptionDetailsModal from "./SubscriptionDetailsModal.tsx";
+import CalendarIcon from "../icons/CalendarIcon.tsx";
+import SearchIcon from "../icons/SearchIcon.tsx";
+import {SensitiveData} from "../../utils/SensitiveData.tsx";
+import {useUserNotifications} from "../../context/UserNotificationsContext.tsx";
+import NotificationsPanel from "../ui/NotificationsPanel.tsx";
+const BellIcon = ({className = "w-5 h-5"}) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+    </svg>
+);
+const EyeIconSvg = ({className}: {className?: string}) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+)
 
 export default function UserProfile() {
     const {user, logout, token} = useAuth()
     const navigate = useNavigate()
 
     const [activeTab, setActiveTab] = useState('subscriptions')
-
     const [subscriptions, setSubscriptions] = useState<IUserSubscription[]>([])
     const [favorites, setFavorites] = useState<IPricingPlan[]>([])
-
     const [loading, setLoading] = useState(true)
+    const location = useLocation()
+    const { unreadCount } = useUserNotifications();
+    const [viewingSub, setViewingSub] = useState<IUserSubscription | null>(null)
+    const [reviewTarget, setReviewTarget] = useState<{ id: number, name: string } | null>(null)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
 
-    const [reviewTarget, setReviewTarget] = useState<{ id: number, name: string } | null>(null)
+    const [searchTerm, setSearchTerm] = useState('')
+    const [visibleCount, setVisibleCount] = useState(3)
 
     const handleLogout = () => {
         logout()
         navigate('/login')
     }
+    const handleOpenDetails = (sub: IUserSubscription) => setViewingSub(sub)
     const handleOpenReview = (pkgId: number, pkgName: string) => {
         setReviewTarget({id: pkgId, name: pkgName})
         setIsReviewModalOpen(true)
     }
-
+    useEffect(() => {
+        const params = new URLSearchParams(location.search)
+        if (params.get('tab') === 'notifications')
+            setActiveTab('notifications')
+    }, [location])
     useEffect(() => {
         const fetchData = async () => {
             if (!token) return
             try {
-                const subRes = await fetch(`${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/subscriptions`, {headers: {'Authorization': `Bearer ${token}`}});
+                const subRes = await fetch(`${import.meta.env.VITE_API_URL}/subscriptions`, {headers: {'Authorization': `Bearer ${token}`}});
                 if (subRes.ok) setSubscriptions(await subRes.json())
 
-                const favRes = await fetch(`${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/favorites`, {headers: {'Authorization': `Bearer ${token}`}});
+                const favRes = await fetch(`${import.meta.env.VITE_API_URL}/favorites`, {headers: {'Authorization': `Bearer ${token}`}});
                 if (favRes.ok) setFavorites(await favRes.json())
 
             } catch (error) {
@@ -63,6 +82,21 @@ export default function UserProfile() {
         }
         fetchData()
     }, [token, activeTab])
+
+
+    const filteredSubscriptions = useMemo(() => {
+        return subscriptions
+            .filter(sub => sub.packageName.toLowerCase().includes(searchTerm.toLowerCase()))
+            .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+    }, [subscriptions, searchTerm])
+
+
+    const displayedSubscriptions = filteredSubscriptions.slice(0, visibleCount);
+    const hasMore = filteredSubscriptions.length > visibleCount;
+
+    const handleShowMore = () => setVisibleCount(prev => prev + 5);
+    const handleCollapse = () => setVisibleCount(5);
+
     const isPeselMissing = !user?.pesel
 
     return (
@@ -78,80 +112,63 @@ export default function UserProfile() {
                         {user?.firstName?.charAt(0).toUpperCase()}
                     </div>
                 </div>
+
                 {isPeselMissing && (
                     <div onClick={() => setIsEditModalOpen(true)} className="mb-8 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg flex items-start gap-3 cursor-pointer hover:bg-yellow-100 transition-colors group">
-                        <div className="text-yellow-600 mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                                <path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" /></svg>
-                        </div>
+                        <div className="text-yellow-600 mt-0.5">⚠️</div>
                         <div>
-                            <h4 className="text-yellow-800 font-bold">Uzupełnij dane, aby kupować pakiety</h4>
-                            <p className="text-yellow-700 text-sm mt-1">
-                                Prawo wymaga podania numeru PESEL przy zakupie ubezpieczenia.
-                                <span className="underline font-semibold ml-1 group-hover:text-yellow-900">Kliknij tutaj, aby uzupełnić profil.</span></p>
+                            <h4 className="text-yellow-800 font-bold">Uzupełnij dane</h4>
+                            <p className="text-yellow-700 text-sm mt-1">Prawo wymaga podania numeru PESEL przy zakupie ubezpieczenia. <span className="underline font-semibold ml-1 group-hover:text-yellow-900">Kliknij tutaj.</span></p>
                         </div>
                     </div>
                 )}
+
                 <div className="grid md:grid-cols-3 gap-8">
                     <div className="md:col-span-1 space-y-6">
                         <div className="bg-slate-50 p-5 rounded-xl border border-slate-100">
                             <div className="flex justify-between items-center mb-3">
                                 <h3 className="font-semibold text-gray-700">Twoje dane</h3>
-                                <button onClick={() => setIsEditModalOpen(true)}
-                                        className="text-[#4E61F6] text-sm font-medium hover:underline">
-                                    <EditIcon className="w-4 h-4"/>
-                                </button>
-                                <button onClick={() => setIsPasswordModalOpen(true)}
-                                        className="text-gray-400 hover:text-red-500 transition-colors"
-                                        title="Zmień hasło">
-                                    <LockIcon className="w-4 h-4"/>
-                                </button>
+                                <div className="flex gap-2">
+                                    <button onClick={() => setIsEditModalOpen(true)} className="text-[#4E61F6] hover:bg-blue-50 p-1 rounded"><EditIcon className="w-4 h-4"/></button>
+                                    <button onClick={() => setIsPasswordModalOpen(true)} className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1 rounded"><LockIcon className="w-4 h-4"/></button>
+                                </div>
                             </div>
                             <div className="space-y-3">
+                                <div><p className="text-xs text-gray-500 font-bold">Imię i nazwisko</p><p className="font-medium text-gray-800">{user?.firstName} {user?.lastName}</p></div>
+                                <div><p className="text-xs text-gray-500 font-bold">Email</p><p className="font-medium text-gray-800 truncate" title={user?.email}>{user?.email}</p></div>
+                                <div><p className="text-xs text-gray-500 font-bold">Telefon</p><p className="font-medium text-gray-800">{user?.phoneNumber || '-'}</p></div>
                                 <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Imię i nazwisko</p>
-                                    <p className="font-medium text-gray-800">{user?.firstName} {user?.lastName}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Email</p>
-                                    <p className="font-medium text-gray-800 truncate"
-                                       title={user?.email}>{user?.email}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Telefon</p>
-                                    <p className="font-medium text-gray-800">{user?.phoneNumber || '-'}</p>
-                                </div>
-
-                                <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">Data urodzenia</p>
+                                    <p className="text-xs text-gray-500 font-bold">Data urodzenia</p>
                                     <p className={`font-medium ${user?.birthDate ? 'text-gray-800' : 'text-gray-400 italic'}`}>
-                                        {user?.birthDate
-                                            ? new Date(user.birthDate).toLocaleDateString('pl-PL')
-                                            : 'Nie podano'
-                                        }
+                                        {user?.birthDate ? new Date(user.birthDate).toLocaleDateString('pl-PL') : 'Nie podano'}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500 uppercase font-bold">PESEL</p>
-                                    <p className={`font-medium ${user?.pesel ? 'text-gray-800' : 'text-red-500'}`}>
-                                        {user?.pesel || 'Brak (Wymagany)'}
-                                    </p>
+                                    <p className="text-xs text-gray-500 font-bold">PESEL</p>
+                                    {user?.pesel ? (
+                                        <SensitiveData text={user.pesel} />
+                                    ) : (
+                                        <p className="font-medium text-sm text-red-500 flex items-center gap-1">Brak (Wymagany do zakupu ubezpieczenia)
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <button
-                                onClick={() => setActiveTab('subscriptions')}
-                                className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors ${activeTab === 'subscriptions' ? 'bg-[#4E61F6] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`}
-                            >
+                            <button onClick={() => setActiveTab('subscriptions')}
+                                    className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors ${activeTab === 'subscriptions' ? 'bg-[#4E61F6] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`}>
                                 <BriefcaseIcon className="w-5 h-5"/> Twoje Pakiety
                             </button>
-                            <button
-                                onClick={() => setActiveTab('favorites')}
-                                className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors ${activeTab === 'favorites' ? 'bg-[#4E61F6] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`}
-                            >
+                            <button onClick={() => setActiveTab('favorites')}
+                                    className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors ${activeTab === 'favorites' ? 'bg-[#4E61F6] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`}>
                                 <HeartIcon className="w-5 h-5" filled={false}/> Ulubione Oferty
+                            </button>
+                            <button onClick={() => setActiveTab('notifications')}
+                                    className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-colors ${activeTab === 'notifications' ? 'bg-[#4E61F6] text-white shadow-md' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`}>
+                                <BellIcon className="w-5 h-5"/> Powiadomienia
+                                {unreadCount > 0 && <span
+                                    className="ml-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full">{unreadCount}</span>}
                             </button>
                         </div>
                     </div>
@@ -160,24 +177,78 @@ export default function UserProfile() {
                         {loading ? <p>Ładowanie...</p> : (
                             <>
                                 {activeTab === 'subscriptions' && (
-                                    <div className="space-y-4">
-                                        <h2 className="text-xl font-semibold text-gray-700 mb-4">Aktywne umowy</h2>
-                                        {subscriptions.length > 0 ? subscriptions.map(sub => (
-                                            <div key={sub.id} className="border border-blue-100 bg-blue-50/30 rounded-xl p-5 relative hover:shadow-md transition-shadow">
-                                                <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">AKTYWNY</div>
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <h3 className="text-lg font-bold text-gray-800">{sub.packageName}</h3>
-                                                    <span className="text-[#4E61F6] font-bold text-lg pr-16">{sub.price}</span>
-                                                </div>
-                                                <p className="text-sm text-gray-600 mb-4">Ważny do: <b>{new Date(sub.endDate).toLocaleDateString()}</b></p>
-                                                <div className="flex justify-end">
-                                                    <button onClick={() => handleOpenReview(sub.packageId || 0, sub.packageName)} className="text-sm font-medium text-yellow-600 hover:text-yellow-700 flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-lg hover:bg-yellow-100">
-                                                        <StarIconOutline className="w-6 h-6"/> Oceń pakiet
-                                                    </button>
-                                                </div>
+                                    <div className="space-y-6">
+                                        <div
+                                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                                            <h2 className="text-xl font-semibold text-gray-700">Aktywne umowy
+                                                ({subscriptions.length})</h2>
+
+                                            <div className="relative w-full sm:w-64">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Szukaj pakietu..."
+                                                    value={searchTerm}
+                                                    onChange={e => setSearchTerm(e.target.value)}
+                                                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none transition-all"
+                                                />
+                                                <div className="absolute left-3 top-2.5"><SearchIcon className="w-4 h-4" /></div>
                                             </div>
-                                        )) : (
-                                            <EmptyState msg="Nie masz jeszcze aktywnych pakietów." btnAction={() => navigate('/kalkulator')}/>
+                                        </div>
+
+                                        {displayedSubscriptions.length > 0 ? (
+                                            <>
+                                                <div className="space-y-4">
+                                                    {displayedSubscriptions.map(sub => (
+                                                        <div key={sub.id} className="border border-blue-100 bg-blue-50/30 rounded-xl p-5 relative hover:shadow-md transition-shadow group animate-fade-in-up">
+                                                            <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg shadow-sm">AKTYWNY</div>
+
+                                                            <div className="flex justify-between items-start mb-2 mt-1">
+                                                                <div>
+                                                                    <h3 className="text-xl font-bold text-gray-900">{sub.packageName}</h3>
+                                                                    <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mt-1">Pakiet Medyczny</p>
+                                                                </div>
+                                                                <span className="text-[#4E61F6] font-bold text-2xl pr-2">{sub.price}</span>
+                                                            </div>
+
+                                                            <div className="bg-white/60 p-3 rounded-lg border border-blue-100/50 mb-4 mt-2 flex items-center gap-2">
+                                                                <CalendarIcon className="w-4 h-4 text-gray-400"/>
+                                                                <p className="text-sm text-gray-600">
+                                                                    Ważny do: <b className="text-gray-800">{new Date(sub.endDate).toLocaleDateString('pl-PL')}</b>
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="flex justify-end gap-3 pt-2 border-t border-blue-100/50">
+                                                                <button onClick={() => handleOpenDetails(sub)} className="text-sm font-bold text-slate-600 hover:text-[#4E61F6] flex items-center gap-1.5 bg-white border border-slate-200 px-4 py-2 rounded-lg hover:border-[#4E61F6] transition-all shadow-sm hover:cursor-pointer">
+                                                                    <EyeIconSvg className="w-4 h-4"/> Szczegóły
+                                                                </button>
+                                                                <button onClick={() => handleOpenReview(sub.packageId || 0, sub.packageName)} className="text-sm font-bold text-yellow-700 hover:text-yellow-800 flex items-center gap-1.5 bg-yellow-100 border border-yellow-200 px-4 py-2 rounded-lg hover:bg-yellow-200 transition-all shadow-sm">
+                                                                    <StarIconOutline className="w-4 h-4"/> Oceń
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {(hasMore || visibleCount > 5) && (
+                                                    <div className="text-center pt-4">
+                                                        {hasMore ? (
+                                                            <button onClick={handleShowMore} className="text-sm font-bold text-[#4E61F6] hover:text-blue-700 bg-blue-50 px-6 py-2 rounded-full hover:bg-blue-100 transition-colors">
+                                                                Pokaż więcej ({filteredSubscriptions.length - visibleCount}) ▼
+                                                            </button>
+                                                        ) : (
+                                                            <button onClick={handleCollapse} className="text-sm font-bold text-gray-500 hover:text-gray-700 bg-gray-100 px-6 py-2 rounded-full hover:bg-gray-200 transition-colors">
+                                                                Zwiń listę ▲
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <EmptyState
+                                                msg={searchTerm ? "Nie znaleziono pakietów pasujących do wyszukiwania." : "Nie masz jeszcze aktywnych pakietów."}
+                                                btnAction={() => searchTerm ? setSearchTerm('') : navigate('/kalkulator')}
+                                                btnText={searchTerm ? "Wyczyść wyszukiwanie" : "Przeglądaj ofertę"}
+                                            />
                                         )}
                                     </div>
                                 )}
@@ -193,7 +264,7 @@ export default function UserProfile() {
                                                 </div>
                                                 <div className="flex items-center gap-3">
                                                     <FavoriteButton packageId={fav.id}/>
-                                                    <Button variant="primary" className="!text-xs !py-2" onClick={() => navigate('/kalkulator')}>Zobacz</Button>
+                                                    <Button variant="primary" className="!text-xs !py-2" onClick={() => navigate('/kalkulator', { state: { highlightPackageId: fav.id } })}>Zobacz</Button>
                                                 </div>
                                             </div>
                                         )) : (
@@ -201,6 +272,7 @@ export default function UserProfile() {
                                         )}
                                     </div>
                                 )}
+                                {activeTab === 'notifications' && <NotificationsPanel />}
                             </>
                         )}
                     </div>
@@ -210,16 +282,18 @@ export default function UserProfile() {
                     <Button onClick={handleLogout} variant="secondary" className="bg-red-50 text-red-600 hover:bg-red-100 shadow-none">Wyloguj się</Button>
                 </div>
             </div>
+
             <ChangePasswordModal isOpen={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)} />
             <EditProfileModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}/>
             {reviewTarget && <AddReviewModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} packageId={reviewTarget.id} packageName={reviewTarget.name}/>}
+            <SubscriptionDetailsModal isOpen={!!viewingSub} onClose={() => setViewingSub(null)} subscription={viewingSub}/>
         </div>
     )
 }
 
-const EmptyState = ({msg, btnAction}: { msg: string, btnAction: () => void }) => (
-    <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
+const EmptyState = ({msg, btnAction, btnText = "Przeglądaj ofertę"}: { msg: string, btnAction: () => void, btnText?: string }) => (
+    <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center bg-gray-50">
         <p className="text-gray-500 mb-4">{msg}</p>
-        <Button onClick={btnAction} variant="primary" className="!text-sm !py-2">Przeglądaj ofertę</Button>
+        <Button onClick={btnAction} variant="primary" className="!text-sm !py-2 shadow-lg">{btnText}</Button>
     </div>
 )
