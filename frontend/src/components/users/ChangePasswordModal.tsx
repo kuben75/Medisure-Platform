@@ -20,15 +20,16 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
             notify.error("Nowe hasła muszą być identyczne.")
             return
         }
-        if (newPassword.length < 8) {
-            notify.error("Hasło musi mieć minimum 8 znaków.")
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/
+        if (!passwordRegex.test(newPassword)) {
+            notify.error("Hasło nie spełnia wymagań bezpieczeństwa.")
             return
         }
 
         setIsLoading(true)
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/account/change-password`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/account/change-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,7 +94,13 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                         required
                         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#4E61F6] outline-none"
                     />
-                    <p className="text-xs text-gray-400 mt-1">Min. 8 znaków, duża litera, cyfra, znak specjalny.</p>
+                    <ul className="text-xs text-gray-500 mt-2 list-disc pl-4 space-y-1">
+                        <li>Minimum 8 znaków</li>
+                        <li>Przynajmniej jedna wielka litera (A-Z)</li>
+                        <li>Przynajmniej jedna mała litera (a-z)</li>
+                        <li>Przynajmniej jedna cyfra (0-9)</li>
+                        <li>Przynajmniej jeden znak specjalny (np. !@#$%^&*)</li>
+                    </ul>
                 </div>
 
                 <div>

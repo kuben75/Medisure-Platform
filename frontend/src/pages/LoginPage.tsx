@@ -17,10 +17,11 @@ export default function LoginPage() {
         const roles = await login(email, password);
 
         if (roles) {
-            if (roles.includes('Admin')) navigate('/admin')
+            if (roles.includes('Admin'))
+                navigate('/admin')
 
-             else navigate('/profile')
-
+             else
+                 navigate('/')
         }
 
     }

@@ -7,11 +7,13 @@ import CalendarIcon from "../../components/icons/CalendarIcon.tsx";
 import ShieldIcon from "../../components/icons/ShieldIcon.tsx";
 import CheckIcon from "../../components/icons/CheckIcon.tsx";
 import ChevronRightIcon from "../../components/icons/ChevronRightIcon.tsx";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 export default function CalculationResults({ estimatedPrice, packageType, age, recommendedPlan, onShowDetails }: ICalculationResultsProps) {
     const isCompany = packageType === 'company'
     const isFamilyCustom = packageType === 'family_custom'
     const isContactRequired = isCompany || isFamilyCustom
+    const {user} = useAuth()
 
     const policyLabel = isCompany ? 'Biznesowa' :
         isFamilyCustom ? 'Rodzinna (Duża)' :
@@ -88,10 +90,10 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
                                 </div>
                             )}
 
-                            <div className="space-y-4 mb-8 flex-grow border-t border-gray-100 pt-6">
+                            <div className="space-y-10 mb-8 flex-grow border-t border-gray-100 pt-6">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <ShieldIcon/>
+                                        <ShieldIcon className="w-5 h-5 text-blue-500"/>
                                         <span className="text-sm text-gray-600 font-medium">Typ polisy</span>
                                     </div>
                                     <span
@@ -103,7 +105,7 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
                                 {!isContactRequired && (
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <UserIcon/>
+                                            <UserIcon className="w-5 h-5 text-blue-500"/>
                                             <span className="text-sm text-gray-600 font-medium">Wiek</span>
                                         </div>
                                         <span className="font-bold text-gray-800">{age} lat</span>
@@ -113,7 +115,7 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
                                 {!isFamilyCustom && (
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <CalendarIcon/>
+                                            <CalendarIcon className="w-5 h-5 text-blue-500"/>
                                             <span className="text-sm text-gray-600 font-medium">Okres</span>
                                         </div>
                                         <span className="font-bold text-gray-800">12 / 24 mies.</span>
@@ -160,7 +162,7 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
                                         </h3>
                                     </div>
 
-                                    {recommendedPlan && !isContactRequired && (
+                                    {recommendedPlan && !isContactRequired && user && (
                                         <div
                                             className="bg-white/20 p-2 rounded-full hover:bg-white/30 transition-colors cursor-pointer backdrop-blur-sm border border-white/10">
                                             <FavoriteButton

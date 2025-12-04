@@ -3,8 +3,8 @@ import { type ReactNode, useEffect, useState} from "react"
 import {useNotification} from "../hooks/UseNotification.ts";
 import {useAuth} from "../hooks/useAuth.ts";
 
-const API_URL_FAVORITES_IDS = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/favorites/ids`
-const API_URL_TOGGLE = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/favorites`
+const API_URL_FAVORITES_IDS = `${import.meta.env.VITE_API_URL}/favorites/ids`
+const API_URL_TOGGLE = `${import.meta.env.VITE_API_URL}/favorites`
 
 
 export const FavoritesProvider = ({ children }: { children: ReactNode }) => {

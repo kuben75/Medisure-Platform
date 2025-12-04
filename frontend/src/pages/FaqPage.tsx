@@ -1,14 +1,23 @@
-import { useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import Navbar from '../components/layout/Navbar.tsx';
 import Accordion from '../components/ui/Accordion.tsx';
 import { FAQ_DATA } from "../constants/faq.ts";
 
 export default function FaqPage() {
-
+const [openIndexes, setOpenIndexes] = useState<number[]>([])
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [])
 
+    const handleToggle = (index: number) => {
+        if(openIndexes.includes(index))
+            setOpenIndexes(p => p.filter(i => i !== index))
+        else
+            setOpenIndexes(p => [...p, index])
+    }
+    const handleCollapseAll = () => {
+        setOpenIndexes([])
+    }
     return (
         <>
             <Navbar />
@@ -25,10 +34,23 @@ export default function FaqPage() {
                             Kompletna lista odpowiedzi na pytania dotyczące pakietów, płatności i działania serwisu.
                         </p>
                     </div>
+                    {openIndexes.length > 0 && (
+                        <div className="flex justify-end mb-4">
+                            <button onClick={handleCollapseAll}
+                                    className="text-sm text-gray-500 hover:text-[#4E61F6] font-medium flex items-center gap-1 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                    <path strokeLinecap="round" strokeLinejoin="round"
+                                          d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"/>
+                                </svg>
+                                Zwiń wszystkie
+                            </button>
+                        </div>
+                    )}
 
                     <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-6 md:p-8 space-y-2">
                         {FAQ_DATA.map((f, i) => (
-                            <Accordion key={i} question={f.q} answer={f.a} />
+                            <Accordion key={i} question={f.q} answer={f.a} isOpen={openIndexes.includes(i)} onToggle={() => handleToggle(i)}/>
                         ))}
                     </div>
 

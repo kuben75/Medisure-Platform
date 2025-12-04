@@ -2,7 +2,7 @@ import {type ReactNode, useEffect, useState} from 'react'
 import type {IUser} from "../types/user.types.ts";
 import {AuthContext as AuthContext1} from "../hooks/useAuth.ts";
 
-const LOGIN_API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/auth/login`
+const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/auth/login`
 
 function parseJwt(token: string) {
     try {

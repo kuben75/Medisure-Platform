@@ -1,30 +1,45 @@
-import React, { useState } from "react"
-import { Link } from "react-router-dom"
+import React, {useState} from "react"
+import {Link} from "react-router-dom"
 import Button from "../../components/ui/Button.tsx"
-import { useNotification } from "../../hooks/UseNotification.ts"
+import {useNotification} from "../../hooks/UseNotification.ts"
 import ContactMap from "../../components/ui/ContactMap.tsx";
 import PaperAirplaneIcon from "../../components/icons/PaperAirplaneIcon.tsx";
 
 export default function FormSection() {
     const [isChecked, setIsChecked] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const { notify } = useNotification()
+    const {notify} = useNotification()
 
     const [formData, setFormData] = useState({
         name: '', surname: '', email: '', phone: '', topic: 'Oferta Indywidualna', message: ''
     })
+    const [errors, setErrors] = useState<Record<string, boolean>>({})
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsLoading(true)
+        e.preventDefault();
 
+        const newErrors: Record<string, boolean> = {};
+        if (!formData.name) newErrors.name = true;
+        if (!formData.surname) newErrors.surname = true;
+        if (!formData.email) newErrors.email = true;
+        if (!formData.phone) newErrors.phone = true;
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            notify.error("Uzupełnij wymagane pola oznaczone kolorem czerwonym.");
+            return;
+        }
+
+        setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false)
-            notify.success("Wiadomość wysłana! Nasz doradca skontaktuje się z Tobą mailowo w ciągu 24h.")
-            setFormData({ name: '', surname: '', email: '', phone: '', topic: 'Oferta Indywidualna', message: '' })
+            notify.success("Wiadomość wysłana! Odpowiemy wkrótce.")
+            setFormData({name: '', surname: '', email: '', phone: '', topic: 'Oferta Indywidualna', message: ''})
             setIsChecked(false)
+            setErrors({})
         }, 1500)
     }
+    const inputClass = (field: string) => `w-full px-4 py-3 border rounded-xl focus:outline-none transition-colors ${errors[field] ? 'border-red-500 bg-red-50 focus:ring-red-500' : 'border-gray-300 focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent bg-white'}`
 
     return (
         <section id="contact-form" className="py-16 px-4 bg-white">
@@ -39,133 +54,99 @@ export default function FormSection() {
 
                     <div className="lg:col-span-3 bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
                         <form className="space-y-5" onSubmit={handleSubmit}>
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <label htmlFor="name"
-                                           className="block text-sm font-bold text-gray-700 mb-1">Imię</label>
-                                    <input
-                                        type="text" id="name" required
-                                        value={formData.name}
-                                        onChange={e => setFormData({...formData, name: e.target.value})}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none bg-gray-50 focus:bg-white transition-colors"
-
-                                    />
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Imię <span
+                                        className="text-red-500">*</span></label>
+                                    <input type="text" value={formData.name} onChange={e => {
+                                        setFormData({...formData, name: e.target.value});
+                                        setErrors({...errors, name: false})
+                                    }} className={inputClass('name')} />
+                                    {errors.name && <p className="text-xs text-red-500 mt-1">Pole wymagane</p>}
                                 </div>
                                 <div>
-                                    <label htmlFor="surname"
-                                           className="block text-sm font-bold text-gray-700 mb-1">Nazwisko</label>
-                                    <input
-                                        type="text" id="surname" required
-                                        value={formData.surname}
-                                        onChange={e => setFormData({...formData, surname: e.target.value})}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none bg-gray-50 focus:bg-white transition-colors"
-
-                                    />
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Nazwisko <span
+                                        className="text-red-500">*</span></label>
+                                    <input type="text" value={formData.surname} onChange={e => {
+                                        setFormData({...formData, surname: e.target.value});
+                                        setErrors({...errors, surname: false})
+                                    }} className={inputClass('surname')} />
+                                    {errors.surname && <p className="text-xs text-red-500 mt-1">Pole wymagane</p>}
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1">Adres
-                                        email</label>
-                                    <input
-                                        type="email" id="email" required
-                                        value={formData.email}
-                                        onChange={e => setFormData({...formData, email: e.target.value})}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none bg-gray-50 focus:bg-white transition-colors"
-
-                                    />
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Email <span
+                                        className="text-red-500">*</span></label>
+                                    <input type="email" value={formData.email} onChange={e => {
+                                        setFormData({...formData, email: e.target.value});
+                                        setErrors({...errors, email: false})
+                                    }} className={inputClass('email')} />
+                                    {errors.email && <p className="text-xs text-red-500 mt-1">Pole wymagane</p>}
                                 </div>
                                 <div>
-                                    <label htmlFor="phone"
-                                           className="block text-sm font-bold text-gray-700 mb-1">Telefon</label>
-                                    <input
-                                        type="tel" id="phone" required
-                                        value={formData.phone}
-                                        onChange={e => setFormData({...formData, phone: e.target.value})}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none bg-gray-50 focus:bg-white transition-colors"
-
-                                    />
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">Telefon <span
+                                        className="text-red-500">*</span></label>
+                                    <input type="tel" value={formData.phone} onChange={e => {
+                                        setFormData({...formData, phone: e.target.value});
+                                        setErrors({...errors, phone: false})
+                                    }} className={inputClass('phone')} />
+                                    {errors.phone && <p className="text-xs text-red-500 mt-1">Pole wymagane</p>}
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="context" className="block text-sm font-bold text-gray-700 mb-1">Czego
-                                    dotyczy pytanie?</label>
-                                <div className="relative">
-                                    <select
-                                        id="context"
-                                        value={formData.topic}
+                                <label className="block text-sm font-bold text-gray-700 mb-1">Temat</label>
+                                <select value={formData.topic}
                                         onChange={e => setFormData({...formData, topic: e.target.value})}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none bg-white appearance-none cursor-pointer"
-                                    >
-                                        <option value="Oferta Indywidualna">Zakup pakietu - Indywidualny</option>
-                                        <option value="Oferta Rodzinna">Zakup pakietu - Rodzinny</option>
-                                        <option value="Oferta Senior">Zakup pakietu - Senior</option>
-                                        <option value="Oferta dla Firm">Oferta dla Firm (B2B)</option>
-                                        <option value="Wsparcie techniczne">Problem techniczny / Logowanie</option>
-                                        <option value="Inne">Inne zapytanie</option>
-                                    </select>
-                                    <div
-                                        className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                                  d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </div>
-                                </div>
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4E61F6] outline-none bg-white">
+                                    <option>Oferta Indywidualna</option>
+                                    <option>Oferta Rodzinna</option>
+                                    <option>Oferta dla Firm</option>
+                                    <option>Inne</option>
+                                </select>
                             </div>
 
                             <div>
-                                <label htmlFor="message"
-                                       className="block text-sm font-bold text-gray-700 mb-1">Wiadomość <span
-                                    className="font-normal text-gray-400">(opcjonalnie)</span></label>
+                                <div className="flex justify-between mb-1">
+                                    <label className="block text-sm font-bold text-gray-700">Wiadomość</label>
+                                    <span
+                                        className={`text-xs ${formData.message.length > 500 ? 'text-red-500' : 'text-gray-400'}`}>
+                                        {formData.message.length}/500
+                                    </span>
+                                </div>
                                 <textarea
-                                    id="message"
                                     rows={4}
+                                    maxLength={500}
                                     value={formData.message}
                                     onChange={e => setFormData({...formData, message: e.target.value})}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none bg-gray-50 focus:bg-white transition-colors resize-none"
-
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#4E61F6] outline-none resize-none"
                                 ></textarea>
                             </div>
 
                             <div className="pt-2">
-                                <label htmlFor="agreement" className="flex items-start cursor-pointer group">
+                                <label className="flex items-start cursor-pointer group">
                                     <div className="flex items-center h-5">
-                                        <input id="agreement" type="checkbox"
+                                        <input type="checkbox"
                                                className="h-5 w-5 rounded border-gray-300 text-[#4E61F6] focus:ring-[#4E61F6] mt-0.5 cursor-pointer"
-                                               checked={isChecked}
-                                               onChange={(e) => setIsChecked(e.target.checked)}
-                                        />
+                                               checked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}/>
                                     </div>
                                     <div
                                         className="ml-3 text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
-                                        Zgadzam się na przetwarzanie danych w celu kontaktu. Szczegóły w <Link
-                                        to="/polityka-prywatnosci" className="font-bold text-[#4E61F6] hover:underline">Polityce
-                                        prywatności</Link>.
+                                        Oświadczam, że zapoznałem/am się z <Link to="/polityka-prywatnosci"
+                                                                                 className="text-[#4E61F6] hover:underline font-medium">Polityką
+                                        Prywatności</Link>...
                                     </div>
                                 </label>
                             </div>
 
-                            <Button
-                                variant="primary"
-                                type="submit"
-                                disabled={!isChecked || isLoading}
-                                className="w-full !py-4 text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2 transition-all">
-                                {isLoading ? (
-                                    "Wysyłanie...") : (
-                                    <>
-                                        <PaperAirplaneIcon className="w-5 h-5 -rotate-45 mb-1"/>
-                                        Wyślij zapytanie
-                                    </>
-                                )}
+                            <Button variant="primary" type="submit" disabled={!isChecked || isLoading}
+                                    className="w-full !py-4 text-lg shadow-lg flex items-center justify-center gap-2">
+                                {isLoading ? "Wysyłanie..." : <><PaperAirplaneIcon
+                                    className="w-5 h-5 -rotate-45"/> Wyślij wiadomość</>}
                             </Button>
-
-                            <p className="text-center text-xs text-gray-400 mt-4">
-                                Odpowiedź otrzymasz na podany adres e-mail. <br/>
-                                Średni czas oczekiwania: <strong>do 24h w dni robocze.</strong>
-                            </p>
                         </form>
                     </div>
 

@@ -6,7 +6,7 @@ import StarIcon from "../icons/StarIcon.tsx";
 import {useNotification} from "../../hooks/UseNotification.ts";
 import {useAuth} from "../../hooks/useAuth.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/reviews`
+const API_URL = `${import.meta.env.VITE_API_URL}/reviews`
 
 export default function AddReviewModal({ isOpen, onClose, packageId, packageName }: AddReviewModalProps) {
     const { token } = useAuth()
@@ -20,6 +20,7 @@ export default function AddReviewModal({ isOpen, onClose, packageId, packageName
         if (!token) return
 
         if (rating === 0) {
+
             notify.error("Musisz wybrać ocenę.")
             return
         }

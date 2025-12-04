@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
-import Button from '../components/ui/Button.tsx'
-import PackageManagement from "../components/admin/PackageManagement.tsx"
-import UserManagement from "../components/admin/UserManagement.tsx";
+import Button from '../ui/Button.tsx'
+import PackageManagement from "./PackageManagement.tsx"
+import UserManagement from "./UserManagement.tsx";
 import {useState} from "react";
-import {Dashboard} from "../components/admin/Dashboard.tsx";
-import ReviewManagement from "../components/admin/ReviewManagement.tsx";
-import {useAuth} from "../hooks/useAuth.ts";
+import {Dashboard} from "./Dashboard.tsx";
+import ReviewManagement from "./ReviewManagement.tsx";
+import {useAuth} from "../../hooks/useAuth.ts";
+import AdminChatPanel from "./AdminChatPanel.tsx";
 
 export default function AdminPanel() {
     const { user, logout } = useAuth()
@@ -47,6 +48,7 @@ export default function AdminPanel() {
                                    onClick={() => setActiveTab('users')}/>
                         <TabButton label="Moderacja Opinii" isActive={activeTab === 'reviews'}
                                    onClick={() => setActiveTab('reviews')}/>
+                        <TabButton label="Centrum Wiadomości" isActive={activeTab === 'chat'} onClick={() => setActiveTab('chat')}/>
                     </nav>
                 </div>
 
@@ -55,6 +57,7 @@ export default function AdminPanel() {
                     {activeTab === 'packages' && <PackageManagement/>}
                     {activeTab === 'users' && <UserManagement/>}
                     {activeTab === 'reviews' && <ReviewManagement/>}
+                    {activeTab === 'chat' && <AdminChatPanel />}
                 </div>
 
             </div>

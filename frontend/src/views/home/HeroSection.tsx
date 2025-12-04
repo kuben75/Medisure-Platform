@@ -11,15 +11,18 @@ import {usePackagePurchase} from "../../hooks/usePackagePurchase.ts"
 import FlashIcon from "../../components/icons/FlashIcon.tsx"
 import {useComparison} from "../../hooks/useComparison.ts"
 import ChevronRightIcon from "../../components/icons/ChevronRightIcon.tsx"
+import {useAuth} from "../../hooks/useAuth.ts";
 
 export default function HeroSection() {
+    const {user} = useAuth()
     const {
         selectedPlan,
         selectedDuration,
         setSelectedDuration,
         openModal,
         closeModal,
-    } = usePackagePurchase();
+        priceDetails,
+    } = usePackagePurchase()
 
     const [plans, setPlans] = useState<IPricingPlan[]>([])
     const [loading, setLoading] = useState<boolean>(true)
@@ -29,7 +32,7 @@ export default function HeroSection() {
     const { notify } = useNotification()
     const { addToComparison } = useComparison()
 
-    const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/packages`
+    const API_URL = `${import.meta.env.VITE_API_URL}/packages`
 
     useEffect(() => {
         const fetchPackages = async () => {
@@ -46,10 +49,10 @@ export default function HeroSection() {
                 else
                     setPlans(featuredPlans)
 
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (e) {
-                setError("Nie udało się pobrać ofert.");
                 notify.error("Nie udało się pobrać ofert.")
+                setError(`Nie udało się pobrać ofert.`)
+                throw new Error(`Nie udało się pobrać ofert: ${e} `)
             } finally {
                 setLoading(false)
             }
@@ -103,11 +106,12 @@ export default function HeroSection() {
                                     relative flex flex-col bg-white text-gray-800 rounded-3xl p-6 shadow-2xl transition-all duration-500
                                     transform hover:-translate-y-3 hover:shadow-blue-900/30
                                     ${index === 1 ? 'md:scale-110 z-10 border-4 border-[#4E61F6]/20' : 'border border-transparent opacity-95 hover:opacity-100'}`}>
-                                {plan.isFeatured && (
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider">Bestseller</div>)}
-                                <div className="absolute top-4 right-4 z-20">
-                                    <FavoriteButton packageId={plan.id} className="text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"/>
-                                </div>
+                                {index === 1 && (
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider">
+                                        Bestseller</div>)}
+                                {user && (<div className="absolute top-4 right-4 z-20">
+                                        <FavoriteButton packageId={plan.id} className="text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"/></div>
+                                )}
 
                                 <div className="mt-4 mb-2">
                                     <p className="text-xs font-bold text-blue-600 uppercase tracking-wider">{plan.category}</p>
@@ -162,13 +166,41 @@ export default function HeroSection() {
 
                         <div className="px-4 pb-6">
                             <div className="text-center mb-6">
-                                <div className="flex items-baseline justify-center gap-1">
-                                    <span className="text-5xl font-black text-gray-900">{selectedPlan.price}</span>
-                                    <span className="text-gray-500">/ miesiąc</span>
-                                </div>
-                                <p className="text-xs text-green-600 font-bold mt-2 bg-green-50 inline-block px-2 py-1 rounded">
-                                    <span className="mr-1">✓</span> Dostępny od zaraz
-                                </p>
+                                {(() => {
+                                    const totalCost = Number(priceDetails.total);
+                                    const monthsCount = priceDetails.months;
+                                    const monthlyPrice = monthsCount > 0 ? (totalCost / monthsCount).toFixed(0) : "0";
+
+                                    const originalTotal = Number(priceDetails.originalTotal);
+                                    const originalMonthly = monthsCount > 0 ? (originalTotal / monthsCount).toFixed(0) : null;
+                                    return (
+                                        <>
+                                            <div className="flex items-baseline justify-center gap-2">
+                                                {priceDetails.isDiscounted && (
+                                                    <span className="text-lg text-red-400 line-through font-medium opacity-80">
+                                                        {originalMonthly} zł
+                                                    </span>
+                                                )}
+                                                <span className="text-5xl font-black text-gray-900 tracking-tight">
+                                                    {monthlyPrice}
+                                                </span>
+                                                <span className="text-2xl text-gray-500 font-bold">zł / mies</span>
+                                            </div>
+
+                                            <div className="mt-3 flex flex-col items-center">
+                                                <p className="text-sm text-gray-500 font-medium bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
+                                                    Płatne jako <span className="text-gray-900 font-bold">{priceDetails.total} zł</span> za {priceDetails.months} miesięcy
+                                                </p>
+
+                                                {priceDetails.isDiscounted && (
+                                                    <span className="inline-block mt-2 text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">
+                                                        {priceDetails.discountLabel}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </>
+                                    );
+                                })()}
                             </div>
 
                             <p className="text-center text-gray-600 text-sm leading-relaxed mb-8 px-2">
@@ -180,9 +212,9 @@ export default function HeroSection() {
                                 <div className="grid grid-cols-2 gap-7">
                                     {DURATION_OPTIONS.map((option) => (
                                         <button key={option.value} onClick={() => setSelectedDuration(option.value)}
-                                            className={`py-2 px-3 rounded-lg text-xs hover:cursor-pointer font-bold transition-all ${selectedDuration === option.value
-                                                ? 'bg-[#4E61F6] text-white shadow-md'
-                                                : 'bg-white text-gray-500 border border-gray-200 hover:border-blue-300'}`}>
+                                                className={`py-2 px-3 rounded-lg text-xs hover:cursor-pointer font-bold transition-all ${selectedDuration === option.value
+                                                    ? 'bg-[#4E61F6] text-white shadow-md'
+                                                    : 'bg-white text-gray-500 border border-gray-200 hover:border-blue-300'}`}>
                                             {option.label}</button>))}
                                 </div>
                             </div>

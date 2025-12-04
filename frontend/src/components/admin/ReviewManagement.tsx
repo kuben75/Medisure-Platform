@@ -7,7 +7,7 @@ import {useConfirm} from "../../hooks/UseConfrim.ts";
 import {useNotification} from "../../hooks/UseNotification.ts";
 import {useAuth} from "../../hooks/useAuth.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/reviews`
+const API_URL = `${import.meta.env.VITE_API_URL}/reviews`
 
 function XIcon() {
     return null;

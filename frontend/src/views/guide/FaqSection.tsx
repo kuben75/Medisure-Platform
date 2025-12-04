@@ -1,11 +1,20 @@
+import {useState} from "react";
 import Accordion from "../../components/ui/Accordion.tsx";
 import {FAQ_DATA} from "../../constants/faq.ts";
 import {Link} from "react-router-dom";
 import Button from "../../components/ui/Button.tsx";
 
 export default function FaqSection() {
+    const [openIndexes, setOpenIndexes] = useState<number[]>([])
 
-    const featuredFaqs = FAQ_DATA.slice(0, 4);
+    const featuredFaqs = FAQ_DATA.slice(0, 4)
+
+    const handleToggle = (index: number) => {
+        if(openIndexes.includes(index))
+            setOpenIndexes(p => p.filter(i => i !== index))
+        else
+            setOpenIndexes(p => [...p, index])
+    }
 
     return (
         <section className="py-20 px-4 bg-white">
@@ -15,9 +24,15 @@ export default function FaqSection() {
                     <p className="text-gray-500">Znajdź szybkie odpowiedzi na kluczowe pytania.</p>
                 </div>
 
-                <div className="mb-8">
+                <div className="mb-8 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                     {featuredFaqs.map((f, i) => (
-                        <Accordion key={i} question={f.q} answer={f.a} />
+                        <Accordion
+                            key={i}
+                            question={f.q}
+                            answer={f.a}
+                            isOpen={openIndexes.includes(i)}
+                            onToggle={() => handleToggle(i)}
+                        />
                     ))}
                 </div>
 

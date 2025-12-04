@@ -29,10 +29,16 @@ export interface IUserSubscription {
     packageId: number
     packageName: string
     price: string
+    transactionId?: string
+    paymentMethod?: string
     startDate: string
     endDate: string
     status: string
     features: string[]
+    street?: string
+    houseNumber?: string
+    city?: string
+    zipCode?: string
 }
 export interface IUserFormModalProps {
     isOpen: boolean;
