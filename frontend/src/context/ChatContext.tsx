@@ -19,8 +19,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const connectionRef = useRef<signalR.HubConnection | null>(null)
     const isConnecting = useRef(false)
 
-    const BASE_URL = "https://localhost:44333/api"
-    const HUB_URL = "https://localhost:44333/chatHub"
+    const BASE_URL = import.meta.env.VITE_API_URL
+    const HUB_URL = `${BASE_URL}/chatHub`
 
     const addMessageUnique = (newMsg: IChatMessage) => {
         setMessages(prev => {
