@@ -10,7 +10,7 @@ import {useAuth} from "../../hooks/useAuth.ts";
 const API_URL = `${import.meta.env.VITE_API_URL}/reviews`
 
 function XIcon() {
-    return null;
+    return null
 }
 
 export default function ReviewManagement() {
