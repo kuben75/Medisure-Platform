@@ -57,3 +57,13 @@ export type AccordionProps = {
     isOpen?: boolean
     onToggle?: () => void
 }
+
+export interface PackageDetailsModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    plan: IPricingPlan | null;
+    userAge: number;
+    selectedDuration: string;
+    onDurationChange: (duration: string) => void;
+    onProceedToCheckout: () => void;
+}

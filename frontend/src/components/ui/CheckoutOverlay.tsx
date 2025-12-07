@@ -13,9 +13,8 @@ import InfoIcon from "../icons/InfoIcon.tsx";
 import BlikLogo from "../icons/BlikLogo.tsx";
 import PayPalLogo from "../icons/PayPalLogo.tsx";
 import GPayLogo from "../icons/GPayLogo.tsx";
+
 const BankIcon = () => <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg>;
-
-
 
 const BankLogo = ({name, color}: { name: string, color: string }) => (
     <div className="flex items-center justify-center w-full h-full font-bold text-sm tracking-tight"
@@ -23,21 +22,41 @@ const BankLogo = ({name, color}: { name: string, color: string }) => (
         {name}
     </div>
 )
+
+const calculateAge = (birthDateString: string): number => {
+    if (!birthDateString) return 0;
+    const today = new Date();
+    const birthDate = new Date(birthDateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+};
+
 export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, onFinalize}: ICheckoutOverlayProps) {
     const {user} = useAuth()
     const [step, setStep] = useState<1 | 2>(1)
     const [isProcessing, setIsProcessing] = useState(false)
+    const [processingStatus, setProcessingStatus] = useState("Inicjowanie...")
     const [isSuccess, setIsSuccess] = useState(false)
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [isPhoneLocked, setIsPhoneLocked] = useState(false)
+
+    const [isBirthDateLocked, setIsBirthDateLocked] = useState(false)
+
     const [saveInfo, setSaveInfo] = useState(false)
+    const [countdown, setCountdown] = useState(5)
 
     const [formData, setFormData] = useState({
-        firstName: '', lastName: '', email: '', phone: '',
+        firstName: '', lastName: '', email: '', phone: '', birthDate: '',
         street: '', houseNumber: '', city: '', zipCode: ''
     })
-    const [paymentMethod, setPaymentMethod] = useState<TPaymentMethodType>('card')
 
+    const [dynamicTotal, setDynamicTotal] = useState(priceDetails.total);
+
+    const [paymentMethod, setPaymentMethod] = useState<TPaymentMethodType>('card')
     const [selectedBank, setSelectedBank] = useState<TBankOptionType | null>(null)
     const [bankLogin, setBankLogin] = useState({login: '', password: ''})
     const [cardData, setCardData] = useState({number: '', expiry: '', cvc: '', holder: ''})
@@ -52,8 +71,46 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
     })
 
     useEffect(() => {
+        if (!formData.birthDate) {
+            setDynamicTotal(priceDetails.total);
+            return;
+        }
+
+        const age = calculateAge(formData.birthDate);
+        let multiplier = 1.0;
+
+        if (!isBirthDateLocked) {
+            if (age > 30 && age <= 50)
+                multiplier += (age - 30) * 0.015;
+            else if (age > 50)
+                multiplier += 0.30 + (age - 50) * 0.025;
+
+            const newTotal = parseFloat((priceDetails.total * multiplier).toFixed(2));
+            setDynamicTotal(newTotal);
+        } else {
+            setDynamicTotal(priceDetails.total);
+        }
+
+    }, [formData.birthDate, isBirthDateLocked, priceDetails.total]);
+
+
+    useEffect(() => {
+        let timer: ReturnType<typeof setInterval>;
+        if (isSuccess && countdown > 0) {
+            timer = setInterval(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+        } else if (isSuccess && countdown === 0) {
+            window.location.href = '/profile?tab=subscriptions'
+        }
+        return () => clearInterval(timer);
+    }, [isSuccess, countdown]);
+
+
+    useEffect(() => {
         if (isOpen && user) {
             const userPhone = user.phoneNumber || ''
+            const userBirthDate = user.birthDate  || '';
 
             const savedData = localStorage.getItem('saved_billing_data')
             let initialData = {
@@ -61,36 +118,55 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                 lastName: user.lastName || '',
                 email: user.email || '',
                 phone: userPhone,
+                birthDate: userBirthDate,
                 street: '', houseNumber: '', city: '', zipCode: ''
             }
 
             if (savedData) {
                 const parsed = JSON.parse(savedData);
-                initialData = { ...initialData, ...parsed, email: user.email }
+                initialData = {
+                    ...initialData,
+                    ...parsed,
+                    email: user.email,
+                    phone: userPhone || parsed.phone || '',
+                }
                 setSaveInfo(true)
             }
 
             setFormData(initialData)
+
             setIsPhoneLocked(!!userPhone && userPhone.length > 0)
+            setIsBirthDateLocked(!!userBirthDate && userBirthDate.length > 0)
 
             setStep(1)
             setIsSuccess(false)
+            setCountdown(5)
             setIsProcessing(false)
             setErrors({})
             setSelectedBank(null)
             setCardData({number: '', expiry: '', cvc: '', holder: ''})
             setBlikCode('')
+            setDynamicTotal(priceDetails.total)
         }
-    }, [isOpen, user])
+    }, [isOpen, user, priceDetails.total])
 
     const validateStep1 = () => {
         const newErrors: Record<string, string> = {}
         const cleanPhone = formData.phone.replace(/\D/g, '')
+
         if (!cleanPhone || cleanPhone.length < 9) newErrors.phone = "Wymagany poprawny nr telefonu"
+        if (!formData.birthDate) newErrors.birthDate = "Data urodzenia jest wymagana do kalkulacji"
+
+        if (formData.birthDate) {
+            const age = calculateAge(formData.birthDate);
+            if (age < 18) newErrors.birthDate = "Musisz być pełnoletni";
+        }
+
         if (!formData.street.trim()) newErrors.street = "Ulica jest wymagana"
         if (!formData.houseNumber.trim()) newErrors.houseNumber = "Nr domu jest wymagany"
         if (!formData.city.trim()) newErrors.city = "Miasto jest wymagane"
         if (!/^\d{2}-\d{3}$/.test(formData.zipCode)) newErrors.zipCode = "Format: XX-XXX"
+
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
@@ -99,21 +175,41 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
         const newErrors: Record<string, string> = {}
 
         if (paymentMethod === 'transfer') {
-            if (!selectedBank)
-                return false
+            if (!selectedBank) return false
 
             if (selectedBank === 'blik') {
                 if (!/^\d{6}$/.test(blikCode)) newErrors.blik = "Kod BLIK musi mieć 6 cyfr"
             } else {
-                if (!bankLogin.login) newErrors.bankLogin = "Podaj identyfikator"
-                if (!bankLogin.password) newErrors.bankPass = "Podaj hasło"
+                // WALIDACJA BANKU (DŁUGOŚĆ PÓL)
+                if (!bankLogin.login || bankLogin.login.length < 5)
+                    newErrors.bankLogin = "Login musi mieć min. 5 znaków"
+                if (!bankLogin.password || bankLogin.password.length < 8)
+                    newErrors.bankPass = "Hasło musi mieć min. 8 znaków"
             }
         }
 
         if (paymentMethod === 'card') {
             const cleanCard = cardData.number.replace(/\s/g, '')
             if (!/^\d{16}$/.test(cleanCard)) newErrors.cardNumber = "Niepoprawny numer karty"
-            if (!/^\d{2}\/\d{2}$/.test(cardData.expiry)) newErrors.expiry = "Format MM/YY"
+
+            // WALIDACJA DATY WAŻNOŚCI KARTY
+            if (!/^\d{2}\/\d{2}$/.test(cardData.expiry)) {
+                newErrors.expiry = "Format MM/YY"
+            } else {
+                const [monthStr, yearStr] = cardData.expiry.split('/');
+                const month = parseInt(monthStr, 10);
+                const year = parseInt(`20${yearStr}`, 10);
+                const now = new Date();
+                const currentMonth = now.getMonth() + 1;
+                const currentYear = now.getFullYear();
+
+                if (month < 1 || month > 12) {
+                    newErrors.expiry = "Niepoprawny miesiąc";
+                } else if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                    newErrors.expiry = "Karta straciła ważność";
+                }
+            }
+
             if (!/^\d{3}$/.test(cardData.cvc)) newErrors.cvc = "CVC to 3 cyfry"
         }
         setErrors(newErrors)
@@ -151,31 +247,45 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                     street: formData.street,
                     houseNumber: formData.houseNumber,
                     city: formData.city,
-                    zipCode: formData.zipCode
+                    zipCode: formData.zipCode,
+                    phone: formData.phone
                 }
                 localStorage.setItem('saved_billing_data', JSON.stringify(dataToSave))
             } else
-                 localStorage.removeItem('saved_billing_data')
+                localStorage.removeItem('saved_billing_data')
 
             setStep(2)
         }
     }
+
     const handlePayment = async () => {
         if (!validateStep2()) return
+
+        // SYMULACJA PROCESOWANIA
         setIsProcessing(true)
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        setProcessingStatus("Nawiązywanie bezpiecznego połączenia...")
+
+        await new Promise(resolve => setTimeout(resolve, 800))
+        setProcessingStatus("Weryfikacja danych płatności...")
+
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        setProcessingStatus("Autoryzacja transakcji...")
+
+        await new Promise(resolve => setTimeout(resolve, 800))
+
         const txId = `TX-${Math.floor(Math.random() * 1000000000)}`
+
         setIsProcessing(false)
         setIsSuccess(true)
+
         let finalMethodName :string = paymentMethod
         if (paymentMethod === 'card') finalMethodName = 'Karta'
         else if (paymentMethod === 'paypal') finalMethodName = 'PayPal'
         else if (paymentMethod === 'gpay') finalMethodName = 'Google Pay'
         else if (paymentMethod === 'transfer') finalMethodName = selectedBank === 'blik' ? 'BLIK' : `Przelew (${selectedBank?.toUpperCase()})`;
 
-        setTimeout(() => {
-            onFinalize(finalMethodName, txId, { ...formData })
-        }, 1500)
+        // Wywołujemy onFinalize, aby zapisać dane, ale nie zamykamy okna (robimy to via redirect/button)
+        onFinalize(finalMethodName, txId, { ...formData })
     }
 
     if (!isOpen) return null
@@ -189,6 +299,11 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
             : 'bg-white border-gray-300 text-slate-800 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 placeholder:text-gray-300 hover:border-gray-400'
     }
     `
+
+    // Obliczenie VAT i Netto na podstawie dynamicznej ceny
+    const dynamicNetto = (dynamicTotal * 0.77).toFixed(2);
+    const dynamicVat = (dynamicTotal * 0.23).toFixed(2);
+    const priceIncrease = dynamicTotal - priceDetails.total;
 
     return (
         <div className="fixed inset-0 z-50 flex flex-col md:flex-row bg-white animate-fade-in font-sans">
@@ -260,34 +375,43 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                         </div>
                     </div>
 
-                    <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-lg">
+                    <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-lg transition-all duration-300">
                         <div className="space-y-2 mb-4 pb-4 border-b border-white/10">
                             <div className="flex justify-between text-sm">
                                 <span className="text-slate-400">Okres</span>
                                 <span className="text-slate-200 font-medium">{priceDetails.months} mies.</span>
                             </div>
+
+                            {/* POKAZUJEMY ZWYŻKĘ JEŚLI ISTNIEJE */}
+                            {priceIncrease > 0.01 && (
+                                <div className="flex justify-between text-sm animate-fade-in">
+                                    <span className="text-orange-300">Zwyżka (wiek)</span>
+                                    <span className="text-orange-300 font-medium">+{priceIncrease.toFixed(2)} zł</span>
+                                </div>
+                            )}
+
                             <div className="flex justify-between text-sm">
                                 <span className="text-slate-400">Netto</span>
-                                <span
-                                    className="text-slate-200 font-medium">{(priceDetails.total * 0.77).toFixed(2)} zł</span>
+                                <span className="text-slate-200 font-medium">{dynamicNetto} zł</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-slate-400">VAT (23%)</span>
-                                <span
-                                    className="text-slate-200 font-medium">{(priceDetails.total * 0.23).toFixed(2)} zł</span>
+                                <span className="text-slate-200 font-medium">{dynamicVat} zł</span>
                             </div>
                         </div>
 
                         <div className="flex justify-between items-end">
                             <div className="flex flex-col">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Do zapłaty</span>
-                                {priceDetails.isDiscounted && (
-                                    <span
-                                        className="text-xs text-red-400 line-through opacity-80">{priceDetails.originalTotal} zł</span>
+                                {(priceDetails.isDiscounted || dynamicTotal > priceDetails.total) && (
+                                    <span className="text-xs text-slate-400/80">
+                                        Cena bazowa: {priceDetails.total} zł
+                                    </span>
                                 )}
                             </div>
-                            <span className="text-4xl font-black text-white tracking-tight">{priceDetails.total} <span
-                                className="text-xl text-slate-500 font-bold">zł</span></span>
+                            <span className="text-4xl font-black text-white tracking-tight animate-fade-in-up key-{dynamicTotal}">
+                                {dynamicTotal.toFixed(2)} <span className="text-xl text-slate-500 font-bold">zł</span>
+                            </span>
                         </div>
                     </div>
 
@@ -325,13 +449,28 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                 <div className="p-10 md:p-16 max-w-2xl mx-auto w-full flex-grow flex flex-col justify-start pt-12">
 
                     {isSuccess ? (
-                        <div className="text-center py-12 animate-fade-in-up">
-                            <div
-                                className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl shadow-green-100">
-                                <CheckIcon className="w-10 h-10 text-green-600"/>
+                        <div className="text-center py-12 animate-fade-in-up flex flex-col items-center justify-center h-full">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-green-500/20 blur-xl rounded-full"></div>
+                                <div
+                                    className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-8 shadow-xl relative z-10 animate-bounce-short">
+                                    <CheckIcon className="w-12 h-12 text-white"/>
+                                </div>
                             </div>
-                            <h2 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">Płatność przyjęta</h2>
-                            <p className="text-slate-500 leading-relaxed">Potwierdzenie wysłaliśmy na Twój email.</p>
+
+                            <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">Płatność przyjęta!</h2>
+                            <p className="text-slate-500 text-lg leading-relaxed max-w-md mx-auto mb-10">
+                                Dziękujemy za zaufanie. Potwierdzenie oraz dokumenty polisy wysłaliśmy na Twój adres email.
+                            </p>
+
+                            <div className="w-full max-w-xs space-y-4">
+                                <Button onClick={() => window.location.href = '/'} variant="primary" className="w-full py-4 rounded-xl shadow-lg !bg-green-500 shadow-green-500/20 hover:shadow-green-500/30">
+                                    Wróć do strony głównej
+                                </Button>
+                                <p className="text-xs text-gray-400 font-medium">
+                                    Automatyczne przekierowanie do panelu za <span className="text-slate-800 font-bold text-base mx-1">{countdown}s</span>
+                                </p>
+                            </div>
                         </div>
                     ) : (
                         <>
@@ -389,6 +528,36 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                                     <p className="text-red-500 text-xs mt-1 absolute">{errors.phone}</p>}
                                             </div>
                                         </div>
+
+                                        {/* POLE DATY URODZENIA - WYŚWIETLANE TYLKO JEŚLI NIE MA GO W PROFILU (lub jest edytowalne) */}
+                                        {!isBirthDateLocked && (
+                                            <div className="bg-orange-50/50 border border-orange-100 rounded-xl p-4 animate-fade-in">
+                                                <div className="flex gap-4 items-center">
+                                                    <div className="bg-orange-100 p-2 rounded-lg text-orange-600">
+                                                        <CalendarIcon className="w-5 h-5" />
+                                                    </div>
+                                                    <div className="flex-grow group relative">
+                                                        <label className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
+                                                            Data urodzenia <span className="text-red-400">*</span>
+                                                            <span className="ml-2 normal-case font-normal text-orange-600/70 text-[10px]">(Wymagane do kalkulacji składki)</span>
+                                                        </label>
+                                                        <input
+                                                            type="date"
+                                                            value={formData.birthDate}
+                                                            max={new Date().toISOString().split('T')[0]}
+                                                            onChange={e => {
+                                                                setFormData({...formData, birthDate: e.target.value});
+                                                                if (errors.birthDate) setErrors({...errors, birthDate: ''});
+                                                            }}
+                                                            className={getInputClass(errors.birthDate, false) + " bg-white"}
+                                                        />
+                                                        {errors.birthDate &&
+                                                            <p className="text-red-500 text-xs mt-1 absolute">{errors.birthDate}</p>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
                                     </div>
 
                                     <div className="space-y-6 pt-2">
@@ -464,7 +633,7 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                             />
                                             <span
                                                 className="ml-3 text-sm text-slate-600 group-hover:text-slate-900 transition-colors font-medium">
-                                                Zapamiętaj moje dane do przyszłych zamówień
+                                                Zapamiętaj moje dane i telefon do przyszłych zamówień
                                             </span>
                                         </label>
                                     </div>
@@ -491,14 +660,14 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                                 { id: 'paypal', label: 'PayPal', icon: <PayPalLogo /> }
                                             ].map((m) => (
                                                 <button key={m.id} onClick={() => {
-                                                        setPaymentMethod(m.id as TPaymentMethodType)
-                                                        setErrors({})
-                                                        setSelectedBank(null)}}
-                                                    className= {`relative flex flex-col items-center justify-center gap-3 h-28 rounded-2xl border transition-all duration-300 group
+                                                    setPaymentMethod(m.id as TPaymentMethodType)
+                                                    setErrors({})
+                                                    setSelectedBank(null)}}
+                                                        className= {`relative flex flex-col items-center justify-center gap-3 h-28 rounded-2xl border transition-all duration-300 group
                                                         ${paymentMethod === m.id
-                                                        ? 'border-blue-500 bg-blue-50/50 shadow-md scale-[1.02] z-10 ring-1 ring-blue-500'
-                                                        : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
-                                                    }`}>
+                                                            ? 'border-blue-500 bg-blue-50/50 shadow-md scale-[1.02] z-10 ring-1 ring-blue-500'
+                                                            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                                                        }`}>
                                                     {paymentMethod === m.id && <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>}
                                                     <div className={`transition-all duration-300 ${paymentMethod === m.id ? 'scale-110' : 'grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100'}`}>{m.icon}</div>
                                                     <span className={`text-xs font-bold ${paymentMethod === m.id ? 'text-blue-700' : 'text-slate-500'}`}>{m.label}</span>
@@ -676,10 +845,10 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                                 <>
                                                     <div
                                                         className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                    <span>Przetwarzanie...</span>
+                                                    <span>{processingStatus}</span>
                                                 </>
                                             ) : (
-                                                <span>Zapłać {priceDetails.total} zł</span>
+                                                <span>Zapłać {dynamicTotal.toFixed(2)} zł</span>
                                             )}
                                         </Button>
                                     </div>

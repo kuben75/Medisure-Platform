@@ -162,7 +162,7 @@ export default function AdminChatPanel() {
                                 ? 'bg-blue-50 border-l-[#4E61F6]'
                                 : hasUnread
                                     ? 'bg-white border-l-transparent hover:bg-gray-50'
-                                    : 'bg-gray-50/40 border-l-transparent hover:bg-gray-100 grayscale-[0.3] opacity-85'; // PRZYCIEMNIENIE
+                                    : 'bg-gray-50/40 border-l-transparent hover:bg-gray-100 grayscale-[0.3] opacity-85';
 
                             return (
                                 <div

@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSeedToDatabase : Migration
+    public partial class UpdateMockData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -116,6 +116,24 @@ namespace backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SystemLogs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SystemNotifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemNotifications", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -289,10 +307,16 @@ namespace backend.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<string>(type: "text", nullable: false),
                     PackageId = table.Column<int>(type: "integer", nullable: false),
+                    PriceAtPurchase = table.Column<string>(type: "text", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    PriceAtPurchase = table.Column<string>(type: "text", nullable: false)
+                    Street = table.Column<string>(type: "text", nullable: false),
+                    HouseNumber = table.Column<string>(type: "text", nullable: false),
+                    City = table.Column<string>(type: "text", nullable: false),
+                    ZipCode = table.Column<string>(type: "text", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "text", nullable: false),
+                    TransactionId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -408,6 +432,9 @@ namespace backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "SystemLogs");
+
+            migrationBuilder.DropTable(
+                name: "SystemNotifications");
 
             migrationBuilder.DropTable(
                 name: "UserPackages");

@@ -5,10 +5,7 @@ export default function CallUsComponent() {
     return (
         <section className="py-20 px-4 bg-slate-50 border-t border-gray-200">
             <div className="container mx-auto text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Wolę bezpośrednią rozmowę</h2>
-                <p className="text-lg text-gray-500 mb-12 max-w-lg mx-auto">
-                    Nasi konsultanci czekają na Twój telefon od poniedziałku do piątku.
-                </p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-15">Wolę bezpośrednią rozmowę</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
 

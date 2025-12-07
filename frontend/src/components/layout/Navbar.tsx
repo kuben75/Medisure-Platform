@@ -7,7 +7,8 @@ import UserIcon from "../icons/UserIcon.tsx";
 import LogoutIcon from "../icons/LogoutIcon.tsx";
 import MenuIcon from "../icons/MenuIcon.tsx";
 import XIcon from "../icons/XIcon.tsx";
-import { useUserNotifications } from "../../context/UserNotificationsContext.tsx";
+
+import {useUserNotifications} from "../../hooks/useUserNotifications.ts";
 
 const BellIcon = ({ hasUnread }: { hasUnread: boolean }) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-6 h-6 transition-transform duration-300 group-hover:rotate-12 ${hasUnread ? 'text-gray-800' : 'text-gray-600'}`}>
@@ -206,7 +207,14 @@ export default function Navbar() {
                             {notifications.map((notif) => (
                                 <div
                                     key={notif.id}
-                                    onClick={() => !notif.isRead && markAsRead && markAsRead(notif.id)}
+                                    onClick={() => {
+                                        if (!notif.isRead && markAsRead)
+                                            markAsRead(notif.id)
+                                        setIsNotificationsOpen(false)
+                                        if(!isAdmin)
+                                            navigate('/profile?tab=notifications')
+                                    }
+                                }
                                     className={`p-5 hover:bg-gray-50 transition-all cursor-pointer group relative ${!notif.isRead ? 'bg-blue-50/40' : 'bg-white'}`}
                                 >
                                     {!notif.isRead && (
@@ -241,7 +249,7 @@ export default function Navbar() {
 
                 <div className="p-4 border-t border-gray-100 bg-gray-50 text-center">
                     <Link
-                        to="/profile?tab=notifications"
+                        to={isAdmin ? "/admin" : "/profile?tab=notifications"}
                         onClick={() => setIsNotificationsOpen(false)}
                         className="text-sm font-bold text-gray-600 hover:text-[#4E61F6] transition-colors flex items-center justify-center gap-2"
                     >

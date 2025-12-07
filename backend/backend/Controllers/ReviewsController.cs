@@ -140,6 +140,13 @@ public class ReviewsController : ControllerBase
             }
             await _context.SaveChangesAsync();
         }
+        await _notificationService.CreateNotificationAsync(
+            review.UserId,
+            "Twoja opinia została zatwierdzona",
+            $"Twoja opinia dotycząca pakietu ID {review.PackageId} została zatwierdzona przez moderatora.",
+            "ReviewApproved"
+        );
+        
         await _logService.LogAsync(
             "APPROVE_REVIEW",
             $"Opinia ID {id} została zatwierdzona.",

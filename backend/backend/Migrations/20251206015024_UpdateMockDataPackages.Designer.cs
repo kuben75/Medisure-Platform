@@ -13,8 +13,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251203235812_AddSystemNotifications")]
-    partial class AddSystemNotifications
+    [Migration("20251206015024_UpdateMockDataPackages")]
+    partial class UpdateMockDataPackages
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

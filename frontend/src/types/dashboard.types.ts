@@ -5,10 +5,11 @@ export interface IDashboardStats {
     expiringSubscriptions: number;
 }
 export interface ISystemLog {
-    id: number
-    action: string
-    description: string
-    level: string
-    userName: string
-    createdAt: string
+    id: number;
+    action: string;
+    description: string;
+    user: string;
+    userId: string | null;
+    level: string;
+    timestamp: string;
 }

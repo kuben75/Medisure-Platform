@@ -19,6 +19,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddSingleton<UserConnectionManager>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Moje API", Version = "v1" });
@@ -55,10 +56,10 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins(frontendUrl) 
+                .WithOrigins(frontendUrl)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials(); 
+                .AllowCredentials();
         });
 });
 
@@ -156,6 +157,7 @@ catch (Exception ex)
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
     logger.LogError(ex, "Wystąpił błąd podczas inicjalizacji bazy danych przy starcie aplikacji.");
 }
+
 app.Run();
 
 void SeedDatabase(IHost app)
@@ -171,11 +173,12 @@ void SeedDatabase(IHost app)
             while (retries > 0)
             {
                 if (dbContext.Database.CanConnect()) break;
-                
+
                 Console.WriteLine($"Czekam na bazę danych... pozostało prób: {retries}");
                 Thread.Sleep(2000);
                 retries--;
             }
+
             dbContext.Database.Migrate();
 
             if (!dbContext.Packages.Any())
@@ -186,129 +189,203 @@ void SeedDatabase(IHost app)
                     {
                         Name = "Pakiet Podstawowy",
                         Category = "Individual",
-                        PriceValue = 59.00m, Price = "59 zł",
-                        Description = "Podstawowa opieka dla młodych i zdrowych.",
-                        Features = new List<string> { "Internista", "Pediatra", "Podstawowe badania krwi" },
+                        PriceValue = 69.00m, Price = "69 zł",
+                        Description = "Niezbędna opieka medyczna na start.",
+                        Features = new List<string>
+                        {
+                            "Nielimitowane konsultacje u lekarza internisty oraz pediatry.",
+                            "Dostęp do alergologa w ramach opieki podstawowej.",
+                            "Podstawowe badania krwi i moczu bez opłat.",
+                            "Gwarantowane terminy wizyt w ciągu 24h.",
+                            "Portal pacjenta: e-recepty i wyniki badań online."
+                        },
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
-                        SpecialistsCount = 5, FacilitiesCount = 200, IsFeatured = false
+                        SpecialistsCount = 3,
+                        FacilitiesCount = 200, IsFeatured = false
                     },
                     new Package
                     {
                         Name = "Pakiet Podstawowy Plus",
                         Category = "Individual",
-                        PriceValue = 79.00m, Price = "79 zł",
-                        Description = "Rozszerzona opieka podstawowa z dodatkowymi korzyściami.",
+                        PriceValue = 99.00m, Price = "99 zł",
+                        Description = "Rozszerzona diagnostyka i specjaliści pierwszego kontaktu.",
                         Features = new List<string>
-                            { "Internista", "Pediatra", "Podstawowe badania krwi", "Konsultacja dietetyczna" },
+                        {
+                            "Dostęp do Ginekologa, Dermatologa, Okulisty i Laryngologa.",
+                            "Rozszerzone badania laboratoryjne (w tym hormony tarczycy).",
+                            "Konsultacje internistyczne bez limitów.",
+                            "Bezpłatne szczepienie przeciw grypie raz w roku.",
+                            "Dostęp do fizjoterapeuty i rehabilitacji."
+                        },
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
-                        SpecialistsCount = 7, FacilitiesCount = 250, IsFeatured = false
+                        SpecialistsCount = 9,
+                        FacilitiesCount = 250, IsFeatured = false
                     },
                     new Package
                     {
                         Name = "Pakiet Komfort",
                         Category = "Individual",
-                        PriceValue = 129.00m, Price = "129 zł",
-                        Description = "Szeroki dostęp do specjalistów bez skierowań.",
+                        PriceValue = 169.00m, Price = "169 zł",
+                        Description = "Szeroki dostęp do specjalistów, rehabilitacja i stomatologia.",
                         Features = new List<string>
-                            { "30 Specjalistów", "Badania obrazowe (RTG, USG)", "Prowadzenie ciąży" },
+                        {
+                            "Dostęp do ponad 20 specjalistów bez skierowań.",
+                            "Stomatologia: Przegląd, skaling i piaskowanie raz w roku.",
+                            "Nielimitowane badania USG i RTG.",
+                            "Pakiet 5 zabiegów rehabilitacyjnych.",
+                            "Wsparcie psychologa i lekarza chorób zakaźnych."
+                        },
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = true,
-                        SpecialistsCount = 15, FacilitiesCount = 800, IsFeatured = true
+                        SpecialistsCount = 24,
+                        FacilitiesCount = 800, IsFeatured = true
                     },
                     new Package
                     {
                         Name = "Pakiet Prestige",
                         Category = "Individual",
-                        PriceValue = 399.00m, Price = "399 zł",
-                        Description = "Pełna opieka medyczna, stomatologia i wizyty domowe.",
+                        PriceValue = 450.00m, Price = "450 zł",
+                        Description = "Opieka VIP: wszyscy specjaliści, wizyty domowe i pełna stomatologia.",
                         Features = new List<string>
-                            { "Wszyscy specjaliści", "Stomatologia zachowawcza", "Wizyty domowe", "Szczepienia" },
+                        {
+                            "Pełny dostęp do wszystkich 32 specjalistów.",
+                            "Stomatologia zachowawcza (leczenie) bez limitów kosztów.",
+                            "Wizyty domowe lekarza i pielęgniarki.",
+                            "Prowadzenie ciąży i szkoła rodzenia w cenie.",
+                            "Indywidualny opiekun medyczny (Concierge)."
+                        },
                         HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
-                        SpecialistsCount = 30, FacilitiesCount = 1500, IsFeatured = true
+                        SpecialistsCount = 32,
+                        FacilitiesCount = 1500, IsFeatured = true
                     },
                     new Package
                     {
-                        Name = "Rodzina 2+1 Start", Category = "Family", PriceValue = 199.00m, Price = "199 zł",
-                        Description = "Ekonomiczny pakiet dla rodziców z jednym dzieckiem.",
-                        Features = new List<string> { "Pediatra bez limitu", "Internista", "Szczepienia podstawowe" },
-                        HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
-                        SpecialistsCount = 10, FacilitiesCount = 400, IsFeatured = false
-                    },
-                    new Package
-                    {
-                        Name = "Rodzina 2+2 Standard", Category = "Family", PriceValue = 299.00m, Price = "299 zł",
-                        Description = "Optymalna opieka dla 4-osobowej rodziny.",
+                        Name = "Rodzina 2+1 Start", Category = "Family", PriceValue = 219.00m, Price = "219 zł",
+                        Description = "Ochrona zdrowia dla rodziców i dziecka.",
                         Features = new List<string>
-                            { "Specjaliści dziecięcy", "Opieka dyżurowa 24h", "Wizyty domowe (2/rok)" },
+                        {
+                            "Nielimitowany Pediatra i Internista dla całej rodziny.",
+                            "Dostęp do Ginekologa i Dermatologa.",
+                            "Bilans zdrowia dziecka i szczepienia obowiązkowe.",
+                            "Pomoc doraźna 24/7 (Hotline).",
+                            "Wsparcie logopedyczne (konsultacja wstępna)."
+                        },
+                        HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
+                        SpecialistsCount = 9,
+                        FacilitiesCount = 400, IsFeatured = false
+                    },
+                    new Package
+                    {
+                        Name = "Rodzina 2+2 Standard", Category = "Family", PriceValue = 380.00m, Price = "380 zł",
+                        Description = "Optymalny pakiet dla rodziny z dostępem do stomatologa.",
+                        Features = new List<string>
+                        {
+                            "Dostęp do większości specjalistów dziecięcych i dorosłych.",
+                            "Stomatologia: przeglądy i higienizacja dla całej rodziny.",
+                            "Wizyty domowe (2 w roku) w nagłych zachorowaniach.",
+                            "Wsparcie logopedy i medycyny sportowej dla dzieci.",
+                            "Opieka stomatologiczna w nagłych bólach."
+                        },
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = false,
-                        SpecialistsCount = 20, FacilitiesCount = 600, IsFeatured = true
+                        SpecialistsCount = 26,
+                        FacilitiesCount = 600, IsFeatured = true
                     },
                     new Package
                     {
                         Name = "Pakiet Rodzinny Premium",
                         Category = "Family",
-                        PriceValue = 350.00m, Price = "350 zł",
-                        Description = "Kompleksowa opieka medyczna dla całej rodziny z dodatkowymi usługami.",
+                        PriceValue = 550.00m, Price = "550 zł",
+                        Description = "Pełne bezpieczeństwo i komfort dla wymagających rodzin.",
                         Features = new List<string>
                         {
-                            "Pediatrzy bez limitu", "Szczepienia dla dzieci", "Opieka dyżurowa 24h",
-                            "Konsultacje psychologiczne"
+                            "Szeroki zakres specjalistów bez skierowań dla każdego.",
+                            "Pełna profilaktyka stomatologiczna i leczenie próchnicy.",
+                            "Psycholog dziecięcy i logopeda (cykl 5 spotkań).",
+                            "Szczepienia dodatkowe (np. meningokoki, grypa) w cenie.",
+                            "Dostęp do psychiatry i lekarza chorób zakaźnych."
                         },
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = true,
-                        SpecialistsCount = 25, FacilitiesCount = 700, IsFeatured = true
+                        SpecialistsCount = 31,
+                        FacilitiesCount = 700, IsFeatured = true
                     },
                     new Package
                     {
-                        Name = "Rodzina 2+3 Premium", Category = "Family", PriceValue = 450.00m, Price = "450 zł",
-                        Description = "Pełna ochrona dla dużej rodziny z nielimitowanym dostępem.",
+                        Name = "Rodzina 2+3 Premium", Category = "Family", PriceValue = 690.00m, Price = "690 zł",
+                        Description = "Maksymalna ochrona dla rodzin wielodzietnych.",
                         Features = new List<string>
                         {
-                            "Wszyscy specjaliści bez skierowań", "Stomatologia dla dzieci", "Rehabilitacja",
-                            "Szczepienia"
+                            "Wszystkie korzyści pakietu Premium dla 5 osób.",
+                            "Nielimitowana rehabilitacja wad postawy u dzieci.",
+                            "Wizyty domowe bez limitów.",
+                            "Stomatologia zachowawcza dla wszystkich członków rodziny.",
+                            "Transport medyczny w razie wypadku."
                         },
                         HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
-                        SpecialistsCount = 30, FacilitiesCount = 1200, IsFeatured = true
+                        SpecialistsCount = 32,
+                        FacilitiesCount = 1200, IsFeatured = true
                     },
                     new Package
                     {
                         Name = "Senior",
                         Category = "Senior",
-                        PriceValue = 180.00m, Price = "180 zł",
-                        Description = "Pakiet dostosowany do potrzeb osób 65+.",
+                        PriceValue = 210.00m, Price = "210 zł",
+                        Description = "Dedykowana opieka geriatryczna i kardiologiczna.",
                         Features = new List<string>
-                            { "Geriatra", "Kardiolog", "Rehabilitacja (10 zabiegów)", "Brak limitu wieku" },
+                        {
+                            "Nielimitowany dostęp do Geriatry, Kardiologa i Reumatologa.",
+                            "Badania EKG spoczynkowe bez limitu.",
+                            "Pakiet 10 zabiegów rehabilitacyjnych.",
+                            "Pomoc w organizacji leków i transportu.",
+                            "Brak ankiety medycznej przy przystąpieniu."
+                        },
                         HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
-                        SpecialistsCount = 20, FacilitiesCount = 600, IsFeatured = false
+                        SpecialistsCount = 20,
+                        FacilitiesCount = 600, IsFeatured = false
                     },
                     new Package
                     {
                         Name = "Pakiet Senior Plus",
                         Category = "Senior",
-                        PriceValue = 220.00m, Price = "220 zł",
-                        Description = "Rozszerzona opieka dla seniorów z dodatkowymi korzyściami.",
+                        PriceValue = 290.00m, Price = "290 zł",
+                        Description = "Rozszerzona opieka dla seniora z wizytami domowymi.",
                         Features = new List<string>
-                            { "Geriatra", "Kardiolog", "Rehabilitacja (15 zabiegów)", "Konsultacja dietetyczna" },
+                        {
+                            "Wizyty domowe lekarza i pielęgniarki.",
+                            "Rozszerzona diagnostyka (Tomografia, Rezonans).",
+                            "Opieka psychologa i onkologa.",
+                            "Konsultacje dietetyczne i diabetologiczne.",
+                            "Pełny zakres rehabilitacji usprawniającej."
+                        },
                         HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
-                        SpecialistsCount = 25, FacilitiesCount = 700, IsFeatured = false
+                        SpecialistsCount = 23,
+                        FacilitiesCount = 700, IsFeatured = false
                     },
                     new Package
                     {
                         Name = "Pakiet Biznes Standard",
                         Category = "Business",
-                        PriceValue = 299.00m, Price = "299 zł",
-                        Description = "Podstawowa opieka medyczna dla pracowników firm.",
+                        PriceValue = 350.00m, Price = "350 zł",
+                        Description = "Zdrowie pracowników to zysk firmy. Kompleksowa opieka.",
                         Features = new List<string>
-                            { "Dostęp do specjalistów", "Badania okresowe", "Opieka medycyny pracy" },
+                        {
+                            "Szybka ścieżka Medycyny Pracy (1 dzień).",
+                            "Dostęp do specjalistów i badań w całej Polsce.",
+                            "Wsparcie psychologiczne dla pracowników (stres, wypalenie).",
+                            "Programy profilaktyczne (Kręgosłup, Serce).",
+                            "Dedykowany opiekun klienta biznesowego."
+                        },
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
-                        SpecialistsCount = 25, FacilitiesCount = 1500, IsFeatured = false
+                        SpecialistsCount = 23,
+                        FacilitiesCount = 1500, IsFeatured = false
                     }
                 };
 
                 dbContext.Packages.AddRange(mockPackages);
                 dbContext.SaveChanges();
             }
+
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-            
+
             if (!dbContext.Roles.Any())
             {
                 var roles = new List<IdentityRole>
@@ -456,7 +533,8 @@ void SeedDatabase(IHost app)
 
                 dbContext.SaveChanges();
             }
-        }catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             var logger = services.GetRequiredService<ILogger<Program>>();
             logger.LogError(ex, "Wystąpił błąd podczas inicjalizacji bazy danych.");

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+1PP94mj5gY=",
+  "dgSpecHash": "agIaokVgEzM=",
   "success": true,
   "projectFilePath": "C:\\Users\\21Kuben\\Desktop\\web-project\\Inzynierka\\backend\\backend\\backend.csproj",
   "expectedPackageFiles": [
@@ -45,6 +45,7 @@
     "C:\\Users\\21Kuben\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\21Kuben\\.nuget\\packages\\npgsql\\8.0.6\\npgsql.8.0.6.nupkg.sha512",
     "C:\\Users\\21Kuben\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.11\\npgsql.entityframeworkcore.postgresql.8.0.11.nupkg.sha512",
+    "C:\\Users\\21Kuben\\.nuget\\packages\\questpdf\\2025.7.4\\questpdf.2025.7.4.nupkg.sha512",
     "C:\\Users\\21Kuben\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.2\\swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
     "C:\\Users\\21Kuben\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.2\\swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",
     "C:\\Users\\21Kuben\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.6.2\\swashbuckle.aspnetcore.swaggergen.6.6.2.nupkg.sha512",
