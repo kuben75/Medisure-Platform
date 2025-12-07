@@ -118,8 +118,9 @@ export default function HeroSection() {
                                     <h3 className="text-2xl font-bold text-gray-900 mt-1">{plan.name}</h3>
                                 </div>
 
-                                <div className="my-6 flex justify-center items-baseline gap-1">
-                                    <span className="text-4xl font-extrabold text-[#4E61F6]">{plan.price}</span>
+                                <div className="my-6 flex justify-center items-baseline gap-2">
+                                    <span className="text-2xl font-extrabold text-[#4E61F6]"> od</span>
+                                    <span className="text-4xl font-extrabold text-[#4E61F6]"> {plan.price}</span>
                                     <span className="text-sm text-gray-400 font-medium">/ mies</span>
                                 </div>
 
@@ -181,10 +182,14 @@ export default function HeroSection() {
                                                         {originalMonthly} zł
                                                     </span>
                                                 )}
+                                                <div className="flex items-baseline gap-2">
+
+                                                    <span className="font-semibold text-gray-500"> od </span>
                                                 <span className="text-5xl font-black text-gray-900 tracking-tight">
                                                     {monthlyPrice}
                                                 </span>
                                                 <span className="text-2xl text-gray-500 font-bold">zł / mies</span>
+                                                </div>
                                             </div>
 
                                             <div className="mt-3 flex flex-col items-center">

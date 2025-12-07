@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import Button from '../ui/Button.tsx'
 import PackageManagement from "./PackageManagement.tsx"
-import UserManagement from "./UserManagement.tsx";
-import {useState} from "react";
-import {Dashboard} from "./Dashboard.tsx";
-import ReviewManagement from "./ReviewManagement.tsx";
-import {useAuth} from "../../hooks/useAuth.ts";
-import AdminChatPanel from "./AdminChatPanel.tsx";
+import UserManagement from "./UserManagement.tsx"
+import {useState} from "react"
+import {Dashboard} from "./Dashboard.tsx"
+import ReviewManagement from "./ReviewManagement.tsx"
+import {useAuth} from "../../hooks/useAuth.ts"
+import AdminChatPanel from "./AdminChatPanel.tsx"
+import BroadcastPanel from "./BroadcastPanel.tsx"
+import NotificationsPanel from "../ui/NotificationsPanel.tsx"
 
 export default function AdminPanel() {
     const { user, logout } = useAuth()
@@ -49,6 +51,8 @@ export default function AdminPanel() {
                         <TabButton label="Moderacja Opinii" isActive={activeTab === 'reviews'}
                                    onClick={() => setActiveTab('reviews')}/>
                         <TabButton label="Centrum Wiadomości" isActive={activeTab === 'chat'} onClick={() => setActiveTab('chat')}/>
+                        <TabButton label={"Panel ogłoszeń"} isActive={activeTab === 'notificationPanel'} onClick={() => setActiveTab('notificationPanel')}/>
+                        <TabButton label="Powiadomienia" isActive={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')}/>
                     </nav>
                 </div>
 
@@ -58,6 +62,8 @@ export default function AdminPanel() {
                     {activeTab === 'users' && <UserManagement/>}
                     {activeTab === 'reviews' && <ReviewManagement/>}
                     {activeTab === 'chat' && <AdminChatPanel />}
+                    {activeTab === 'notificationPanel' && <BroadcastPanel />}
+                    {activeTab === 'notifications' && <NotificationsPanel />}
                 </div>
 
             </div>

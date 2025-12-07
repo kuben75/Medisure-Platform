@@ -97,21 +97,13 @@ export default function PackageFilters({ filters, setFilters }: IPackageFiltersP
                     <div className="flex justify-between mb-1"><label className="text-xs font-bold text-gray-500">Min.
                         Lekarzy</label><span
                         className="text-xs font-bold text-[#4E61F6]">{filters.minSpecialists}</span></div>
-                    <input type="range" min="0" max="60" step="5" value={filters.minSpecialists}
+                    <input type="range" min="0" max="30" step="3" value={filters.minSpecialists}
                            onChange={(e) => handleChange('minSpecialists', Number(e.target.value))}
                            className="w-full accent-[#4E61F6]"/>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-                <div>
-                    <div className="flex justify-between mb-1"><label className="text-xs font-bold text-gray-500">Min.
-                        Lekarzy</label><span
-                        className="text-xs font-bold text-[#4E61F6]">{filters.minSpecialists}</span></div>
-                    <input type="range" min="0" max="100" step="5" value={filters.minSpecialists}
-                           onChange={(e) => handleChange('minSpecialists', Number(e.target.value))}
-                           className="w-full accent-[#4E61F6]"/>
-                </div>
                 <div>
                     <div className="flex justify-between mb-1"><label className="text-xs font-bold text-gray-500">Min.
                         Placówek</label><span

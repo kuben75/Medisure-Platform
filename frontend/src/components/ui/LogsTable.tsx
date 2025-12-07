@@ -1,130 +1,202 @@
 import {useEffect, useState} from "react"
 import type {ISystemLog} from "../../types/dashboard.types.ts"
 import {useAuth} from "../../hooks/useAuth.ts";
+import SearchIcon from "../icons/SearchIcon.tsx";
+import ChevronDownIcon from "../icons/ChevronDownIcon.tsx";
+const RefreshIcon = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
 
-const API_URL_LOGS = `${import.meta.env.VITE_API_URL}/admin/logs`
+const LogRow = ({ log }: { log: ISystemLog }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
 
-export default function LogsTable() {
-    const [logs, setLogs] = useState<ISystemLog[]>([])
-    const [search, setSearch] = useState("")
-    const [loading, setLoading] = useState(true)
-    const { token } = useAuth()
-    const [levelFilter, setLevelFilter] = useState("All")
-    const fetchLogs = async () => {
-        if (!token) return
-
-        try {
-            const params = new URLSearchParams()
-
-            if (search) params.append("search", search)
-
-            if (levelFilter !== "All") {
-                params.append("level", levelFilter)
-            }
-            const url = `${API_URL_LOGS}?${params.toString()}`
-
-            const response = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            if (response.ok) {
-                const data = await response.json()
-                setLogs(data)
-            } else {
-                console.error("Błąd pobierania logów:", response.status)
-            }
-        } catch (e) {
-            console.error(e)
-        } finally {
-            setLoading(false)
+    const getLevelBadge = (level: string) => {
+        const base = "px-2.5 py-0.5 rounded-full text-xs font-bold border uppercase tracking-wide";
+        switch (level) {
+            case 'Error': return <span className={`${base} bg-red-50 text-red-700 border-red-200`}>Error</span>;
+            case 'Warning': return <span className={`${base} bg-yellow-50 text-yellow-700 border-yellow-200`}>Warning</span>;
+            case 'Security': return <span className={`${base} bg-purple-50 text-purple-700 border-purple-200`}>Security</span>;
+            case 'Success': return <span className={`${base} bg-green-50 text-green-700 border-green-200`}>Success</span>;
+            default: return <span className={`${base} bg-blue-50 text-blue-700 border-blue-200`}>Info</span>;
         }
-    }
-
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            fetchLogs()
-        }, 500);
-        return () => clearTimeout(timeoutId);
-    }, [search, levelFilter, token, fetchLogs]);
+    };
 
     return (
-        <div className="hidden md:block mt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-                <h3 className="text-xl font-semibold text-gray-700">Logi Systemowe</h3>
-                <div className="flex gap-3 w-full md:w-auto">
-                    <select
-                        className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white cursor-pointer"
-                        value={levelFilter}
-                        onChange={(e) => setLevelFilter(e.target.value)}
+        <>
+            <tr
+                onClick={() => setIsExpanded(!isExpanded)}
+                className={`cursor-pointer transition-all border-b border-gray-100 hover:bg-blue-50/30 ${isExpanded ? 'bg-blue-50/50' : ''}`}
+            >
+                <td className="px-4 py-4 whitespace-nowrap text-gray-500 text-xs font-mono truncate">
+                    {new Date(log.timestamp).toLocaleString('pl-PL')}
+                </td>
+                <td className="px-4 py-4">
+                    {getLevelBadge(log.level)}
+                </td>
+                <td className="px-4 py-4 truncate" title={log.action}>
+                    <span className="font-semibold text-gray-700 text-sm">{log.action}</span>
+                </td>
+                <td className="px-4 py-4 truncate">
+                    <div className="flex flex-col">
+                        <span className="font-bold text-gray-800 text-xs truncate">{log.user}</span>
+                        {log.userId && <span className="text-[10px] text-gray-400 font-mono truncate">{log.userId.substring(0, 8)}...</span>}
+                    </div>
+                </td>
+                <td className="px-4 py-4">
+                    <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm text-gray-600 truncate">{log.description}</p>
+                        <ChevronDownIcon className={`w-4 h-4 text-gray-400 transition-transform duration-300 flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
+                    </div>
+                </td>
+            </tr>
+
+            {isExpanded && (
+                <tr className="bg-gray-50/50 animate-fade-in">
+                    <td colSpan={5} className="px-6 py-4 border-b border-gray-200">
+                        <div className="flex gap-3">
+                            <div className="flex-grow overflow-hidden">
+                                <p className="text-xs font-bold text-gray-500 uppercase mb-1">Treść logu:</p>
+                                <p className="text-sm text-gray-800 font-mono whitespace-pre-wrap break-words bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                    {log.description}
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            )}
+        </>
+    );
+};
+
+export default function LogsTable() {
+    const { token } = useAuth()
+    const [logs, setLogs] = useState<ISystemLog[]>([])
+    const [loading, setLoading] = useState(true)
+
+    const [filterLevel, setFilterLevel] = useState('All')
+    const [searchTerm, setSearchTerm] = useState('')
+
+    const API_URL_LOGS = `${import.meta.env.VITE_API_URL}/admin/logs`;
+
+    const fetchLogs = async () => {
+        if (!token) return;
+        setLoading(true);
+        try {
+            const response = await fetch(`${API_URL_LOGS}?limit=100`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const mapped = data.map((l: any) => ({
+                    id: l.id,
+                    action: l.action,
+                    description: l.description,
+                    user: l.userName || "System",
+                    userId: l.userId,
+                    level: l.level || "Info",
+                    timestamp: l.createdAt
+                }));
+                setLogs(mapped);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchLogs();
+        const interval = setInterval(fetchLogs, 30000);
+        return () => clearInterval(interval);
+    }, [token]);
+
+    const filteredLogs = logs.filter(log => {
+        const matchesLevel = filterLevel === 'All' || log.level === filterLevel;
+        const searchLower = searchTerm.toLowerCase();
+        const matchesSearch =
+            log.description.toLowerCase().includes(searchLower) ||
+            log.action.toLowerCase().includes(searchLower) ||
+            log.user.toLowerCase().includes(searchLower);
+
+        return matchesLevel && matchesSearch;
+    });
+
+    return (
+        <div className="mt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-gray-800">Dziennik Zdarzeń</h3>
+                    <button
+                        onClick={fetchLogs}
+                        className="p-2 text-gray-400 hover:text-[#4E61F6] hover:bg-blue-50 rounded-full transition-colors"
+                        title="Odśwież"
                     >
-                        <option value="All">Wszystkie poziomy</option>
+                        <RefreshIcon className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                    </button>
+                </div>
+
+                <div className="flex gap-3 w-full md:w-auto">
+                    <div className="relative flex-grow md:w-64">
+                        <input
+                            type="text"
+                            placeholder="Szukaj w logach..."
+                            className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <div className="absolute left-3 top-2.5 text-gray-400"><SearchIcon className="w-4 h-4"/></div>
+                    </div>
+
+                    <select
+                        className="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#4E61F6] outline-none bg-white cursor-pointer"
+                        value={filterLevel}
+                        onChange={(e) => setFilterLevel(e.target.value)}
+                    >
+                        <option value="All">Wszystkie typy</option>
                         <option value="Info">Info</option>
-                        <option value="Success">Success</option>
-                        <option value="Warning">Warning</option>
-                        <option value="Error">Error</option>
-                        <option value="Security">Security</option>
+                        <option value="Success">Success </option>
+                        <option value="Warning">Warning </option>
+                        <option value="Error">Error </option>
+                        <option value="Security">Security </option>
                     </select>
-                    <input
-                        type="text"
-                        placeholder="Szukaj w logach..."
-                        className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none flex-grow md:flex-grow-0"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200 max-h-96 overflow-y-auto">
-                <table className="min-w-full text-sm">
-                    <thead className="bg-gray-50 sticky top-0 shadow-sm z-10">
-                    <tr>
-                        <th className="py-3 px-4 text-left font-medium text-gray-500">Czas</th>
-                        <th className="py-3 px-4 text-left font-medium text-gray-500">Poziom</th>
-                        <th className="py-3 px-4 text-left font-medium text-gray-500">Akcja</th>
-                        <th className="py-3 px-4 text-left font-medium text-gray-500">Opis</th>
-                        <th className="py-3 px-4 text-left font-medium text-gray-500">Użytkownik</th>
-                    </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                    {loading ? (
+            <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="max-h-[600px] overflow-y-auto custom-scrollbar">
+                    <table className="w-full text-sm text-left table-fixed">
+                        <thead className="text-xs text-gray-500 uppercase bg-gray-50 sticky top-0 z-10 shadow-sm">
                         <tr>
-                            <td colSpan={5} className="p-8 text-center text-gray-400">Ładowanie logów...</td>
+                            <th className="px-4 py-4 font-bold w-40">Czas</th>
+                            <th className="px-4 py-4 font-bold w-28">Poziom</th>
+                            <th className="px-4 py-4 font-bold w-48">Akcja</th>
+                            <th className="px-4 py-4 font-bold w-48">Użytkownik</th>
+                            <th className="px-4 py-4 font-bold">Opis zdarzenia</th>
                         </tr>
-                    ) : logs.length === 0 ? (
-                        <tr>
-                            <td colSpan={5} className="p-8 text-center text-gray-500 bg-gray-50">
-                                Brak logów spełniających kryteria.
-                            </td>
-                        </tr>
-                    ) : (
-                        logs.map((log) => (
-                            <tr key={log.id} className="hover:bg-gray-50 transition-colors">
-                                <td className="py-3 px-4 text-gray-500 whitespace-nowrap">
-                                    {new Date(log.createdAt).toLocaleString()}
-                                </td>
-                                <td className="py-3 px-4">
-                                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${
-                                            log.level === 'Error' ? 'bg-red-50 text-red-700 border-red-200' :
-                                                log.level === 'Warning' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                                                    log.level === 'Success' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                        log.level === 'Security' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                                                            'bg-blue-50 text-blue-700 border-blue-200'
-                                        }`}>
-                                            {log.level}
-                                        </span>
-                                </td>
-                                <td className="py-3 px-4 font-medium text-gray-700">{log.action}</td>
-                                <td className="py-3 px-4 text-gray-600 max-w-xs truncate" title={log.description}>
-                                    {log.description}
-                                </td>
-                                <td className="py-3 px-4 text-gray-500 font-mono text-xs">
-                                    {log.userName}
-                                </td>
-                            </tr>
-                        ))
-                    )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                        {loading && logs.length === 0 ? (
+                            <tr><td colSpan={5} className="text-center py-12 text-gray-400">Ładowanie danych...</td></tr>
+                        ) : filteredLogs.length === 0 ? (
+                            <tr><td colSpan={5} className="text-center py-12 text-gray-400">Brak logów spełniających kryteria.</td></tr>
+                        ) : (
+                            filteredLogs.map((log) => (
+                                <LogRow key={log.id} log={log} />
+                            ))
+                        )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+                .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+            `}</style>
         </div>
-    )
+    );
 }

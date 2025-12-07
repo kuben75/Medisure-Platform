@@ -1,5 +1,6 @@
 ﻿using backend.Models;
 using backend.DTOs;
+using backend.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,6 +9,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using backend.Services;
 using System.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
@@ -20,19 +22,25 @@ public class AuthController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly ILogService _logService;
     private readonly IEmailService _emailService;
+    private readonly INotificationService _notificationService;
+    private readonly ApplicationDbContext _context;
 
     public AuthController(
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager,
         IConfiguration configuration,
         ILogService logService,
-        IEmailService emailService)
+        IEmailService emailService,
+        INotificationService notificationService,
+        ApplicationDbContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _configuration = configuration;
         _logService = logService;
         _emailService = emailService;
+        _notificationService = notificationService;
+        _context = context;
     }
 
     private async Task SendHtmlEmailAsync(string to, string subject, string title, string message, string buttonText,
@@ -103,7 +111,12 @@ public class AuthController : ControllerBase
         await _userManager.AddToRoleAsync(newUser, "User");
         await SafeLogAsync("REGISTER_SUCCESS", $"Zarejestrowano: {registerDto.Email}", newUser.UserName, newUser.Id,
             "Success");
-
+        await _notificationService.CreateNotificationAsync(
+            newUser.Id,
+            "Witamy w Medisure!",
+            "Dziękujemy za dołączenie do Medisure. Cieszymy się, że jesteś z nami! Zapoznaj się z regulaminem i zacznij korzystać z naszych usług. Jeśli masz pytania, skontaktuj się z naszym zespołem wsparcia.",
+            "Info"
+        );
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
         var encodedToken = WebUtility.UrlEncode(token);
         
@@ -163,17 +176,59 @@ public class AuthController : ControllerBase
                 { Message = "Konto nie jest aktywne. Sprawdź skrzynkę e-mail i kliknij link aktywacyjny." });
         }
 
+        if (_userManager.GetTwoFactorEnabledAsync(user).Result)
+        {
+            return Ok(new { Message = "Wymagana weryfikacja dwuetapowa.", Code = "REQUIRES_2FA", Email = user.Email });
+        }
+        if (string.IsNullOrEmpty(user.Pesel))
+        {
+            var alreadyNotified = await _context.SystemNotifications
+                .AnyAsync(n => n.UserId == user.Id && n.Title == "Uzupełnij profil" && n.CreatedAt > DateTime.UtcNow.AddDays(-1));
+
+            if (!alreadyNotified)
+            {
+                await _notificationService.CreateNotificationAsync(
+                    user.Id,
+                    "Uzupełnij profil",
+                    "Brakuje Twojego numeru PESEL. Jest on niezbędny do zakupu pakietu medycznego.",
+                    "Alert"
+                );
+            }
+        } ;
+
+        var expiringPackages = await _context.UserPackages
+            .Include(p => p.Package)
+            .Where(up => up.UserId == user.Id && up.Status == "Active")
+            .Where(up => up.EndDate > DateTime.UtcNow && up.EndDate < DateTime.UtcNow.AddDays(7))
+            .ToListAsync();
+
+        foreach (var sub in expiringPackages)
+        {
+            var daysLeft = (sub.EndDate - DateTime.UtcNow).Days;
+                
+            var notifiedRecently = await _context.SystemNotifications
+                .AnyAsync(n => n.UserId == user.Id && n.Message.Contains(sub.Package.Name) && n.CreatedAt > DateTime.UtcNow.AddDays(-3));
+
+            if (!notifiedRecently)
+            {
+                await _notificationService.CreateNotificationAsync(
+                    user.Id,
+                    "Pakiet wkrótce wygaśnie",
+                    $"Twój pakiet '{sub.Package.Name}' wygasa za {daysLeft} dni. Odnów go, aby zachować ciągłość ochrony.",
+                    "Warning"
+                );
+            }
+        }
         var userRoles = await _userManager.GetRolesAsync(user);
         var tokenString = GenerateJwtToken(user, userRoles);
 
         await SafeLogAsync("LOGIN_SUCCESS", $"Zalogowano: {loginDto.Email}", user.UserName, user.Id, "Success");
-
         return Ok(new
-        {
-            Message = "Zalogowano pomyślnie",
-            Token = tokenString,
-            User = new { user.Email, user.FirstName, user.LastName, user.BirthDate, user.Pesel }
-        });
+            {
+                Message = "Zalogowano pomyślnie",
+                Token = tokenString,
+                User = new { user.Email, user.FirstName, user.LastName, user.BirthDate, user.Pesel }
+            });
     }
 
     [HttpPost("forgot-password")]
@@ -269,5 +324,35 @@ public class AuthController : ControllerBase
         }
             
         return BadRequest(new { Message = "Link wygasł lub został już wykorzystany." });
+    }
+    
+    [HttpPost("login-2fa")]
+    public async Task<IActionResult> Verify2FaCode([FromBody] TwoFactorLoginDto dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null) return Unauthorized(new { Message = "Błąd autoryzacji." });
+
+        var isCodeValid = await _userManager.VerifyTwoFactorTokenAsync(
+            user, 
+            _userManager.Options.Tokens.AuthenticatorTokenProvider, 
+            dto.Code.Replace(" ", string.Empty)); 
+
+        if (!isCodeValid)
+        {
+            await SafeLogAsync("2FA_FAILED", $"Niepoprawny kod 2FA dla {dto.Email}", user.Email, user.Id, "Security");
+            return Unauthorized(new { Message = "Niepoprawny kod weryfikacyjny." });
+        }
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var tokenString = GenerateJwtToken(user, userRoles);
+
+        await SafeLogAsync("LOGIN_SUCCESS_2FA", $"Zalogowano z 2FA: {dto.Email}", user.UserName, user.Id, "Success");
+
+        return Ok(new
+        {
+            Message = "Zalogowano pomyślnie",
+            Token = tokenString,
+            User = new { user.Email, user.FirstName, user.LastName, user.BirthDate, user.Pesel, user.TwoFactorEnabled }
+        });
     }
 }

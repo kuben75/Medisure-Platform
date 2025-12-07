@@ -1,23 +1,39 @@
 import Modal from '../ui/Modal.tsx'
 import Button from '../ui/Button.tsx'
 import { SPECIALISTS_LIST } from '../../constants/specialists.tsx'
-import type {ISpecialistsListModalProps} from "../../types/specialists.types.ts"
 import CheckIcon from "../icons/CheckIcon.tsx";
+import { useMemo } from "react";
+import type {ISpecialistsListModalProps} from "../../types/specialists.types.ts";
 
 const LockIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>;
 
-export default function SpecialistsListModal({ isOpen, onClose, packageName, limit }: ISpecialistsListModalProps) {
+export default function SpecialistsListModal({ isOpen, onClose, packageName }: ISpecialistsListModalProps) {
     if (!isOpen) return null;
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const sortedSpecialists = useMemo(() => {
+        const list = [...SPECIALISTS_LIST];
+
+        return list.sort((a, b) => {
+            const aAvailable = a.availableInPackages.includes(packageName);
+            const bAvailable = b.availableInPackages.includes(packageName);
+
+            if (aAvailable && !bAvailable) return -1;
+            if (!aAvailable && bAvailable) return 1;
+            return 0;
+        });
+    }, [packageName]);
+
     const total = SPECIALISTS_LIST.length;
-    const percentage = Math.round((limit / total) * 100);
+    const availableCount = SPECIALISTS_LIST.filter(s => s.availableInPackages.includes(packageName)).length;
+    const percentage = Math.round((availableCount / total) * 100);
 
     let progressColor = "bg-blue-500";
     if (percentage < 30) progressColor = "bg-yellow-400";
     else if (percentage > 80) progressColor = "bg-green-500";
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} className="max-w-5xl">
+        <Modal isOpen={isOpen} onClose={onClose} className="max-w-6xl">
             <div className="text-center mb-8">
                 <h2 className="text-2xl font-bold text-gray-900">
                     Zakres specjalistów
@@ -25,12 +41,11 @@ export default function SpecialistsListModal({ isOpen, onClose, packageName, lim
                 <p className="text-lg text-[#4E61F6] font-semibold mt-1">{packageName}</p>
             </div>
 
-            {/* Pasek Postępu */}
             <div className="mb-8 bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <div className="flex justify-between text-sm mb-3 font-medium">
-                    <span className="text-gray-600">Dostępność specjalizacji</span>
+                    <span className="text-gray-600">Dostępność specjalizacji w tym pakiecie</span>
                     <span className={`font-bold ${percentage > 80 ? 'text-green-600' : 'text-[#4E61F6]'}`}>
-                        {percentage}% ({limit}/{total})
+                        {percentage}% ({availableCount}/{total})
                     </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden border border-gray-300/50">
@@ -38,49 +53,61 @@ export default function SpecialistsListModal({ isOpen, onClose, packageName, lim
                         className={`h-4 rounded-full transition-all duration-1000 ease-out ${progressColor} relative`}
                         style={{ width: `${percentage}%` }}
                     >
-                        {/* Efekt połysku na pasku */}
                         <div className="absolute top-0 left-0 w-full h-full bg-white/20"></div>
                     </div>
                 </div>
                 <p className="text-xs text-gray-400 mt-3 text-center">
-                    Im wyższy pakiet, tym szerszy dostęp do lekarzy bez skierowania.
+                    Lista zawiera wszystkich specjalistów współpracujących z Medisure. Kolorowe karty oznaczają dostępność w wybranym pakiecie.
                 </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-h-[55vh] overflow-y-auto p-2 custom-scrollbar">
-                {SPECIALISTS_LIST.map((spec, idx) => {
-                    const isAvailable = idx < limit;
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-h-[60vh] overflow-y-auto p-2 custom-scrollbar">
+                {sortedSpecialists.map((spec) => {
+                    const isAvailable = spec.availableInPackages.includes(packageName);
 
                     return (
                         <div
-                            key={idx}
+                            key={spec.id}
                             className={`
                                 relative p-4 rounded-xl border flex flex-col items-center text-center transition-all duration-300 group
                                 ${isAvailable
                                 ? 'bg-white border-blue-100 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-blue-300'
-                                : 'bg-gray-50 border-gray-200 opacity-60 grayscale hover:grayscale-0 hover:opacity-80'
+                                : 'bg-gray-50/50 border-gray-100 opacity-50 grayscale hover:grayscale-0 hover:opacity-100'
                             }
                             `}
                         >
-                            {/* Ikona */}
-                            <div className={`text-3xl mb-3 transition-transform group-hover:scale-110 ${isAvailable ? '' : 'opacity-50'}`}>
-                                {spec.icon}
+                            <div className="relative mb-3">
+                                <div className={`w-20 h-20 rounded-full overflow-hidden border-2 ${isAvailable ? 'border-blue-100 group-hover:border-blue-400' : 'border-gray-200'}`}>
+                                    <img
+                                        src={spec.imageUrl}
+                                        alt={spec.name}
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
+                                    />
+                                </div>
+                                {isAvailable && (
+                                    <div className="absolute bottom-0 right-0 bg-green-500 text-white p-1 rounded-full border-2 border-white">
+                                        <CheckIcon className="w-3 h-3" />
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Nazwa */}
-                            <span className={`text-xs font-bold leading-tight mb-2 ${isAvailable ? 'text-gray-800' : 'text-gray-500'}`}>
-                                {spec.name}
+                            <span className={`text-[10px] uppercase font-bold tracking-wider mb-1 ${isAvailable ? 'text-blue-600' : 'text-gray-400'}`}>
+                                {spec.category}
                             </span>
 
-                            {/* Status */}
-                            <div className="mt-auto pt-2 border-t border-gray-100/50 w-full flex justify-center">
+                            <span className={`text-xs font-bold leading-tight mb-1 ${isAvailable ? 'text-gray-900' : 'text-gray-500'}`}>
+                                {spec.title} {spec.name}
+                            </span>
+
+                            <div className="mt-auto pt-3 border-t border-gray-100/50 w-full flex justify-center">
                                 {isAvailable ? (
                                     <div className="flex items-center gap-1 text-[10px] text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded-full">
-                                        <CheckIcon className="w-6 h-6" /> Dostępny
+                                        Dostępny
                                     </div>
                                 ) : (
-                                    <div className="flex items-center gap-1 text-[10px] text-gray-500 font-medium bg-gray-200 px-2 py-0.5 rounded-full">
-                                        <LockIcon /> Zablokowany
+                                    <div className="flex items-center gap-1 text-[10px] text-gray-400 font-medium bg-gray-100 px-2 py-0.5 rounded-full">
+                                        <LockIcon /> Brak w pakiecie
                                     </div>
                                 )}
                             </div>
@@ -90,17 +117,11 @@ export default function SpecialistsListModal({ isOpen, onClose, packageName, lim
             </div>
 
             <div className="mt-8 text-center pt-6 border-t border-gray-100">
-                <Button variant="outline" onClick={onClose} className="!px-10 shadow-sm hover:bg-gray-50 border-gray-300 text-gray-600">
+                <Button variant="primary" onClick={onClose} className="!px-10 shadow-sm border-gray-300 ">
                     Zamknij listę
                 </Button>
             </div>
 
-            <style>{`
-                .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-                .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; border: 2px solid #f1f5f9; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-            `}</style>
         </Modal>
-    );
+    )
 }

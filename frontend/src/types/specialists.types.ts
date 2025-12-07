@@ -1,14 +1,20 @@
-import React from "react";
+import {type ReactNode} from "react";
 
 export interface ISpecialistsListModalProps {
     isOpen: boolean;
     onClose: () => void;
-    packageName: string;
-    limit: number;
+    packageName: string
 }
 
 export interface ISpecialist {
+    id: number;
     name: string;
+    title: string;
     category: string;
-    icon: React.ReactNode;
+    experienceYears: number;
+    description: string;
+    imageUrl: string;
+    gender: 'male' | 'female';
+    availableInPackages: string[];
+    icon?: ReactNode;
 }

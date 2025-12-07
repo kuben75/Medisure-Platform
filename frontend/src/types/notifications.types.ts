@@ -1,9 +1,12 @@
-export type TNotificationType = 'success' | 'error' | 'info'
+export type TNotificationType = 'Info' | 'Alert' | 'Success' | 'Warning'
 
 export interface INotification {
-    id: number
-    message: string
-    type: TNotificationType
+    id: number;
+    title: string;
+    message: string;
+    isRead: boolean;
+    createdAt: string;
+    type: string;
 }
 
 export interface INotificationContextType {
@@ -13,7 +16,14 @@ export interface INotificationContextType {
         info: (msg: string) => void
     }
 }
-
+export interface INotificationsContext {
+    notifications: INotification[];
+    unreadCount: number;
+    markAsRead: (id: number) => Promise<void>;
+    markAllAsRead: () => Promise<void>;
+    refreshNotifications: () => void;
+    deleteNotification: (id: number) => Promise<void>;
+}
 export interface ConfirmOptions {
     title?: string
     description?: string

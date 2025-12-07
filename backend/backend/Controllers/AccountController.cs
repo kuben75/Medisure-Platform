@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore; 
 using System.Security.Claims;
 using backend.Data;
+using System.Text.Encodings.Web;
 
-namespace backend.Controllers
-{
+namespace backend.Controllers;
+
     [ApiController]
     [Route("api/account")]
     [Authorize] 
@@ -18,12 +19,21 @@ namespace backend.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogService _logService;
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
+        private readonly UrlEncoder _urlEncoder;
 
-        public AccountController(UserManager<ApplicationUser> userManager, ILogService logService, ApplicationDbContext context)
+        public AccountController(
+            UserManager<ApplicationUser> userManager, 
+            ILogService logService, ApplicationDbContext context, 
+            INotificationService notificationService,
+            UrlEncoder urlEncoder
+            )
         {
             _userManager = userManager;
             _logService = logService;
             _context = context;
+            _notificationService = notificationService;
+            _urlEncoder = urlEncoder;
         }
 
         [HttpPut("profile")]
@@ -115,7 +125,8 @@ namespace backend.Controllers
                     lastName = user.LastName,
                     phoneNumber = user.PhoneNumber, 
                     birthDate = user.BirthDate,
-                    pesel = user.Pesel
+                    pesel = user.Pesel,
+                    twoFactorEnabled = user.TwoFactorEnabled 
                 });
             }
             await _logService.LogAsync(
@@ -140,6 +151,12 @@ namespace backend.Controllers
 
             if (result.Succeeded)
             {
+                await _notificationService.CreateNotificationAsync(
+                    user.Id, 
+                    "Zmiana hasła", 
+                    "Twoje hasło zostało zmienione. Jeśli to nie Ty, skontaktuj się z nami natychmiast.", 
+                    "Security"
+                );
                 await _logService.LogAsync("PASSWORD_CHANGE_SUCCESS", $"Użytkownik {user.UserName} zmienił hasło.", user.UserName, user.Id, "Success");
                 return Ok(new { Message = "Hasło zostało pomyślnie zmienione." });
             }
@@ -148,5 +165,62 @@ namespace backend.Controllers
 
             return BadRequest(result.Errors);
         }
+        [HttpGet("2fa/setup")]
+        public async Task<IActionResult> GetTwoFactorSetup()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+            if (string.IsNullOrEmpty(unformattedKey))
+            {
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+            }
+
+            var email = user.Email;
+            var authenticatorUri = GenerateQrCodeUri(email, unformattedKey);
+
+            return Ok(new { Key = unformattedKey, AuthenticatorUri = authenticatorUri, IsEnabled = user.TwoFactorEnabled });
+        }
+        [HttpPost("2fa/enable")]
+        public async Task<IActionResult> EnableTwoFactor([FromBody] TwoFactorDto dto)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
+                user, _userManager.Options.Tokens.AuthenticatorTokenProvider, dto.Code.Replace(" ", string.Empty));
+
+            if (!is2faTokenValid)
+            {
+                return BadRequest(new { Message = "Kod weryfikacyjny jest nieprawidłowy." });
+            }
+
+            await _userManager.SetTwoFactorEnabledAsync(user, true);
+            await _logService.LogAsync("2FA_ENABLED", $"Użytkownik {user.Email} włączył 2FA.", user.Email, user.Id, "Security");
+
+            return Ok(new { Message = "Weryfikacja dwuetapowa została włączona." });
+        }
+        [HttpPost("2fa/disable")]
+        public async Task<IActionResult> DisableTwoFactor()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            await _userManager.SetTwoFactorEnabledAsync(user, false);
+            await _logService.LogAsync("2FA_DISABLED", $"Użytkownik {user.Email} wyłączył 2FA.", user.Email, user.Id, "Warning");
+
+            return Ok(new { Message = "Weryfikacja dwuetapowa została wyłączona." });
+        }
+
+        private string GenerateQrCodeUri(string email, string unformattedKey)
+        {
+            return string.Format(
+                "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6",
+                _urlEncoder.Encode("Medisure"),
+                _urlEncoder.Encode(email),
+                unformattedKey);
+        }
     }
-}
+    

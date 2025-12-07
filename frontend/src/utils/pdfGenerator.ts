@@ -148,7 +148,6 @@ export const generatePolicyPDF = async (
 
     currentY += 14
 
-    // === SEKCJA 4: ZAKRES ===
     currentY = drawSectionHeader("4", "Zakres ubezpieczenia", currentY)
 
     if (sub.features && sub.features.length > 0) {

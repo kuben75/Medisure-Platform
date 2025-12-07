@@ -5,6 +5,7 @@ export interface IUser {
     phoneNumber?: string
     birthDate?: string
     pesel?: string
+    twoFactorEnabled?: boolean
 }
 
 export interface IUserDto {
