@@ -1,4 +1,4 @@
-import {partners} from "../../tests/MockData.ts";
+import {partners} from "../../constants/MockData.ts";
 
 export default function Partners() {
     return (

@@ -1,27 +1,46 @@
-import { useState, useMemo } from 'react';
+import {useState, useMemo, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DURATION_OPTIONS } from '../constants/options.ts';
-import type { IPricingPlan } from "../types/pricing.types.ts";
+import type {IAddressData, IPricingPlan, ISubscriptionOption, TBillingType} from "../types/pricing.types.ts";
 import { useAuth } from "./useAuth.ts";
 import { useNotification } from "./UseNotification.ts";
 import { useConfirm } from "./UseConfrim.ts";
 
 const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL}/subscriptions`
+const OPTIONS_URL = `${import.meta.env.VITE_API_URL}/packages/options`
 
 export const usePackagePurchase = () => {
     const [selectedPlan, setSelectedPlan] = useState<IPricingPlan | null>(null)
-    const [selectedDuration, setSelectedDuration] = useState('1y')
+    const [selectedDuration, setSelectedDuration] = useState('yearly')
+    const [billingPeriod, setBillingPeriod] = useState<TBillingType>('monthly')
+    const [options, setOptions] = useState<ISubscriptionOption[]>([])
+
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
     const [isBuying, setIsBuying] = useState(false)
 
-    const { token, user } = useAuth()
+    const { token, user, updateUser } = useAuth()
     const navigate = useNavigate()
     const { notify } = useNotification()
     const confirm = useConfirm()
 
+    useEffect(() => {
+        const fetchOptions = async () => {
+            try {
+                const res = await fetch(OPTIONS_URL)
+                if (res.ok) {
+                    const data = await res.json();
+                    setOptions(data);
+                }
+            } catch (err) {
+                console.error("Błąd pobierania opcji:", err);
+            }
+        }
+        fetchOptions()
+    }, [])
+
     const openModal = (plan: IPricingPlan) => {
         setSelectedPlan(plan)
-        setSelectedDuration('1y')
+        setSelectedDuration('yearly')
+        setBillingPeriod('monthly')
     }
 
     const closeModal = () => {
@@ -30,24 +49,48 @@ export const usePackagePurchase = () => {
     }
 
     const priceDetails = useMemo(() => {
-        if (!selectedPlan) return { total: 0, monthly: 0, originalTotal: 0, isDiscounted: false, months: 12, discountLabel: '' }
+        const defaults = { total: 0, monthly: 0, originalTotal: 0, isDiscounted: false, months: 12, discountLabel: '', label: '' };
 
-        const option = DURATION_OPTIONS.find(o => o.value === selectedDuration) || DURATION_OPTIONS.find(o => o.value === '1y')!
-        const baseMonthly = selectedPlan.priceValue || 0
-        const months = option.months
-        const originalTotal = baseMonthly * months
-        const discountFactor = 1 - option.discount
-        const finalTotal = originalTotal * discountFactor
+        if (!selectedPlan || options.length === 0) return defaults;
 
-        return {
-            total: Math.round(finalTotal),
-            originalTotal: Math.round(originalTotal),
-            monthly: baseMonthly,
-            isDiscounted: option.discount > 0,
-            months: months,
-            discountLabel: option.discount > 0 ? `-${option.discount * 100}%` : ''
+        const option = options.find(o => o.id === selectedDuration) || options[0];
+        if(!option) return defaults;
+
+        const baseMonthly = selectedPlan.priceValue || 0;
+
+        if (option.id === '7d')
+            return { ...defaults, total: 1, monthly: 0, months: 0, label: option.label, discountLabel: 'TEST' };
+
+
+        const months = option.months;
+        const originalTotal = baseMonthly * months;
+
+        if (billingPeriod === 'monthly') {
+            return {
+                total: originalTotal,
+                originalTotal: originalTotal,
+                monthly: baseMonthly,
+                isDiscounted: false,
+                months: months,
+                label: option.label,
+                discountLabel: ''
+            };
+        } else {
+            const discountFactor = 1 - option.discount;
+            const finalTotal = originalTotal * discountFactor;
+            const effectiveMonthly = finalTotal / months;
+
+            return {
+                total: Math.round(finalTotal),
+                originalTotal: Math.round(originalTotal),
+                monthly: effectiveMonthly,
+                isDiscounted: option.discount > 0,
+                months: months,
+                label: option.label,
+                discountLabel: option.discount > 0 ? `-${option.discount * 100}%` : ''
+            }
         }
-    }, [selectedPlan, selectedDuration])
+    }, [selectedPlan, selectedDuration, options, billingPeriod])
 
     const handleProceedToCheckout = async () => {
         if (!selectedPlan) return
@@ -55,7 +98,7 @@ export const usePackagePurchase = () => {
         if (!token || !user) {
             const shouldLogin = await confirm({
                 title: "Wymagane logowanie",
-                description: "Musisz być zalogowany, aby kupić pakiet. Czy chcesz się zalogować teraz?",
+                description: "Musisz być zalogowany, aby kupić pakiet.",
                 confirmText: "Zaloguj się",
                 cancelText: "Anuluj",
                 variant: 'info'
@@ -63,26 +106,16 @@ export const usePackagePurchase = () => {
             if (shouldLogin) navigate('/login')
             return
         }
-        if(!user.pesel) {
-            const shouldUpdate = await confirm({
-                title: "Brak numeru PESEL",
-                description: "Aby kupić pakiet, musisz podać swój numer PESEL w ustawieniach profilu.",
-                confirmText: "Przejdź do profilu",
-                cancelText: "Anuluj",
-                variant: 'info'
-            })
-            if (shouldUpdate) navigate('/profile')
-            return
-        }
 
-        setIsCheckoutOpen(true);
+        setIsCheckoutOpen(true)
     }
 
-    const finalizePurchase = async (method: string, txId: string, addressData: any) => {
-       setIsBuying(true)
+    const finalizePurchase = async (method: string, txId: string, addressData: IAddressData) => {
+        setIsBuying(true);
         try {
             const payload = {
                 duration: selectedDuration,
+                billingPeriod: billingPeriod,
                 paymentMethod: method,
                 transactionId: txId,
                 ...addressData
@@ -97,16 +130,31 @@ export const usePackagePurchase = () => {
                 body: JSON.stringify(payload)
             })
 
-            if (!response.ok) throw new Error("Błąd zakupu")
+            if (!response.ok) {
+                const errData = await response.json()
+                throw new Error(errData.Message || "Błąd zakupu")
+            }
+            const data = await response.json();
+            if (data.user || data.User) {
+                updateUser(data.user || data.User);
+            } else {
+                if (addressData.pesel) {
+                    updateUser({
+                        ...user!,
+                        pesel: addressData.pesel,
+                        phoneNumber: user!.phoneNumber ?? null,
+                        birthDate: user!.birthDate ?? null,
+                        roles: user!.roles ?? []
+                    });
+                }
 
+            }
             notify.success("Pakiet zakupiony pomyślnie!")
             closeModal()
             navigate('/profile')
-
         } catch (err) {
-            notify.error(err instanceof Error ? err.message : "Błąd podczas zakupu pakietu")
-        }
-        finally {
+            notify.error(err instanceof Error ? err.message : String(err))
+        } finally {
             setIsBuying(false)
         }
     }
@@ -118,10 +166,13 @@ export const usePackagePurchase = () => {
         openModal,
         closeModal,
         priceDetails,
+        options,
         handleProceedToCheckout,
         isCheckoutOpen,
         closeCheckout: () => setIsCheckoutOpen(false),
         finalizePurchase,
-        isBuying
-    }
+        isBuying,
+        billingPeriod,
+        setBillingPeriod,
+    };
 }

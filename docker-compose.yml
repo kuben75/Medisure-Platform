@@ -4,6 +4,7 @@ services:
   db:
     image: postgres:15-alpine
     container_name: inzynierka_db
+    restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=test
@@ -12,12 +13,20 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  seq:
+    image: datalust/seq
+    container_name: inzynierka_seq
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80"
   backend:
     container_name: inzynierka_backend
+    restart: always
     build:
-      context: ./backend
-      dockerfile: backend/Dockerfile
+      context: ./backend/backend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -26,15 +35,25 @@ services:
       - Jwt__Issuer=http://localhost:8080
       - Jwt__Audience=http://localhost:8080
       - FrontendUrl=http://localhost:3000
-      - USE_HTTPS_REDIRECTION=false
+      - AllowedHosts=*
+      - Cors__AllowedOrigins=http://localhost:3000,http://localhost:5173
+      - EmailSettings__SmtpServer=smtp.gmail.com
+      - EmailSettings__SmtpPort=587
+      - EmailSettings__SenderEmail=jakup.lawniczak@gmail.com
+      - EmailSettings__SenderName=Medisure System
+      - EmailSettings__Password=nfqgeivitpqsmpek
+      - SEQ_URL=http://seq
     depends_on:
       - db
+      - seq
 
   frontend:
     container_name: inzynierka_frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8080/api
     ports:
       - "3000:80"
     depends_on:

@@ -25,6 +25,8 @@ namespace backend.Models
 
         public string PaymentMethod { get; set; } 
         public string TransactionId { get; set; } 
+        public string Pesel { get; set; }
+        public bool ExpirationWarningSent { get; set; } = false;
 
     }
 }

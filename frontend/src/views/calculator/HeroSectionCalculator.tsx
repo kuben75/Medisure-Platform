@@ -4,17 +4,20 @@ import Button from "../../components/ui/Button"
 import BuildingIcon from "../../components/icons/BuildingIcon"
 import UserGroupIcon from "../../components/icons/UserGroupIcon"
 import CheckCircleIcon from "../../components/icons/CheckCircleIcon"
-import type {HeroCalcProps} from "../../types/ui.types.ts"
 import {Link} from "react-router-dom"
 import {useNotification} from "../../hooks/UseNotification.ts";
+import type {IHeroCalcProps} from "../../types/ui.types.ts";
 
-export default function HeroSectionCalculator({ onCalculate, isCalculating, initialAge }: HeroCalcProps) {
-    const [packageType, setPackageType] = useState('individual')
+export default function HeroSectionCalculator({ onCalculate, isCalculating, initialAge }: IHeroCalcProps) {
+    const [packageType, setPackageType] = useState('Indywidualny')
     const [age, setAge] = useState<string>(initialAge ? String(initialAge) : '')
+
+    const [budgetLimit, setBudgetLimit] = useState<string>('')
 
     const [familySize, setFamilySize] = useState('2+1')
     const [companySize, setCompanySize] = useState('')
     const {notify} = useNotification()
+
     useEffect(() => {
         if (initialAge) setAge(String(initialAge))
     }, [initialAge])
@@ -22,16 +25,18 @@ export default function HeroSectionCalculator({ onCalculate, isCalculating, init
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
-        if (packageType === 'company') {
+        const maxPrice = budgetLimit ? parseInt(budgetLimit) : undefined;
+
+        if (packageType === 'Biznesowy') {
             if (!companySize || parseInt(companySize) < 30) {
                 notify.error("Oferta dla firm wymaga minimum 30 pracowników.")
                 return
             }
-            onCalculate({ type: packageType, age: 0, companySize: parseInt(companySize) })
+            onCalculate({ type: packageType, age: 0, companySize: parseInt(companySize), maxPrice })
             return
         }
-        if (packageType === 'family' && familySize === 'other') {
-            onCalculate({ type: 'family_custom', age: 0, familySize: 'other' })
+        if (packageType === 'Rodzinny' && familySize === 'other') {
+            onCalculate({ type: 'family_custom', age: 0, familySize: 'other', maxPrice })
             return
         }
 
@@ -40,7 +45,8 @@ export default function HeroSectionCalculator({ onCalculate, isCalculating, init
         onCalculate({
             type: packageType,
             age: parseInt(age),
-            familySize: packageType === 'family' ? familySize : undefined
+            familySize: packageType === 'Rodzinny' ? familySize : undefined,
+            maxPrice
         })
     }
 
@@ -74,28 +80,43 @@ export default function HeroSectionCalculator({ onCalculate, isCalculating, init
                     <form onSubmit={handleSubmit} className="space-y-6">
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-3">Dla kogo szukasz
-                                pakietu?</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">Dla kogo szukasz pakietu?</label>
                             <div className="grid grid-cols-3 gap-3">
-                                <button type="button" onClick={() => setPackageType('individual')} className={`p-4 border rounded-xl flex flex-col items-center transition-all duration-200 ${packageType === 'individual' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`}>
-                                    <UserIcon className={`w-8 h-8 mb-2 ${packageType === 'individual' ? 'text-blue-600' : 'text-gray-400'}`}/>
-                                    <span className={`text-xs font-bold ${packageType === 'individual' ? 'text-blue-700' : 'text-gray-500'}`}>Indywidualny</span>
+                                <button type="button" onClick={() => setPackageType('Indywidualny')} className={`p-4 border rounded-xl flex flex-col items-center transition-all duration-200 ${packageType === 'Indywidualny' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`}>
+                                    <UserIcon className={`w-8 h-8 mb-2 ${packageType === 'Indywidualny' ? 'text-blue-600' : 'text-gray-400'}`}/>
+                                    <span className={`text-xs font-bold ${packageType === 'Indywidualny' ? 'text-blue-700' : 'text-gray-500'}`}>Indywidualny</span>
                                 </button>
-                                <button type="button" onClick={() => setPackageType('family')} className={`p-4 border rounded-xl flex flex-col items-center transition-all duration-200 ${packageType === 'family' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`}>
-                                    <UserGroupIcon className={`w-8 h-8 mb-2 ${packageType === 'family' ? 'text-blue-600' : 'text-gray-400'}`}/>
-                                    <span className={`text-xs font-bold ${packageType === 'family' ? 'text-blue-700' : 'text-gray-500'}`}>Rodzinny</span>
+                                <button type="button" onClick={() => setPackageType('Rodzinny')} className={`p-4 border rounded-xl flex flex-col items-center transition-all duration-200 ${packageType === 'Rodzinny' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/50' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'}`}>
+                                    <UserGroupIcon className={`w-8 h-8 mb-2 ${packageType === 'Rodzinny' ? 'text-blue-600' : 'text-gray-400'}`}/>
+                                    <span className={`text-xs font-bold ${packageType === 'Rodzinny' ? 'text-blue-700' : 'text-gray-500'}`}>Rodzinny</span>
                                 </button>
-                                <button type="button" onClick={() => setPackageType('company')} className={`p-4 border rounded-xl flex flex-col items-center transition-all duration-200 ${packageType === 'company' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/50' : 'border-gray-200 hover:border-blue-300 hover:text-gray-50'}`}>
-                                    <BuildingIcon className={`w-8 h-8 mb-2 ${packageType === 'company' ? 'text-blue-600' : 'text-gray-400'}`}/>
-                                    <span className={`text-xs font-bold ${packageType === 'company' ? 'text-blue-700' : 'text-gray-500'}`}>Dla Firmy</span>
+                                <button type="button" onClick={() => setPackageType('Biznesowy')} className={`p-4 border rounded-xl flex flex-col items-center transition-all duration-200 ${packageType === 'Biznesowy' ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-500/50' : 'border-gray-200 hover:border-blue-300 hover:text-gray-50'}`}>
+                                    <BuildingIcon className={`w-8 h-8 mb-2 ${packageType === 'Biznesowy' ? 'text-blue-600' : 'text-gray-400'}`}/>
+                                    <span className={`text-xs font-bold ${packageType === 'Biznesowy' ? 'text-blue-700' : 'text-gray-500'}`}>Dla Firmy</span>
                                 </button>
                             </div>
                         </div>
 
-                        {packageType === 'company' ? (
+                        {packageType !== 'Biznesowy' && (
+                            <div className="animate-fade-in">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Twój budżet miesięczny</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={budgetLimit}
+                                        onChange={(e) => setBudgetLimit(e.target.value)}
+                                        className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                                        min={0}
+                                    />
+                                    <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-medium">zł</span>
+                                </div>
+                                <p className="text-[10px] text-gray-400 mt-1 ml-1">Pozostaw puste, aby zobaczyć wszystkie oferty.</p>
+                            </div>
+                        )}
+
+                        {packageType === 'Biznesowy' ? (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Liczba
-                                    pracowników</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Liczba pracowników</label>
                                 <input
                                     type="number"
                                     value={companySize}
@@ -108,27 +129,18 @@ export default function HeroSectionCalculator({ onCalculate, isCalculating, init
                             </div>
                         ) : (
                             <>
-                                {(packageType === 'individual' || (packageType === 'family' && familySize !== 'other')) && (
+                                {(packageType === 'Indywidualny' || (packageType === 'Rodzinny' && familySize !== 'other')) && (
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            {packageType === 'family' ? 'Wiek najstarszej osoby' : 'Twój wiek'}
+                                            {packageType === 'Rodzinny' ? 'Wiek najstarszej osoby' : 'Twój wiek'}
                                         </label>
                                         <div className="relative">
-                                            <input
-                                                type="number"
-                                                value={age}
-                                                onChange={(e) => setAge(e.target.value)}
-                                                required
-                                                min={18}
-                                                max={100}
-                                                className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
-                                                placeholder="np. 30"
-                                            />
+                                            <input type="number" value={age} onChange={(e) => setAge(e.target.value)} required min={18} max={100} className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"/>
                                             <span className="absolute right-4 top-4 text-gray-400">lat</span>
                                         </div>
                                     </div>
                                 )}
-                                {packageType === 'family' && (
+                                {packageType === 'Rodzinny' && (
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Wariant rodzinny</label>
                                         <div className="grid grid-cols-2 gap-2">

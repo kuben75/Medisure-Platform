@@ -3,7 +3,7 @@ export const calculatePersonalizedPrice = (basePrice: number, category: string, 
     if (!basePrice) return 0;
 
 
-    if (category === 'Business' || category === 'Senior') {
+    if (category === 'Biznesowy' || category === 'Senior') {
         return basePrice;
     }
 

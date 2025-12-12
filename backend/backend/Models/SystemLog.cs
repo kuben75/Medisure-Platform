@@ -13,4 +13,5 @@ public class SystemLog
     public string? UserId { get; set; }
         
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsSensitive { get; set; } = false;
 }

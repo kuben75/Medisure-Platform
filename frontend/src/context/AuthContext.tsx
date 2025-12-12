@@ -1,6 +1,6 @@
 import {type ReactNode, useEffect, useState} from 'react'
 import type {IUser} from "../types/user.types.ts";
-import {AuthContext as AuthContext1} from "../hooks/useAuth.ts";
+import {AuthContext} from "../hooks/useAuth.ts";
 
 const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/auth/login`
 
@@ -36,11 +36,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 let finalRoles: string[] = []
                 if (decodedToken) {
                     const tokenRoles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-                    if (Array.isArray(tokenRoles)) {
+                    if (Array.isArray(tokenRoles))
                         finalRoles = tokenRoles
-                    } else if (typeof tokenRoles === 'string') {
+                     else if (typeof tokenRoles === 'string')
                         finalRoles = [tokenRoles]
-                    }
+
                 }
                 setRoles(finalRoles)
             } catch (e) {
@@ -51,7 +51,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         setIsLoading(false)
     }, [])
+    useEffect(() => {
+        const handleStorageChange = (e:StorageEvent) => {
+            if (e.key === 'auth_token' || e.key === 'auth_user')
+                window.location.reload()
+        }
+        window.addEventListener('storage', handleStorageChange)
+        return () => {
+            window.removeEventListener('storage', handleStorageChange)
+        }
+    }, [])
+    const setAuthSession = (newToken: string, newUser: IUser) => {
+        setToken(newToken)
+        setUser(newUser)
 
+        localStorage.setItem('auth_token', newToken)
+        localStorage.setItem('auth_user', JSON.stringify(newUser))
+
+        let finalRoles: string[] = []
+        const decodedToken = parseJwt(newToken)
+        if (decodedToken) {
+            const tokenRoles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+            if (Array.isArray(tokenRoles)) finalRoles = tokenRoles
+            else if (typeof tokenRoles === 'string') finalRoles = [tokenRoles]
+        }
+        setRoles(finalRoles)
+        setIsLoading(false)
+    }
     const login = async (email: string, password: string): Promise<string[] | null> => {
         setIsLoading(true)
         setError(null)
@@ -119,14 +145,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         updateUser,
+        setAuthSession,
         isLoading,
         error
     }
 
     return (
-        <AuthContext1 value={value}>
+        <AuthContext value={value}>
             {!isLoading && children}
-        </AuthContext1>
+        </AuthContext>
     )
 }
 

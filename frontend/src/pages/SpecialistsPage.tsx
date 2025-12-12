@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
+import {useState, useMemo, useEffect} from 'react';
 import { SPECIALISTS_LIST } from '../constants/specialists.tsx';
 import type { ISpecialist } from "../types/specialists.types.ts";
 import Modal from '../components/ui/Modal.tsx';
 import Button from '../components/ui/Button.tsx';
 import CheckIcon from '../components/icons/CheckIcon.tsx';
 import BriefcaseIcon from "../components/icons/BriefcaseIcon.tsx";
-import { useNavigate } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 const CATEGORY_GROUPS: Record<string, string[]> = {
     "Podstawowa i Rodzinna": ["Podstawowa", "Pediatria", "Geriatria", "Medycyna rodzinna"],
@@ -37,10 +37,18 @@ const VerifiedBadge = () => (
 )
 
 export default function SpecialistsPage() {
-    const [searchTerm, setSearchTerm] = useState("")
-    const [selectedCategory, setSelectedCategory] = useState("Wszystkie")
-    const [selectedSpecialist, setSelectedSpecialist] = useState<ISpecialist | null>(null)
     const navigate = useNavigate()
+    const location = useLocation();
+    const packageFilterName = location.state?.filterByPackage || null;
+    const initialSearch = location.state?.filterByName || "";
+    const [searchTerm, setSearchTerm] = useState(initialSearch)
+    const [selectedCategory, setSelectedCategory] = useState("Wszystkie");
+    const [selectedSpecialist, setSelectedSpecialist] = useState<ISpecialist | null>(null)
+
+    useEffect(() => {
+        if (!packageFilterName && !initialSearch) window.scrollTo(0, 0)
+        if (initialSearch) setSearchTerm(initialSearch);
+    }, [packageFilterName, initialSearch])
 
     const filtered = useMemo(() => {
         return SPECIALISTS_LIST.filter(s => {

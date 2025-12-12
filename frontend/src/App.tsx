@@ -6,16 +6,11 @@ import PatientGuidePage from "./views/guide/PatientGuidePage.tsx"
 import ContactPage from "./views/contact/ContactPage.tsx"
 import CalculatorPage from "./views/calculator/CalculatorPage.tsx"
 import LoginPage from "./pages/LoginPage.tsx"
-import {AuthProvider} from "./context/AuthContext.tsx"
 import AdminRoute from './components/auth/AdminRoute.tsx'
 import AdminPanel from './components/admin/AdminPanel.tsx'
 import RegisterPage from "./pages/RegisterPage.tsx"
 import UserProfile from "./components/users/UserProfile.tsx"
 import UserRoute from "./components/auth/UserRoute.tsx"
-import {NotificationProvider} from "./context/NotificationContext.tsx"
-import {ConfirmationProvider} from "./context/ConfirmationContext.tsx"
-import {FavoritesProvider} from "./context/FavouritesContext.tsx"
-import {ComparisonProvider} from "./context/ComparisonContext.tsx"
 import OnboardingModal from "./components/users/OnboardingModal.tsx"
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx"
 import FaqPage from "./pages/FaqPage.tsx"
@@ -25,11 +20,11 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import ConfirmEmailPage from "./pages/ConfirmEmailPage.tsx";
 import ChatWidget from "./components/chat/chatWidget.tsx";
-import {ChatProvider} from "./context/ChatContext.tsx";
 import TermsPage from "./pages/TermsPage.tsx";
 import CookiePolicyPage from "./pages/CookiePolicyPage.tsx";
 import SpecialistsPage from "./pages/SpecialistsPage.tsx";
-import {UserNotificationsProvider} from "./context/UserNotificationsContext.tsx";
+import ConfirmChangeEmailPage from "./pages/ConfirmChangeEmailPage.tsx";
+import {AppProviders} from "./context/AppProviders.tsx";
 
 function AppLayout() {
     return (
@@ -40,53 +35,42 @@ function AppLayout() {
             </main>
             <Footer/>
             <OnboardingModal/>
-            <CookieConsent />
-            <ChatWidget />
+            <CookieConsent/>
+            <ChatWidget/>
         </div>
     )
 }
 
 function App() {
     return (
-        <NotificationProvider>
-            <ConfirmationProvider>
-                <AuthProvider>
-                    <FavoritesProvider>
-                        <ComparisonProvider>
-                            <UserNotificationsProvider>
-                            <ChatProvider>
-                                <ScrollToTop/>
-                                <Routes>
-                                    <Route path="/rejestracja" element={<RegisterPage/>}/>
-                                    <Route path="/login" element={<LoginPage/>}/>
-                                    <Route path="/polityka-prywatnosci" element={<PrivacyPolicyPage/>}/>
-                                    <Route path="/regulamin" element={<TermsPage/>}/>
-                                    <Route path="/polityka-cookies" element={<CookiePolicyPage/>}/>
-                                    <Route path="/faq" element={<FaqPage/>}/>
-                                    <Route path="/reset-hasla" element={<ResetPasswordPage />} />
-                                    <Route path="/potwierdz-email" element={<ConfirmEmailPage />} />
-                                    <Route path="/zapomnialem-hasla" element={<ForgotPasswordPage />} />
-                                    <Route path="/" element={<AppLayout/>}>
-                                        <Route index element={<HomePage/>}/>
-                                        <Route path="przewodnik-pacjenta" element={<PatientGuidePage/>}/>
-                                        <Route path="kontakt" element={<ContactPage/>}/>
-                                        <Route path="kalkulator" element={<CalculatorPage/>}/>
-                                        <Route element={<UserRoute/>}>
-                                            <Route path="profile" element={<UserProfile/>}/>
-                                        </Route>
-                                        <Route path="/specjalisci" element={<SpecialistsPage />} />
-                                    </Route>
-                                    <Route path="/admin" element={<AdminRoute/>}>
-                                        <Route index element={<AdminPanel/>}/>
-                                    </Route>
-                                </Routes>
-                            </ChatProvider>
-                            </UserNotificationsProvider>
-                        </ComparisonProvider>
-                    </FavoritesProvider>
-                </AuthProvider>
-            </ConfirmationProvider>
-        </NotificationProvider>
+        <AppProviders>
+            <ScrollToTop/>
+            <Routes>
+                <Route path="/rejestracja" element={<RegisterPage/>}/>
+                <Route path="/login" element={<LoginPage/>}/>
+                <Route path="/polityka-prywatnosci" element={<PrivacyPolicyPage/>}/>
+                <Route path="/regulamin" element={<TermsPage/>}/>
+                <Route path="/polityka-cookies" element={<CookiePolicyPage/>}/>
+                <Route path="/faq" element={<FaqPage/>}/>
+                <Route path="/reset-hasla" element={<ResetPasswordPage/>}/>
+                <Route path="/potwierdz-email" element={<ConfirmEmailPage/>}/>
+                <Route path="/zapomnialem-hasla" element={<ForgotPasswordPage/>}/>
+                <Route path="/potwierdz-nowy-email" element={<ConfirmChangeEmailPage/>}/>
+                <Route path="/" element={<AppLayout/>}>
+                    <Route index element={<HomePage/>}/>
+                    <Route path="przewodnik-pacjenta" element={<PatientGuidePage/>}/>
+                    <Route path="kontakt" element={<ContactPage/>}/>
+                    <Route path="kalkulator" element={<CalculatorPage/>}/>
+                    <Route element={<UserRoute/>}>
+                        <Route path="profile" element={<UserProfile/>}/>
+                    </Route>
+                    <Route path="/specjalisci" element={<SpecialistsPage/>}/>
+                </Route>
+                <Route path="/admin" element={<AdminRoute/>}>
+                    <Route index element={<AdminPanel/>}/>
+                </Route>
+            </Routes>
+        </AppProviders>
     )
 }
 

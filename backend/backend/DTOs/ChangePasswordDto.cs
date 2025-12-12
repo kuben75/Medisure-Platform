@@ -15,4 +15,5 @@ public class ChangePasswordDto
 
     [Compare("NewPassword", ErrorMessage = "Hasła nie są identyczne")]
     public string ConfirmNewPassword { get; set; }
+    public string? TwoFactorCode { get; set; }
 }

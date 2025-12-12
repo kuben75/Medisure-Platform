@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../ui/Modal.tsx';
 import Button from '../ui/Button.tsx';
 import type {IUserDto} from "../../types/user.types.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 const API_URL_USERS = `${import.meta.env.VITE_API_URL}/admin/users`;
 
 export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdit }: {
-    isOpen: boolean;
-    onClose: () => void;
-    onSaveSuccess: () => void;
-    token: string | null;
-    userToEdit: IUserDto | null;
+    isOpen: boolean
+    onClose: () => void
+    onSaveSuccess: () => void
+    token: string | null
+    userToEdit: IUserDto | null
 }) => {
+    const { user: currentUser, updateUser } = useAuth()
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
@@ -21,17 +23,18 @@ export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdi
 
     useEffect(() => {
         if (userToEdit && isOpen) {
-            setFirstName(userToEdit.firstName)
-            setLastName(userToEdit.lastName)
-            setEmail(userToEdit.email)
-            setPhoneNumber(userToEdit.phoneNumber || '')
+            setFirstName(userToEdit.firstName);
+            setLastName(userToEdit.lastName);
+            setEmail(userToEdit.email);
+            setPhoneNumber(userToEdit.phoneNumber || '');
 
-            if (userToEdit.birthDate)
+            if (userToEdit.birthDate && userToEdit.birthDate !== "0001-01-01T00:00:00")
                 setBirthDate(userToEdit.birthDate.split('T')[0])
              else
                 setBirthDate('')
 
         }
+        setError(null)
     }, [userToEdit, isOpen])
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -69,9 +72,26 @@ export const UserFormModal = ({ isOpen, onClose, onSaveSuccess, token, userToEdi
                 }
                 throw new Error(errorMsg);
             }
+            if (currentUser && currentUser.email === userToEdit.email) {
 
-            onSaveSuccess();
-            onClose();
+                const updatedSessionUser = {
+                    ...currentUser,
+                    firstName: updatedUserData.firstName,
+                    lastName: updatedUserData.lastName,
+                    phoneNumber: updatedUserData.phoneNumber ?? null,
+                    birthDate: updatedUserData.birthDate ?? null,
+                    pesel: currentUser.pesel ?? null
+                }
+
+                if (updateUser)
+                    updateUser(updatedSessionUser)
+
+                localStorage.setItem('auth_user', JSON.stringify(updatedSessionUser))
+
+            }
+
+            onSaveSuccess()
+            onClose()
         } catch (err: any) {
             setError(err.message)
         } finally {

@@ -1,5 +1,5 @@
 import React from "react";
-import type {IPricingPlan} from "./pricing.types.ts";
+import type {IPricingPlan, ISubscriptionOption, TBillingType} from "./pricing.types.ts";
 
 export type IconProps = {
     className?: string | "w-6 h-6"
@@ -40,10 +40,16 @@ export interface IComparisonModalProps {
     packages: IPricingPlan[]
 }
 
-export interface HeroCalcProps {
-    onCalculate: (data: { type: string; age: number; familySize?: string; companySize?: number }) => void
-    isCalculating: boolean
-    initialAge?: number
+export interface IHeroCalcProps {
+    onCalculate: (data: {
+        type: string;
+        age: number;
+        familySize?: string;
+        companySize?: number;
+        maxPrice?: number;
+    }) => void;
+    isCalculating: boolean;
+    initialAge?: number | undefined;
 }
 
 export interface IFaqItem {
@@ -57,13 +63,27 @@ export type AccordionProps = {
     isOpen?: boolean
     onToggle?: () => void
 }
-
-export interface PackageDetailsModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    plan: IPricingPlan | null;
-    userAge: number;
-    selectedDuration: string;
-    onDurationChange: (duration: string) => void;
-    onProceedToCheckout: () => void;
+export interface ExtendedPackageDetailsModalProps extends IPackageDetailsModalProps {
+    billingPeriod: TBillingType;
+    setBillingPeriod: (val: TBillingType) => void;
+}
+export interface IPackageDetailsModalProps {
+    isOpen: boolean
+    onClose: () => void
+    plan: IPricingPlan | null
+    userAge: number | undefined
+    selectedDuration: string
+    onDurationChange: (id: string) => void
+    onProceedToCheckout: () => void
+    options: ISubscriptionOption[]
+    priceDetails: {
+        label: string
+        total: number
+        monthly: number
+        originalTotal: number
+        isDiscounted: boolean
+        months: number
+        discountLabel: string
+    }
+    isBuying: boolean
 }

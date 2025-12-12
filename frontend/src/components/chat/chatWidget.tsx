@@ -8,21 +8,23 @@ const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none"
 const SendIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" /></svg>;
 
 export default function ChatWidget() {
-    const { user } = useAuth();
-    const { messages, sendMessageToAdmin, unreadCount } = useChat();
+    const {roles } = useAuth();
+    const { messages, sendMessageToAdmin, unreadCount, currentChatId, markAsRead } = useChat()
 
     const [isOpen, setIsOpen] = useState(false);
     const [input, setInput] = useState('');
     const bottomRef = useRef<HTMLDivElement>(null);
 
-    const myEmail = user?.email?.toLowerCase() || "";
+    const myEmail = currentChatId
 
     const myMessages = messages.filter(m => {
         const msgSender = (m.user || "").toLowerCase();
         const msgTarget = (m.targetUserEmail || "").toLowerCase();
+        const myId = myEmail.toLowerCase();
 
-        if (msgSender === myEmail && m.type === "UserToAdmin") return true;
-        if (m.type === "AdminToUser" && msgTarget === myEmail) return true;
+        if (msgSender === myId && m.type === "UserToAdmin") return true;
+
+        if (m.type === "AdminToUser" && msgTarget === myId) return true;
 
         return false;
     });
@@ -33,14 +35,20 @@ export default function ChatWidget() {
         }
     }, [myMessages, isOpen]);
 
-    const handleSend = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim()) return;
-        await sendMessageToAdmin(input);
-        setInput('');
-    };
+    useEffect(() => {
+        if (isOpen && unreadCount > 0) {
+            markAsRead('')
+        }
+    }, [isOpen, unreadCount, markAsRead]);
 
-    if (!user) return null
+    const handleSend = async (e: React.FormEvent) => {
+        e.preventDefault()
+        if (!input.trim()) return
+        await sendMessageToAdmin(input)
+        setInput('')
+    }
+
+    if (roles?.includes("Admin")) return null
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
@@ -75,14 +83,20 @@ export default function ChatWidget() {
                         )}
 
                         {myMessages.map((msg, idx) => {
-                            const isMe = (msg.user || "").toLowerCase() === myEmail;
+                            const isMe = (msg.user || "").toLowerCase() === myEmail
+                            const isSystem = (msg.user || "").toLowerCase() === "system"
+
+                            let senderName = "Admin"
+                            if (isMe) senderName = "Ja"
+                            else if (isSystem) senderName = "System"
+
                             return (
                                 <ChatBubble
                                     key={idx}
                                     message={msg.message}
                                     isMe={isMe}
                                     timestamp={new Date(msg.timestamp)}
-                                    senderName={isMe ? "Ja" : "Admin"}
+                                    senderName={senderName}
                                 />
                             )
                         })}

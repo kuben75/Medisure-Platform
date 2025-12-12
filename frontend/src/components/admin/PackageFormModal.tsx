@@ -14,21 +14,18 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
 }) => {
     const isEditMode = packageToEdit !== null
 
-    // Stany formularza
     const [name, setName] = useState('')
     const [price, setPrice] = useState('')
     const [priceValue, setPriceValue] = useState(0)
-    const [category, setCategory] = useState('Individual')
+    const [category, setCategory] = useState('Indywidualny')
     const [description, setDescription] = useState('')
     const [features, setFeatures] = useState('')
 
-    // Statystyki
     const [averageRating, setAverageRating] = useState(0)
     const [reviews, setReviews] = useState(0)
     const [specialistsCount, setSpecialistsCount] = useState(0)
     const [facilitiesCount, setFacilitiesCount] = useState(0)
 
-    // Opcje
     const [hasDentalCare, setHasDentalCare] = useState(false)
     const [hasHospitalization, setHasHospitalization] = useState(false)
     const [hasRehabilitation, setHasRehabilitation] = useState(false)
@@ -43,7 +40,7 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
                 setName(packageToEdit.name)
                 setPrice(packageToEdit.price)
                 setPriceValue(packageToEdit.priceValue || 0)
-                setCategory(packageToEdit.category || 'Individual')
+                setCategory(packageToEdit.category || 'Indywidualny')
                 setDescription(packageToEdit.description)
                 setFeatures(packageToEdit.features ? packageToEdit.features.join(', ') : '')
                 setAverageRating(packageToEdit.averageRating)
@@ -57,8 +54,7 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
                 setHasRehabilitation(packageToEdit.hasRehabilitation || false)
                 setIsFeatured(packageToEdit.isFeatured || false)
             } else {
-                // Reset dla nowego
-                setName(''); setPrice(''); setPriceValue(0); setCategory('Individual')
+                setName(''); setPrice(''); setPriceValue(0); setCategory('Indywidualny')
                 setDescription(''); setFeatures('')
                 setAverageRating(4.5); setReviews(0)
                 setSpecialistsCount(10); setFacilitiesCount(100)
@@ -68,7 +64,6 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
         }
     }, [packageToEdit, isOpen, isEditMode])
 
-    // Auto-update pola tekstowego ceny
     const handlePriceValueChange = (val: string) => {
         const num = parseFloat(val)
         setPriceValue(num)
@@ -129,7 +124,6 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
         }
     }
 
-    // Helper styli inputów
     const labelClass = "block text-xs font-bold text-gray-500 uppercase mb-1";
     const inputClass = "w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4E61F6] focus:border-transparent outline-none transition-all text-sm";
 
@@ -143,7 +137,6 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
             <form onSubmit={handleSubmit} className="space-y-6 max-h-[65vh] overflow-y-auto px-1 custom-scrollbar">
                 {error && <div className="text-red-600 bg-red-50 p-3 rounded-lg text-sm border border-red-100">{error}</div>}
 
-                {/* SEKCJA 1: PODSTAWOWE */}
                 <div className="space-y-4">
                     <h4 className="text-sm font-bold text-[#4E61F6] uppercase tracking-wider border-b border-blue-100 pb-1">Podstawowe informacje</h4>
                     <div className="grid grid-cols-2 gap-4">
@@ -154,9 +147,9 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
                         <div className="col-span-2 md:col-span-1">
                             <label className={labelClass}>Kategoria</label>
                             <select value={category} onChange={(e) => setCategory(e.target.value)} className={`${inputClass} bg-white`}>
-                                <option value="Individual">Indywidualny</option>
-                                <option value="Family">Rodzinny</option>
-                                <option value="Company">Dla Firmy</option>
+                                <option value="Indywidualny">Indywidualny</option>
+                                <option value="Rodzinny">Rodzinny</option>
+                                <option value="Biznesowy">Dla Firmy</option>
                                 <option value="Senior">Senior</option>
                             </select>
                         </div>
@@ -168,7 +161,6 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
                     </div>
                 </div>
 
-                {/* SEKCJA 2: CENA */}
                 <div className="space-y-4">
                     <h4 className="text-sm font-bold text-[#4E61F6] uppercase tracking-wider border-b border-blue-100 pb-1">Cennik</h4>
                     <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
@@ -183,7 +175,6 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
                     </div>
                 </div>
 
-                {/* SEKCJA 3: SZCZEGÓŁY */}
                 <div className="space-y-4">
                     <h4 className="text-sm font-bold text-[#4E61F6] uppercase tracking-wider border-b border-blue-100 pb-1">Zakres i Statystyki</h4>
 
@@ -205,7 +196,6 @@ export const PackageFormModal = ({ isOpen, onClose, onPackageAdded, token, packa
                     </div>
                 </div>
 
-                {/* SEKCJA 4: OPCJE */}
                 <div className="space-y-3 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
                     <h4 className="text-xs font-bold text-gray-500 uppercase mb-2">Dodatkowe Opcje</h4>
                     <div className="grid grid-cols-2 gap-3">

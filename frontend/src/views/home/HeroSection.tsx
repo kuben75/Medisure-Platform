@@ -5,23 +5,21 @@ import Rating from "../../components/ui/Rating.tsx"
 import { useNavigate } from 'react-router-dom'
 import type {IPricingPlan} from "../../types/pricing.types.ts"
 import FavoriteButton from "../../components/ui/FavouriteButton.tsx"
-import {DURATION_OPTIONS} from "../../constants/options.ts"
 import {useNotification} from "../../hooks/UseNotification.ts"
 import {usePackagePurchase} from "../../hooks/usePackagePurchase.ts"
 import FlashIcon from "../../components/icons/FlashIcon.tsx"
 import {useComparison} from "../../hooks/useComparison.ts"
 import ChevronRightIcon from "../../components/icons/ChevronRightIcon.tsx"
-import {useAuth} from "../../hooks/useAuth.ts";
+import {useAuth} from "../../hooks/useAuth.ts"
+import ShieldCheckIcon from "../../components/icons/ShieldCheckIcon.tsx";
+import CalendarIcon from "../../components/icons/CalendarIcon.tsx";
 
 export default function HeroSection() {
     const {user} = useAuth()
     const {
         selectedPlan,
-        selectedDuration,
-        setSelectedDuration,
         openModal,
         closeModal,
-        priceDetails,
     } = usePackagePurchase()
 
     const [plans, setPlans] = useState<IPricingPlan[]>([])
@@ -52,14 +50,12 @@ export default function HeroSection() {
             } catch (e) {
                 notify.error("Nie udało się pobrać ofert.")
                 setError(`Nie udało się pobrać ofert.`)
-                throw new Error(`Nie udało się pobrać ofert: ${e} `)
             } finally {
                 setLoading(false)
             }
         }
         fetchPackages()
     }, [])
-
 
     const handleProceedToCalculator = () => {
         if (!selectedPlan) return
@@ -78,17 +74,23 @@ export default function HeroSection() {
     }
 
     return (
-        <section className="relative w-full text-center text-white py-24 md:py-28 px-4 bg-gradient-to-br from-[#2563EB] via-[#4F46E5] to-[#4338ca] overflow-hidden">
+        <section className="relative w-full text-center text-white py-16 md:py-32 px-4 bg-gradient-to-br from-[#2563EB] via-[#4F46E5] to-[#4338ca] overflow-hidden">
 
-            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-white/10 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
-            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+            <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-white/10 rounded-full blur-3xl opacity-20 pointer-events-none animate-pulse"></div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto relative z-10">
-                <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight drop-shadow-sm">
-                    Twoje Zdrowie, <br className="hidden md:block"/> Nasz Priorytet.
+
+                <h1 className="text-4xl md:text-6xl font-black mb-4 md:mb-6 leading-tight tracking-tight drop-shadow-lg">
+                    Twoje Zdrowie, <br className="hidden md:block"/>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-white">
+                    Nasz Priorytet.
+                </span>
                 </h1>
-                <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-16 leading-relaxed">
-                    Porównaj najlepsze oferty medyczne w Polsce. Wybierz pakiet dopasowany do Twoich potrzeb i ciesz się spokojem.
+
+                <p className="text-base md:text-xl text-blue-50 max-w-2xl mx-auto mb-12 md:mb-16 leading-relaxed opacity-90 px-2">
+                    Wybierz pakiet medyczny dopasowany do Twojego stylu życia.
+                    Płać wygodnie co miesiąc i zrezygnuj kiedy chcesz, lub oszczędzaj płacąc za rok z góry.
                 </p>
 
                 {loading && (
@@ -98,144 +100,165 @@ export default function HeroSection() {
                 )}
 
                 {!loading && !error && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-15 items-center">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch">
                         {plans.map((plan, index) => (
                             <div
                                 key={plan.id}
                                 className={`
-                                    relative flex flex-col bg-white text-gray-800 rounded-3xl p-6 shadow-2xl transition-all duration-500
-                                    transform hover:-translate-y-3 hover:shadow-blue-900/30
-                                    ${index === 1 ? 'md:scale-110 z-10 border-4 border-[#4E61F6]/20' : 'border border-transparent opacity-95 hover:opacity-100'}`}>
+                                relative flex flex-col bg-white text-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl transition-all duration-500
+                                transform hover:-translate-y-2 group
+                                ${index === 1
+                                    ? 'mt-4 mb-4 md:-mt-8 md:mb-8 border-4 border-yellow-400 z-10 shadow-blue-900/40 order-first md:order-none' // Na mobile wyróżniony pakiet pierwszy
+                                    : 'border border-transparent hover:shadow-xl opacity-95 hover:opacity-100'
+                                }`}
+                            >
                                 {index === 1 && (
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider">
-                                        Bestseller</div>)}
-                                {user && (<div className="absolute top-4 right-4 z-20">
-                                        <FavoriteButton packageId={plan.id} className="text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors"/></div>
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full shadow-md uppercase tracking-wider flex items-center gap-1 w-max">
+                                        <ShieldCheckIcon className="w-3 h-3 md:w-4 md:h-4"/> Najczęściej wybierany
+                                    </div>
                                 )}
 
-                                <div className="mt-4 mb-2">
-                                    <p className="text-xs font-bold text-blue-600 uppercase tracking-wider">{plan.category}</p>
-                                    <h3 className="text-2xl font-bold text-gray-900 mt-1">{plan.name}</h3>
+                                {user && (
+                                    <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20">
+                                        <FavoriteButton packageId={plan.id} className="text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors p-2 rounded-full"/>
+                                    </div>
+                                )}
+
+                                <div className="mt-2 mb-2 md:mb-4 text-left">
+                                    <p className="text-[10px] md:text-xs font-bold text-[#4E61F6] uppercase tracking-wider mb-1">{plan.category}</p>
+                                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-[#4E61F6] transition-colors">{plan.name}</h3>
                                 </div>
 
-                                <div className="my-6 flex justify-center items-baseline gap-2">
-                                    <span className="text-2xl font-extrabold text-[#4E61F6]"> od</span>
-                                    <span className="text-4xl font-extrabold text-[#4E61F6]"> {plan.price}</span>
-                                    <span className="text-sm text-gray-400 font-medium">/ mies</span>
+                                <div className="my-2 md:my-4 flex items-baseline gap-1 text-left">
+                                    <span className="text-base md:text-lg text-gray-400 font-medium">od</span>
+                                    <span className="text-4xl md:text-5xl font-extrabold text-gray-900"> {plan.price}</span>
+                                    <div className="flex flex-col ml-1">
+                                        <span className="text-xs md:text-sm font-bold text-gray-500">zł / mies</span>
+                                    </div>
                                 </div>
 
-                                <ul className="space-y-3 mb-8 text-left flex-grow">
-                                    {plan.features.slice(0, 3).map((feature, i) => (
-                                        <li key={i} className="flex items-center justify-center text-sm text-gray-600"><FlashIcon /><span className="text-left flex-1">{feature}</span></li>))}
+                                <div className="text-left mb-4 md:mb-6">
+                                <span className="inline-block bg-green-50 text-green-700 text-[10px] font-bold px-2 py-1 rounded border border-green-100">
+                                    Możliwość płatności miesięcznej
+                                </span>
+                                </div>
+
+                                <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 text-left flex-grow">
+                                    {plan.features.slice(0, 4).map((feature, i) => (
+                                        <li key={i} className="flex items-start text-xs md:text-sm text-gray-600">
+                                            <div className="mt-0.5 min-w-[20px] text-green-500"><FlashIcon className="w-3 h-3 md:w-4 md:h-4 text-yellow-500 mr-2"/></div>
+                                            <span className="ml-1 md:ml-2 leading-tight">{feature}</span>
+                                        </li>
+                                    ))}
                                 </ul>
 
-                                <div className="mb-6 flex justify-center">
+                                <div className="mb-4 md:mb-6 flex justify-start">
                                     <Rating rating={plan.averageRating} reviews={plan.reviews}/>
                                 </div>
 
-                                <Button variant={index === 1 ? 'primary' : 'secondary'} className={`w-full py-3.5 text-sm font-bold shadow-lg ${index !== 1 ? 'border-gray-200 hover:border-[#4E61F6] text-gray-600 hover:text-[#4E61F6]' : ''}`} onClick={() => openModal(plan)}>
-                                    Sprawdź ofertę
+                                <Button
+                                    variant={index === 1 ? 'primary' : 'secondary'}
+                                    className={`w-full py-3 md:py-4 text-sm font-bold shadow-lg hover:shadow-xl transition-all ${index !== 1 ? 'bg-gray-50 border-gray-200 hover:bg-white hover:border-[#4E61F6] text-gray-600 hover:text-[#4E61F6]' : ''}`}
+                                    onClick={() => openModal(plan)}
+                                >
+                                    Zobacz szczegóły
                                 </Button>
                             </div>
                         ))}
                     </div>
                 )}
 
-                <div className="mt-20">
-                    <p className="text-blue-200 text-sm mb-4 uppercase tracking-wide font-semibold opacity-80">Chcesz zobaczyć więcej opcji?</p>
-                    <Button variant="secondary" className="px-10 py-4 text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-transform" onClick={() => navigate('/kalkulator')}>
-                        Przejdź do pełnego katalogu
+                <div className="mt-12 md:mt-20 animate-fade-in-up pb-8 md:pb-0">
+                    <p className="text-blue-100 text-xs md:text-sm mb-4 uppercase tracking-wide font-semibold opacity-80">Nie wiesz co wybrać?</p>
+                    <Button variant="secondary" className="w-full md:w-auto px-8 md:px-12 py-3 md:py-4 text-base md:text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-transform bg-white text-[#4E61F6] border-none" onClick={() => navigate('/kalkulator')}>
+                        Przejdź do pełnego kalkulatora
                     </Button>
                 </div>
             </div>
 
-            <Modal isOpen={selectedPlan !== null} onClose={closeModal} className="max-w-md bg-white overflow-hidden p-0">
+            <Modal isOpen={selectedPlan !== null} onClose={closeModal} className="w-[95%] md:w-full max-w-lg bg-white overflow-hidden p-0 rounded-2xl md:rounded-3xl mx-auto my-auto">
                 {selectedPlan && (
-                    <div className="text-gray-800 relative">
-                        <div className="h-36 bg-gradient-to-r from-[#4E61F6] to-[#7C3AED] flex items-center justify-center relative mb-8 rounded-t-2xl -mt-8 -mx-8">
-                            <div className="text-white text-center px-4">
-                                <span className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2">
-                                    Szczegóły Pakietu
-                                </span>
-                                <h2 className="text-2xl font-bold leading-tight">{selectedPlan.name}</h2>
-                            </div>
+                    <div className="text-gray-800 relative max-h-[90vh] overflow-y-auto custom-scrollbar"> {/* Scrollbar dla małych ekranów */}
+                        <div className="h-32 md:h-40 bg-gradient-to-br from-[#4E61F6] to-[#4338ca] flex flex-col items-center justify-center relative p-4 md:p-6 text-center shrink-0">
+                        <span className="inline-block bg-white/20 backdrop-blur-md px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] text-white font-bold uppercase tracking-wider mb-2 border border-white/10">
+                            Wybrany Pakiet
+                        </span>
+                            <h2 className="text-2xl md:text-3xl font-black text-white leading-tight mb-1">{selectedPlan.name}</h2>
+                            <p className="text-blue-100 text-xs md:text-sm opacity-90">{selectedPlan.category}</p>
 
-                            <div className="absolute top-4 right-4">
-                                <FavoriteButton packageId={selectedPlan.id} className="text-white/80 hover:text-white hover:bg-white/20"/>
+                            <div className="absolute top-3 right-3 md:top-4 md:right-4">
+                                <FavoriteButton packageId={selectedPlan.id} className="text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-sm transition-all"/>
                             </div>
                         </div>
 
-                        <div className="px-4 pb-6">
-                            <div className="text-center mb-6">
-                                {(() => {
-                                    const totalCost = Number(priceDetails.total);
-                                    const monthsCount = priceDetails.months;
-                                    const monthlyPrice = monthsCount > 0 ? (totalCost / monthsCount).toFixed(0) : "0";
-
-                                    const originalTotal = Number(priceDetails.originalTotal);
-                                    const originalMonthly = monthsCount > 0 ? (originalTotal / monthsCount).toFixed(0) : null;
-                                    return (
-                                        <>
-                                            <div className="flex items-baseline justify-center gap-2">
-                                                {priceDetails.isDiscounted && (
-                                                    <span className="text-lg text-red-400 line-through font-medium opacity-80">
-                                                        {originalMonthly} zł
-                                                    </span>
-                                                )}
-                                                <div className="flex items-baseline gap-2">
-
-                                                    <span className="font-semibold text-gray-500"> od </span>
-                                                <span className="text-5xl font-black text-gray-900 tracking-tight">
-                                                    {monthlyPrice}
-                                                </span>
-                                                <span className="text-2xl text-gray-500 font-bold">zł / mies</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="mt-3 flex flex-col items-center">
-                                                <p className="text-sm text-gray-500 font-medium bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
-                                                    Płatne jako <span className="text-gray-900 font-bold">{priceDetails.total} zł</span> za {priceDetails.months} miesięcy
-                                                </p>
-
-                                                {priceDetails.isDiscounted && (
-                                                    <span className="inline-block mt-2 text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">
-                                                        {priceDetails.discountLabel}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </>
-                                    );
-                                })()}
-                            </div>
-
-                            <p className="text-center text-gray-600 text-sm leading-relaxed mb-8 px-2">
-                                {selectedPlan.description}
-                            </p>
-
-                            <div className="bg-gray-50 p-4 rounded-xl mb-8 border border-gray-100">
-                                <p className="text-xs font-bold text-gray-400 uppercase mb-3 text-center">Dostępne warianty czasowe</p>
-                                <div className="grid grid-cols-2 gap-7">
-                                    {DURATION_OPTIONS.map((option) => (
-                                        <button key={option.value} onClick={() => setSelectedDuration(option.value)}
-                                                className={`py-2 px-3 rounded-lg text-xs hover:cursor-pointer font-bold transition-all ${selectedDuration === option.value
-                                                    ? 'bg-[#4E61F6] text-white shadow-md'
-                                                    : 'bg-white text-gray-500 border border-gray-200 hover:border-blue-300'}`}>
-                                            {option.label}</button>))}
+                        <div className="p-5 md:p-8 -mt-6">
+                            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 md:p-6 text-center mb-6 md:mb-8 relative z-10">
+                                <p className="text-[10px] md:text-xs text-gray-400 font-bold uppercase mb-2">Cena podstawowa</p>
+                                <div className="flex items-baseline justify-center gap-1">
+                                    <span className="text-4xl md:text-5xl font-black text-[#4E61F6]">{selectedPlan.price}</span>
+                                    <span className="text-sm md:text-xl text-gray-500 font-bold">zł / mies</span>
+                                </div>
+                                <div className="mt-4 flex justify-center gap-2 flex-wrap">
+                                <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-[10px] md:text-xs font-bold rounded-md">
+                                    <CalendarIcon className="w-3 h-3"/> Miesięcznie
+                                </span>
+                                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-[10px] md:text-xs font-bold rounded-md">
+                                    <ShieldCheckIcon className="w-3 h-3"/> Rocznie (-5%)
+                                </span>
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <Button variant="primary" className="w-full py-4 text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center gap-2" onClick={handleProceedToCalculator}>
-                                    Dostosuj i Zamów <ChevronRightIcon className="w-6 h-6"/>
-                                </Button>
+                            <div className="space-y-5 md:space-y-6">
+                                <div>
+                                    <h4 className="font-bold text-gray-800 text-xs md:text-sm uppercase tracking-wide mb-2 md:mb-3">Co zyskujesz?</h4>
+                                    <p className="text-gray-600 text-xs md:text-sm leading-relaxed">
+                                        {selectedPlan.description}
+                                    </p>
+                                </div>
 
-                                <button onClick={handleCompareAndRedirect} className="w-full text-center text-sm text-gray-500 hover:text-[#4E61F6] transition-colors py-3 border-t border-gray-100 mt-2 font-medium flex items-center justify-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                    </svg>
-                                    Porównaj z innymi ofertami
-                                </button>
+                                <div className="bg-blue-50/50 p-3 md:p-4 rounded-xl border border-blue-100">
+                                    <h4 className="font-bold text-blue-800 text-[10px] md:text-xs uppercase mb-2 md:mb-3 flex items-center gap-2">
+                                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                                        Elastyczność
+                                    </h4>
+                                    <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm text-gray-700">
+                                        <li className="flex items-center gap-2">
+                                            <span className="text-green-500">✓</span>
+                                            Możliwość płatności co miesiąc
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <span className="text-green-500">✓</span>
+                                            Rezygnacja w dowolnym momencie*
+                                        </li>
+                                        <li className="flex items-center gap-2">
+                                            <span className="text-green-500">✓</span>
+                                            Szybka e-polisa na maila
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className="space-y-3 pt-2 pb-4">
+                                    <Button
+                                        variant="primary"
+                                        className="w-full py-3 md:py-4 text-base md:text-lg shadow-lg hover:shadow-blue-500/30 flex items-center justify-center gap-2 group transition-all"
+                                        onClick={handleProceedToCalculator}
+                                    >
+                                        Dostosuj i Kup
+                                        <ChevronRightIcon className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform"/>
+                                    </Button>
+
+                                    <button
+                                        onClick={handleCompareAndRedirect}
+                                        className="w-full py-2 md:py-3 text-xs md:text-sm font-bold text-gray-500 hover:text-[#4E61F6] flex items-center justify-center gap-2 transition-colors"
+                                    >
+                                        + Dodaj do porównania
+                                    </button>
+                                </div>
                             </div>
+                        </div>
+
+                        <div className="bg-gray-50 p-3 text-center text-[9px] md:text-[10px] text-gray-400 border-t border-gray-100">
+                            *Dotyczy subskrypcji miesięcznej z 30-dniowym okresem wypowiedzenia.
                         </div>
                     </div>
                 )}

@@ -1,10 +1,23 @@
-import { createContext, useContext, useEffect, useState, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, useMemo, type ReactNode } from 'react';
 import * as signalR from '@microsoft/signalr';
 import { useAuth } from "../hooks/useAuth";
 import { useNotification } from "../hooks/UseNotification";
-import type {IChatMessage, IExtendedChatContext, IUserDetail} from "../types/chat.types";
+import type { IChatMessage, IExtendedChatContext, IUserDetail } from "../types/chat.types";
 
-const ChatContext = createContext<IExtendedChatContext | null>(null);
+interface IChatContextWithIdentity extends IExtendedChatContext {
+    currentChatId: string;
+}
+
+const ChatContext = createContext<IChatContextWithIdentity | null>(null);
+
+const getGuestId = () => {
+    let id = localStorage.getItem('guest_chat_id')
+    if (!id) {
+        id = `guest_${Math.random().toString(36).substr(2, 9)}`
+        localStorage.setItem('guest_chat_id', id)
+    }
+    return id
+}
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user, token } = useAuth()
@@ -14,7 +27,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [messages, setMessages] = useState<IChatMessage[]>([])
     const [userDetails, setUserDetails] = useState<Record<string, IUserDetail>>({})
     const [onlineUsers, setOnlineUsers] = useState<string[]>([])
-    const [unreadCount, setUnreadCount] = useState(0)
+
 
     const connectionRef = useRef<signalR.HubConnection | null>(null)
     const isConnecting = useRef(false)
@@ -22,114 +35,124 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const BASE_URL = import.meta.env.VITE_API_URL
     const HUB_URL = `${BASE_URL}/chatHub`
 
+    const currentChatId = (user?.email || (!token ? getGuestId() : "")).toLowerCase();
+
+    const unreadCount = useMemo(() => {
+        return messages.filter(m => !m.isRead && m.type === "AdminToUser").length;
+    }, [messages]);
+
     const addMessageUnique = (newMsg: IChatMessage) => {
         setMessages(prev => {
             const exists = prev.some(m =>
                 m.message === newMsg.message &&
                 m.user === newMsg.user &&
-                Math.abs(new Date(m.timestamp).getTime() - newMsg.timestamp.getTime()) < 1000
+                Math.abs(new Date(m.timestamp).getTime() - newMsg.timestamp.getTime()) < 2000
             )
-
             if (exists) return prev;
             return [...prev, newMsg];
         })
     }
 
     useEffect(() => {
-        const fetchHistory = async () => {
-            if (!token) { setMessages([]); return; }
+        setMessages([]);
+
+        let active = true;
+        let newConnection: signalR.HubConnection | null = null;
+
+        const initChat = async () => {
+            const guestId = !token ? getGuestId() : null;
+            const headers: HeadersInit = {};
+
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            else if (guestId) headers['X-Anon-ID'] = guestId;
 
             try {
-                const response = await fetch(`${BASE_URL}/chat/history`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.ok) {
+                const response = await fetch(`${BASE_URL}/chat/history`, { headers });
+                if (response.ok && active) {
                     const data = await response.json();
+                    const rawMsgs = data.messages || data;
 
-                    let msgs = [];
-                    if (data.messages) {
-                        msgs = data.messages;
-                        setUserDetails(data.users || {});
-                        setOnlineUsers(data.onlineUsers || []);
-                    } else {
-                        msgs = data;
-                    }
+                    if (data.users) setUserDetails(data.users);
+                    if (data.onlineUsers) setOnlineUsers(data.onlineUsers);
 
-                    const parsedMessages = msgs.map((msg: any) => ({
+                    const parsedMessages = rawMsgs.map((msg: any) => ({
                         id: msg.id,
                         user: msg.sender,
                         message: msg.message,
-                        type: msg.sender === "Admin" ? "AdminToUser" : "UserToAdmin",
+                        type: (msg.sender === "Admin" || msg.sender === "System") ? "AdminToUser" : "UserToAdmin",
                         targetUserEmail: msg.receiver,
                         timestamp: new Date(msg.timestamp),
                         isRead: msg.isRead
-                    }))
-                    setMessages(parsedMessages);
+                    }));
+
+                    if (active) setMessages(parsedMessages);
                 }
             } catch (err) {
-                console.error("Błąd pobierania historii:", err)
+                console.error("Błąd historii:", err);
             }
-        }
-        fetchHistory()
-    }, [token])
 
-    useEffect(() => {
-        if (!token || connectionRef.current || isConnecting.current) return
-        isConnecting.current = true
+            if (connectionRef.current) return;
+            isConnecting.current = true;
 
-        const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl(HUB_URL, { accessTokenFactory: () => token })
-            .withAutomaticReconnect()
-            .configureLogging(signalR.LogLevel.Warning)
-            .build()
+            let finalHubUrl = HUB_URL;
+            if (!token && guestId) {
+                finalHubUrl += `?anonId=${guestId}`;
+            }
 
-        newConnection.on('ReceiveMessage', (sender: string, message: string, type: any, targetEmail?: string) => {
-            const newMsg: IChatMessage = {
-                user: sender,
-                message,
-                type,
-                targetUserEmail: targetEmail,
-                timestamp: new Date(),
-                isRead: false
-            };
-            addMessageUnique(newMsg);
+            newConnection = new signalR.HubConnectionBuilder()
+                .withUrl(finalHubUrl, { accessTokenFactory: () => token || "" })
+                .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Warning)
+                .build();
 
-            if (user && sender !== user.email && sender !== "Admin")
-                setUnreadCount(prev => prev + 1)
+            newConnection.on('ReceiveMessage', (sender: string, message: string, type: any, targetEmail?: string) => {
+                const newMsg: IChatMessage = {
+                    id: Date.now(),
+                    user: sender,
+                    message,
+                    type,
+                    targetUserEmail: targetEmail,
+                    timestamp: new Date(),
+                    isRead: false
+                };
+                addMessageUnique(newMsg);
+            });
 
-        })
+            newConnection.on('UserStatusChanged', (email: string, isOnline: boolean) => {
+                setOnlineUsers(prev => {
+                    const normalized = email.toLowerCase();
+                    return isOnline ? [...new Set([...prev, normalized])] : prev.filter(e => e !== normalized);
+                });
+            });
 
-        newConnection.on('UserStatusChanged', (email: string, isOnline: boolean) => {
-            setOnlineUsers(prev => {
-                const normalized = email.toLowerCase()
-                if (isOnline) return [...new Set([...prev, normalized])]
-                return prev.filter(e => e !== normalized)
-            })
-        })
-
-        const start = async () => {
             try {
                 await newConnection.start();
-                console.log('SignalR Connected');
-                connectionRef.current = newConnection;
-                setConnection(newConnection);
+                console.log(`SignalR Connected (${token ? 'User' : 'Guest'})`);
+                if (active) {
+                    connectionRef.current = newConnection;
+                    setConnection(newConnection);
+                } else {
+                    newConnection.stop();
+                }
             } catch (err) {
                 console.error('SignalR Error:', err);
-            } finally {
+            }
+            finally {
                 isConnecting.current = false;
             }
         };
-        start();
+
+        initChat();
 
         return () => {
+            active = false;
             if (connectionRef.current) {
                 connectionRef.current.stop();
                 connectionRef.current = null;
                 setConnection(null);
             }
         };
-    }, [token, user?.email]);
+    }, [token, BASE_URL, HUB_URL]);
 
     const sendMessageToAdmin = async (msg: string) => {
         if (connection?.state === signalR.HubConnectionState.Connected) {
@@ -137,10 +160,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 await connection.invoke('SendMessageToAdmin', msg);
             } catch (err) {
                 console.error(err);
-                notify.error("Nie udało się wysłać wiadomości.");
+                notify.error("Błąd wysyłania.");
             }
         } else {
-            notify.error("Brak połączenia z czatem.");
+            notify.error("Brak połączenia.");
         }
     };
 
@@ -150,37 +173,81 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 await connection.invoke('SendMessageToUser', targetEmail, msg)
             } catch (err) {
                 console.error(err)
-                notify.error("Nie udało się wysłać wiadomości.")
+                notify.error("Błąd wysyłania.")
             }
-        } else {
-            notify.error("Brak połączenia.")
         }
     }
 
-    const markAsRead = async (userEmail: string) => {
-        setMessages(prev => prev.map(m => {
-            if (m.user.toLowerCase() === userEmail.toLowerCase()) {
-                return { ...m, isRead: true };
+    const markAsRead = async (targetEmail?: string) => {
+
+        setMessages(prev => {
+            if (targetEmail) {
+                const targetLower = targetEmail.toLowerCase();
+
+                const hasUnread = prev.some(m =>
+                    m.type === "UserToAdmin" &&
+                    m.user.toLowerCase() === targetLower &&
+                    !m.isRead
+                );
+                if (!hasUnread) return prev;
+
+                return prev.map(m => {
+                    if (m.type === "UserToAdmin" && m.user.toLowerCase() === targetLower && !m.isRead) {
+                        return { ...m, isRead: true };
+                    }
+                    return m;
+                });
             }
-            return m
-        }))
+
+            else {
+                const hasUnread = prev.some(m => m.type === "AdminToUser" && !m.isRead);
+                if (!hasUnread) return prev;
+
+                return prev.map(m => {
+                    if (m.type === "AdminToUser" && !m.isRead) {
+                        return { ...m, isRead: true };
+                    }
+                    return m;
+                });
+            }
+        });
+
+        const guestId = !token ? getGuestId() : null;
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        else if (guestId) headers['X-Anon-ID'] = guestId;
 
         try {
-            await fetch(`${BASE_URL}/chat/mark-read`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userEmail })
-            });
+            if (targetEmail) {
+                await fetch(`${BASE_URL}/chat/mark-read`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ userEmail: targetEmail })
+                });
+            } else {
+                await fetch(`${BASE_URL}/chat/mark-my-read`, {
+                    method: 'POST',
+                    headers: headers
+                });
+            }
         } catch (e) {
-            console.error(e)
+            console.error("Błąd oznaczania jako przeczytane:", e);
         }
     }
 
     return (
-        <ChatContext.Provider value={{ connection, messages, sendMessageToAdmin, sendMessageToUser, unreadCount, onlineUsers, userDetails, markAsRead }}>
+        <ChatContext.Provider value={{
+            connection,
+            messages,
+            sendMessageToAdmin,
+            sendMessageToUser,
+            unreadCount,
+            onlineUsers,
+            userDetails,
+            markAsRead,
+            currentChatId
+        }}>
             {children}
         </ChatContext.Provider>
     )
