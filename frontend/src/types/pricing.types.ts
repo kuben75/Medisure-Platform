@@ -3,23 +3,33 @@ import type {IUserSubscription} from "./user.types.ts";
 
 export type TPaymentMethodType = 'card' | 'transfer' | 'paypal' | 'gpay'
 export type TBankOptionType = 'blik' | 'mbank' | 'pko' | 'ing' | 'pekao' | 'millenium' | 'alior'
+export type TDurationType = '12m' | '24m' | '7d'
+export type TBillingType = 'monthly' | 'upfront'
 
+export interface ISubscriptionOption {
+    id: string
+    label: string
+    description: string
+    months: number;
+    discount: number
+    isRecurring: boolean
+}
 export interface IPricingPlan {
-    id: number;
-    name: string;
-    price: string;
-    priceValue: number;
-    description: string;
-    category: string;
-    hasDentalCare: boolean;
-    hasHospitalization: boolean;
-    hasRehabilitation: boolean;
-    specialistsCount: number;
-    facilitiesCount: number;
-    features: string[];
-    averageRating: number;
-    reviews: number;
-    isFeatured?: boolean;
+    id: number
+    name: string
+    price: string
+    priceValue: number
+    description: string
+    category: string
+    hasDentalCare: boolean
+    hasHospitalization: boolean
+    hasRehabilitation: boolean
+    specialistsCount: number
+    facilitiesCount: number
+    features: string[]
+    averageRating: number
+    reviews: number
+    isFeatured?: boolean
 }
 
 export interface ICalculationResultsProps {
@@ -48,35 +58,42 @@ export interface IPackageFiltersProps {
     setFilters: React.Dispatch<React.SetStateAction<IFilterState>>
 }
 
-export interface AddressData {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    street: string;
-    houseNumber: string;
-    city: string;
-    zipCode: string;
+export interface IAddressData {
+    firstName: string
+    lastName: string
+    email: string
+    phone: string
+    street: string
+    houseNumber: string
+    city: string
+    zipCode: string
+    pesel?: string
+    startDate?: string | undefined
 }
 
 export interface IPriceDetails {
-    total: number;
-    monthly: number;
-    months: number;
-    originalTotal: number;
-    isDiscounted: boolean;
-    discountLabel: string;
+    total: number
+    monthly: number
+    months: number
+    originalTotal: number
+    isDiscounted: boolean
+    discountLabel: string
+    label: string
+}
+export interface IExtendedProps extends ICheckoutOverlayProps {
+    billingPeriod?: TBillingType
 }
 export interface ICheckoutOverlayProps {
-    isOpen: boolean;
-    onClose: () => void;
-    plan: IPricingPlan;
-    priceDetails: IPriceDetails;
-    onFinalize: (method: string, txId: string, addressData: AddressData) => void
+    isOpen: boolean
+    onClose: () => void
+    plan: IPricingPlan
+    priceDetails: IPriceDetails
+    onFinalize: (method: string, txId: string, addressData: IAddressData) => void
 }
 
-export interface SubscriptionDetailsModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    subscription: IUserSubscription | null;
+export interface ISubscriptionDetailsModalProps {
+    isOpen: boolean
+    onClose: () => void
+    subscription: IUserSubscription | null
+    onRefresh?: () => void
 }

@@ -20,7 +20,7 @@ public class UpdateUserDto
     
     public DateTime? BirthDate { get; set; }
     
-    [RegularExpression(@"^\d{11}$", ErrorMessage = "PESEL musi składać się z 11 cyfr.")]
-    public string? Pesel { get; set; }
+    public string? CurrentPassword { get; set; }
+    public string? TwoFactorCode { get; set; }
     
 }

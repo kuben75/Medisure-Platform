@@ -1,26 +1,31 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-
 import {useAuth} from "../hooks/useAuth.ts";
 import Navbar from "../components/layout/Navbar.tsx";
 import {useNotification} from "../hooks/UseNotification.ts";
 import Button from "../components/ui/Button.tsx";
+import LockIcon from "../components/icons/LockIcon.tsx";
 const KeyIcon = ({ className = "w-6 h-6" }) => (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>);
 
 export default function LoginPage() {
     const navigate = useNavigate()
-    const { login } = useAuth()
+    const { login, setAuthSession, user, roles } = useAuth()
     const { notify } = useNotification()
-
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [code2FA, setCode2FA] = useState('')
-
     const [step, setStep] = useState(1)
     const [isLoading, setIsLoading] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
     const [authEmail, setAuthEmail] = useState('')
+    const [lockedError, setLockedError] = useState<string | null>(null)
 
+    useEffect(() => {
+        if (user) {
+            const target = roles.includes('Admin') ? '/admin' : '/';
+            navigate(target, { replace: true });
+        }
+    }, [user, roles, navigate]);
     const triggerSuccessAndRedirect = async (targetUrl: string, loginAction: () => Promise<void>) => {
         setIsSuccess(true);
 
@@ -30,25 +35,25 @@ export default function LoginPage() {
         }, 1500)
     }
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-
+        e.preventDefault()
+        setIsLoading(true)
+        setLockedError(null)
         try {
             const API_URL = `${import.meta.env.VITE_API_URL || "https://localhost:44333/api"}/auth/login`;
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
-            });
+            })
 
-            const data = await response.json();
+            const data = await response.json()
 
             if (response.ok) {
                 if (data.code === "REQUIRES_2FA" || data.Code === "REQUIRES_2FA") {
-                    setAuthEmail(email);
-                    setStep(2);
-                    notify.info("Wprowadź kod z aplikacji uwierzytelniającej.");
-                    setIsLoading(false);
+                    setAuthEmail(email)
+                    setStep(2)
+                    notify.info("Wprowadź kod z aplikacji uwierzytelniającej.")
+                    setIsLoading(false)
                 } else {
 
                     const roles = data.roles || data.user?.roles || [];
@@ -60,6 +65,10 @@ export default function LoginPage() {
                 }
             } else {
                 setIsLoading(false);
+                if (data.code === "ACCOUNT_LOCKED" || data.Code === "ACCOUNT_LOCKED") {
+                    setLockedError(data.message || "Konto zablokowane.");
+                    return;
+                }
                 throw new Error(data.message || "Błąd logowania")
             }
         } catch (err: any) {
@@ -99,14 +108,16 @@ export default function LoginPage() {
                 const target = roles?.includes('Admin') ? '/admin' : '/'
 
                 await triggerSuccessAndRedirect(target, async () => {
-                    await login(email, password)
+                    setAuthSession(token, user);
                 })
-            } else throw new Error(data.message || data.Message || "Niepoprawny kod 2FA.")
+            } else {
+                setIsLoading(false);
+                throw new Error(data.message || data.Message || "Niepoprawny kod 2FA.")
+            }
 
         } catch (err) {
-            notify.error(err instanceof Error ? err.message : "Błąd sieci.");
-        } finally {
             setIsLoading(false);
+            notify.error(err instanceof Error ? err.message : "Błąd sieci.");
         }
     }
 
@@ -125,7 +136,19 @@ export default function LoginPage() {
                         <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
                             {step === 1 ? 'Logowanie do konta' : 'Weryfikacja 2FA'}
                         </h2>
-
+                        {lockedError && (
+                            <div className="mt-4 mb-2 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg flex items-start gap-3 animate-fade-in">
+                                <div className="text-red-500 mt-0.5">
+                                    <LockIcon className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold text-red-800">Dostęp zablokowany</h3>
+                                    <p className="text-xs text-red-700 mt-1 leading-relaxed">
+                                        {lockedError}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                         {step === 1 && (
                             <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
                                 <p className="text-center text-gray-500 mb-6">Wpisz swój email i hasło.</p>

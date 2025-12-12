@@ -20,9 +20,11 @@ namespace backend.Controllers
         private readonly INotificationService _notificationService;
         private readonly IPdfService _pdfService;
         private readonly IConfiguration _configuration;
+        private readonly IPricingService _pricingService;
 
         public SubscriptionsController(ApplicationDbContext context, ILogService logService, IEmailService emailService,
-            INotificationService notificationService, IPdfService pdfService, IConfiguration configuration)
+            INotificationService notificationService, IPdfService pdfService,
+            IConfiguration configuration, IPricingService pricingService)
         {
             _context = context;
             _logService = logService;
@@ -30,6 +32,15 @@ namespace backend.Controllers
             _notificationService = notificationService;
             _pdfService = pdfService;
             _configuration = configuration;
+            _pricingService = pricingService;
+        }
+
+        private int CalculateAge(DateTime birthDate)
+        {
+            var today = DateTime.UtcNow;
+            var age = today.Year - birthDate.Year;
+            if (birthDate.Date > today.AddYears(-age)) age--;
+            return age;
         }
 
         [HttpPost("{packageId}")]
@@ -49,36 +60,100 @@ namespace backend.Controllers
                 return BadRequest(new { Message = "Nie znaleziono użytkownika." });
             }
 
-            if (string.IsNullOrEmpty(user.Pesel))
-                return BadRequest(new
-                    { Message = "Brak numeru PESEL. Uzupełnij dane w profilu.", Code = "MISSING_PESEL" });
-            
+            if (!string.IsNullOrEmpty(user.Pesel))
+            {
+                if (user.Pesel != dto.Pesel)
+                    return BadRequest(new
+                    {
+                        Message =
+                            "Podany numer PESEL różni się od przypisanego do Twojego konta. Skontaktuj się z obsługą, jeśli dane są błędne."
+                    });
+            }
+            else
+            {
+                var peselTaken = await _context.Users.AnyAsync(u => u.Pesel == dto.Pesel && u.Id != user.Id);
+                if (peselTaken)
+                {
+                    return BadRequest(new { Message = "Ten numer PESEL jest już powiązany z innym kontem." });
+                }
+
+                user.Pesel = dto.Pesel;
+            }
 
             var package = await _context.Packages.FindAsync(packageId);
             if (package == null) return NotFound(new { Message = "Taki pakiet nie istnieje." });
 
-            DateTime startDate = DateTime.UtcNow;
-            DateTime endDate;
-            decimal finalPrice = 0;
+            var option = _pricingService.GetOption(dto.Duration);
+            if (option == null) return BadRequest(new { Message = "Nieprawidłowa opcja subskrypcji." });
 
-            switch (dto.Duration.ToLower())
+            if (package.Category == "Biznesowy")
             {
-                case "7d":
-                    endDate = startDate.AddDays(7);
-                    finalPrice = 0;
-                    break;
-                case "2y":
-                    endDate = startDate.AddYears(2);
-                    finalPrice = package.PriceValue * 24 * 0.85m;
-                    break;
-                case "1y":
-                default:
-                    endDate = startDate.AddYears(1);
-                    finalPrice = package.PriceValue * 12;
-                    break;
+                await _logService.LogAsync("UNAUTHORIZED_PURCHASE_ATTEMPT",
+                    $"Próba zakupu pakietu B2B przez API: {package.Name}, User: {user.Email}",
+                    "System",
+                    user.Id,
+                    "Warning",
+                    true);
+
+                return BadRequest(new
+                {
+                    Message =
+                        "Pakiety biznesowe nie są dostępne w sprzedaży online. Prosimy o kontakt z działem sprzedaży."
+                });
             }
 
-            finalPrice = Math.Round(finalPrice, 2);
+            var birthDate = user.BirthDate ?? DateTime.UtcNow;
+            var age = CalculateAge(birthDate);
+
+            decimal ageMultiplier = 1.0m;
+            if (package.Category == "Indywidualny")
+            {
+                if (age > 30 && age <= 50)
+                {
+                    ageMultiplier += (decimal)((age - 30) * 0.015);
+                }
+                else if (age > 50)
+                {
+                    ageMultiplier += 0.30m + (decimal)((age - 50) * 0.025);
+                }
+            }
+
+            var basePriceWithAge = package.PriceValue * ageMultiplier;
+            decimal calculatedAmount =
+                _pricingService.CalculateFinalPrice(basePriceWithAge, dto.Duration, dto.BillingPeriod);
+
+            DateTime effectiveStartDate = dto.StartDate.HasValue && dto.StartDate.Value > DateTime.UtcNow
+                ? dto.StartDate.Value.ToUniversalTime()
+                : DateTime.UtcNow;
+
+            DateTime effectiveEndDate;
+            string priceString;
+
+            string formattedPrice = calculatedAmount % 1 == 0
+                ? $"{Math.Round(calculatedAmount, 0)}"
+                : $"{calculatedAmount:F2}";
+
+            if (dto.Duration == "7d")
+            {
+                effectiveEndDate = effectiveStartDate.AddDays(7).AddDays(-1);
+                priceString = $"{formattedPrice} zł (Test)";
+            }
+            else
+            {
+                if (dto.BillingPeriod == "monthly")
+                {
+                    effectiveEndDate = effectiveStartDate.AddMonths(1).AddDays(-1);
+                    priceString = $"{formattedPrice} zł / mies";
+                }
+                else
+                {
+                    int monthsToCheck = dto.Duration == "24m" ? 24 : 12;
+                    effectiveEndDate = effectiveStartDate.AddMonths(monthsToCheck).AddDays(-1);
+                    priceString = $"{formattedPrice} zł";
+                }
+            }
+
+            effectiveEndDate = effectiveEndDate.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
 
             var subscription = new UserPackage
             {
@@ -86,14 +161,15 @@ namespace backend.Controllers
                 UserId = user.Id,
                 Package = package,
                 PackageId = packageId,
-                StartDate = startDate,
-                EndDate = endDate,
+                StartDate = effectiveStartDate,
+                EndDate = effectiveEndDate,
                 Status = "Active",
-                PriceAtPurchase = $"{finalPrice} zł",
+                PriceAtPurchase = $"{formattedPrice} zł" + (dto.BillingPeriod == "monthly" ? " / mies" : ""),
                 Street = dto.Street,
                 HouseNumber = dto.HouseNumber,
                 City = dto.City,
                 ZipCode = dto.ZipCode,
+                Pesel = dto.Pesel,
                 PaymentMethod = dto.PaymentMethod,
                 TransactionId = dto.TransactionId
             };
@@ -104,8 +180,8 @@ namespace backend.Controllers
             await _logService.LogAsync("SUBSCRIBE_SUCCESS", $"Zakup: {package.Name}, ID: {subscription.Id}", user.Email,
                 user.Id, "Success");
             var frontendUrl = _configuration["FrontendUrl"];
-            
-            var termsLink = $"{frontendUrl}/regulamin"; 
+
+            var termsLink = $"{frontendUrl}/regulamin";
             var privacyLink = $"{frontendUrl}/polityka-prywatnosci";
             try
             {
@@ -160,16 +236,16 @@ namespace backend.Controllers
                                                             </tr>
                                                             <tr>
                                                                 <td style='padding-bottom: 10px; color: #1f2937; font-size: 16px; font-weight: 600;'>Pakiet {package.Name}</td>
-                                                                <td align='right' style='padding-bottom: 10px; color: #1f2937; font-size: 16px; font-weight: 600;'>{finalPrice} zł</td>
+                                                                <td align='right' style='padding-bottom: 10px; color: #1f2937; font-size: 16px; font-weight: 600;'>{priceString} zł</td>
                                                             </tr>
                                                             <tr>
-                                                                <td style='color: #6b7280; font-size: 12px;'>Okres: {startDate.ToShortDateString()} - {endDate.ToShortDateString()}</td>
+                                                                <td style='color: #6b7280; font-size: 12px;'>Okres: {effectiveStartDate.ToShortDateString()} - {effectiveEndDate.ToShortDateString()}</td>
                                                                 <td align='right'></td>
                                                             </tr>
                                                             <tr><td colspan='2' style='padding-top: 20px;'></td></tr>
                                                             <tr>
                                                                 <td style='padding-top: 20px; border-top: 1px solid #e5e7eb; color: #1f2937; font-size: 18px; font-weight: bold;'>RAZEM</td>
-                                                                <td align='right' style='padding-top: 20px; border-top: 1px solid #e5e7eb; color: #4E61F6; font-size: 24px; font-weight: bold;'>{finalPrice} zł</td>
+                                                                <td align='right' style='padding-top: 20px; border-top: 1px solid #e5e7eb; color: #4E61F6; font-size: 24px; font-weight: bold;'>{priceString} zł</td>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -179,7 +255,7 @@ namespace backend.Controllers
                                                         <h3 style='color: #1f2937; font-size: 16px; margin-bottom: 15px; border-left: 4px solid #4E61F6; padding-left: 10px;'>Dane nabywcy</h3>
                                                         <p style='color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0;'>
                                                             <strong>{user.FirstName} {user.LastName}</strong><br>
-                                                            PESEL: {user.Pesel}<br>
+                                                            PESEL: {dto.Pesel}<br>
                                                             ul. {dto.Street} {dto.HouseNumber}<br>
                                                             {dto.ZipCode} {dto.City}
                                                         </p>
@@ -217,7 +293,8 @@ namespace backend.Controllers
                     pdfBytes,
                     $"Polisa_{subscription.TransactionId}.pdf"
                 );
-
+                await _logService.LogAsync("EMAIL_SENT", $"Wysłano potwierdzenie zakupu na: {user.Email}", "System",
+                    user.Id, "Success");
                 await _notificationService.CreateNotificationAsync(
                     user.Id,
                     "Zakupiono pakiet",
@@ -237,7 +314,20 @@ namespace backend.Controllers
                     "Error");
             }
 
-            return Ok(new { Message = $"Sukces! Zakupiłeś pakiet: {package.Name}. Sprawdź maila." });
+            return Ok(new
+            {
+                Message = $"Sukces! Zakupiłeś pakiet: {package.Name}. Sprawdź maila.",
+                User = new
+                {
+                    user.Email,
+                    user.FirstName,
+                    user.LastName,
+                    user.PhoneNumber,
+                    user.BirthDate,
+                    user.Pesel,
+                    user.TwoFactorEnabled
+                }
+            });
         }
 
         [HttpGet]
@@ -271,10 +361,55 @@ namespace backend.Controllers
                     HouseNumber = up.HouseNumber,
                     City = up.City,
                     ZipCode = up.ZipCode,
+                    IsMonthly = up.PriceAtPurchase.Contains("/mies")
                 })
                 .ToListAsync();
 
             return Ok(myPackages);
+        }
+
+        [HttpPost("{id}/cancel")]
+        [Authorize]
+        public async Task<IActionResult> CancelSubscription(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var subscription = await _context.UserPackages
+                .Include(up => up.Package)
+                .FirstOrDefaultAsync(up => up.Id == id && up.UserId == userId);
+
+            if (subscription == null)
+                return NotFound(new { Message = "Nie znaleziono takiej subskrypcji." });
+
+
+            if (subscription.Status == "Cancelled")
+                return BadRequest(new { Message = "Ta subskrypcja została już anulowana." });
+
+
+            if (subscription.EndDate < DateTime.UtcNow)
+                return BadRequest(new { Message = "Nie można anulować wygasłej subskrypcji." });
+
+            subscription.Status = "Cancelled";
+
+            await _context.SaveChangesAsync();
+
+            await _logService.LogAsync(
+                "SUBSCRIPTION_CANCELLED",
+                $"Użytkownik anulował subskrypcję {subscription.Package.Name} (ID: {subscription.Id}).",
+                User.Identity?.Name,
+                userId,
+                "Info"
+            );
+
+            await _notificationService.CreateNotificationAsync(
+                userId,
+                "Subskrypcja anulowana",
+                $"Anulowałeś odnawianie pakietu {subscription.Package.Name}. Dostęp zachowasz do {subscription.EndDate:dd.MM.yyyy}.",
+                "System"
+            );
+
+            return Ok(new { Message = "Subskrypcja została pomyślnie anulowana." });
         }
     }
 }

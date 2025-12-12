@@ -1,7 +1,9 @@
-export default function ShieldCheckIcon() {
+import type {IconProps} from "../../types/ui.types.ts";
+
+export default function ShieldCheckIcon({className}: IconProps) {
     return (
         <svg
-            className="w-6 h-6 text-indigo-400"
+            className={className || "w-6 h-6 text-indigo-400"}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

@@ -69,7 +69,7 @@ export const SPECIALISTS_LIST: ISpecialist[] = [
         id: 1,
         name: "Janusz Kowalski",
         title: "dr n. med.",
-        category: "Podstawowa",
+        category: "Internista",
         experienceYears: 25,
         gender: 'male',
         imageUrl: getDocImg('male', 10),
@@ -417,4 +417,4 @@ export const SPECIALISTS_LIST: ISpecialist[] = [
         description: "Neurologopeda. Terapia wad wymowy u dzieci, wczesna interwencja logopedyczna.",
         availableInPackages: CHILD_DEVELOPMENT
     },
-];
+]

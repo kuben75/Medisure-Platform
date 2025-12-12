@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
             if (response.ok)
                 setStatus('success')
              else
-                throw new Error("Błąd serwera")
+                throw new Error("Błąd serwera" + response.status);
 
         } catch (err) {
             console.error(err);

@@ -12,7 +12,7 @@ export default function TermsPage() {
                             Regulamin Serwisu Medisure.pl
                         </h1>
                         <p className="text-gray-500 italic">
-                            Obowiązuje od: 2025 r.
+                            Ostatnia aktualizacja: Grudzień 2025 r.
                         </p>
                     </div>
 
@@ -45,22 +45,30 @@ export default function TermsPage() {
 
                         <section>
                             <h3 className="text-xl font-bold text-gray-900 mb-3">4. Rejestracja i Konto Klienta</h3>
-                            <p>Rejestracja wymaga podania imienia, nazwiska, e-maila, telefonu i hasła. Po zalogowaniu Użytkownik może uzupełnić numer PESEL, który jest wymagany przy zakupie pakietu.</p>
+                            <p>Rejestracja Konta wymaga podania podstawowych danych: imienia, nazwiska, adresu e-mail, numeru telefonu oraz hasła.</p>
+                            <p className="mt-2">Uzupełnienie pozostałych danych, takich jak data urodzenia, następuje w modelu <em>progressive profiling</em> (stopniowe uzupełnianie) i jest dobrowolne na etapie posiadania konta, lecz może być wymagane do skorzystania z niektórych funkcji (np. kalkulatora lub zakupu).</p>
                         </section>
 
                         <section>
                             <h3 className="text-xl font-bold text-gray-900 mb-3">5. Kalkulator i porównywarka</h3>
-                            <p>Wyniki wyliczane w kalkulatorze mają charakter orientacyjny. Ostateczną cenę i warunki określa operator medyczny.</p>
+                            <p>Wyniki wyliczane w kalkulatorze mają charakter orientacyjny i są dopasowywane na podstawie wieku zadeklarowanego przez Użytkownika. Ostateczną cenę i warunki określa operator medyczny.</p>
                         </section>
 
                         <section>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">6. Zakup pakietu</h3>
-                            <p>Zakup dokonywany jest za pośrednictwem Serwisu i wymaga wprowadzenia danych osobowych, w tym numeru PESEL. Umowa świadczenia usług zawierana jest pomiędzy Użytkownikiem a operatorem medycznym.</p>
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">6. Zakup pakietu i weryfikacja</h3>
+                            <p>Zakup dokonywany jest za pośrednictwem Serwisu. Na tym etapie podanie <strong>daty urodzenia</strong> (w celu wyliczenia składki) oraz <strong>numeru PESEL</strong> (w celu identyfikacji ubezpieczonego) jest obowiązkowe.</p>
+                            <p className="mt-2 text-gray-600 italic">
+                                Uwaga: Numer PESEL podany przy pierwszym zakupie zostaje trwale przypisany do Konta Klienta w celu weryfikacji tożsamości i zachowania ciągłości historii ubezpieczenia.
+                            </p>
                         </section>
 
                         <section>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">7. Płatności</h3>
-                            <p>Jeżeli oferta wymaga płatności online, Użytkownik może zostać przekierowany na stronę operatora lub partnera płatniczego. Administrator nie przechowuje danych kart płatniczych.</p>
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">7. Płatności i Subskrypcje</h3>
+                            <ul className="list-disc pl-5 space-y-2">
+                                <li><strong>Płatność jednorazowa:</strong> Opłacenie pakietu z góry na czas określony (np. rok). Umowa wygasa automatycznie po upływie tego okresu.</li>
+                                <li><strong>Płatność miesięczna (Subskrypcja):</strong> Usługa w modelu odnawialnym. Opłata pobierana jest cyklicznie co miesiąc.</li>
+                                <li><strong>Anulowanie:</strong> Użytkownik ma prawo anulować odnawianie subskrypcji miesięcznej w dowolnym momencie poprzez Panel Klienta. Ochrona pozostaje aktywna do końca opłaconego okresu rozliczeniowego.</li>
+                            </ul>
                         </section>
 
                         <section>

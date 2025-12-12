@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import UserPlusIcon from "../components/icons/UserPlusIcon.tsx";
-
 import {useNotification} from "../hooks/UseNotification.ts";
 import Navbar from "../components/layout/Navbar.tsx";
+import {useAuth} from "../hooks/useAuth.ts";
 
 export default function RegisterPage() {
     const navigate = useNavigate()
-
+    const {user, roles} = useAuth();
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
@@ -16,7 +16,12 @@ export default function RegisterPage() {
     const [acceptTerms, setAcceptTerms] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const {notify} = useNotification()
-
+    useEffect(() => {
+        if (user) {
+            const target = roles.includes('Admin') ? '/admin' : '/';
+            navigate(target, { replace: true });
+        }
+    }, [user, roles, navigate]);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 

@@ -10,6 +10,13 @@ import XIcon from "../icons/XIcon.tsx";
 
 import {useUserNotifications} from "../../hooks/useUserNotifications.ts";
 
+// Ikona Miotły / Kosza
+const BroomIcon = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" />
+    </svg>
+)
+
 const BellIcon = ({ hasUnread }: { hasUnread: boolean }) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-6 h-6 transition-transform duration-300 group-hover:rotate-12 ${hasUnread ? 'text-gray-800' : 'text-gray-600'}`}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
@@ -19,16 +26,60 @@ const BellIcon = ({ hasUnread }: { hasUnread: boolean }) => (
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
-
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+    // ZMIANA: Zamiast tablicy ID, trzymamy datę ostatniego czyszczenia (timestamp)
+    const [lastClearedTime, setLastClearedTime] = useState<number>(0);
 
     const location = useLocation()
     const navigate = useNavigate()
 
     const { unreadCount, notifications, markAsRead, markAllAsRead } = useUserNotifications();
-
     const { user, logout, roles } = useAuth()
-    const isAdmin = roles.includes('Admin')
+    const isAdmin = roles?.includes('Admin')
+
+    // --- LOGIKA LOCAL STORAGE (TIMESTAMP) ---
+    useEffect(() => {
+        if (user?.email) {
+            // Używamy maila zamiast ID
+            const storageKey = `cleared_date_${user.email}`;
+            const stored = localStorage.getItem(storageKey);
+
+            if (stored) {
+                setLastClearedTime(parseInt(stored, 10));
+            } else {
+                setLastClearedTime(0);
+            }
+        }
+    }, [user]);
+
+    const handleClearRead = () => {
+        if (!user?.email) return;
+
+        const now = Date.now();
+        setLastClearedTime(now);
+
+        const storageKey = `cleared_date_${user.email}`;
+        localStorage.setItem(storageKey, now.toString());
+    }
+    // ----------------------------
+
+    // FILTROWANIE:
+    // Pokazujemy powiadomienie JEŚLI:
+    // 1. Jest nieprzeczytane (!isRead)
+    // LUB
+    // 2. Zostało stworzone PO dacie ostatniego czyszczenia
+    const visibleNotifications = notifications.filter(notif => {
+        if (!notif.isRead) return true; // Nieprzeczytane zawsze pokazujemy
+
+        const notifDate = new Date(notif.createdAt).getTime();
+        return notifDate > lastClearedTime;
+    });
+
+    // Czy przycisk "Wyczyść" powinien być aktywny?
+    // Tylko jeśli są jakieś przeczytane wiadomości, które są starsze niż moment ostatniego czyszczenia (czyli są widoczne)
+    const canClear = visibleNotifications.some(n => n.isRead);
+
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -36,6 +87,7 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
+    // ... (reszta useEffectów bez zmian) ...
     useEffect(() => {
         document.body.style.overflow = (isMenuOpen || isNotificationsOpen) ? 'hidden' : 'auto'
     }, [isMenuOpen, isNotificationsOpen])
@@ -63,12 +115,14 @@ export default function Navbar() {
         <>
             <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md py-3' : 'bg-white py-5'}`}>
                 <nav className="container mx-auto px-4 flex justify-between items-center">
+                    {/* LOGO */}
                     <Link to="/" className="flex items-center gap-2 group">
                         <div className="w-10 h-10 bg-[#4E61F6] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">M</div>
                         <span className="text-xl font-bold text-gray-800 tracking-tight">Medisure<span className="text-[#4E61F6]">.pl</span>
                         </span>
                     </Link>
 
+                    {/* MENU DESKTOP */}
                     <ul className="hidden lg:flex items-center gap-2">
                         {navLinks.map((link, index) => (
                             <li key={link.label} className={index === 0 ? "mr-8 xl:mr-12 relative" : ""}>
@@ -89,6 +143,7 @@ export default function Navbar() {
                         ))}
                     </ul>
 
+                    {/* PRAWA STRONA (IKONY) */}
                     <div className="hidden lg:flex items-center gap-4">
                         {user ? (
                             <div className="flex items-center gap-3">
@@ -175,46 +230,69 @@ export default function Navbar() {
                 </nav>
             </header>
 
+            {/* OVERLAY */}
             <div
                 className={`fixed inset-0 bg-black/50 z-[60] transition-opacity duration-300 ${isNotificationsOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
                 onClick={() => setIsNotificationsOpen(false)}
             />
 
+            {/* PANEL BOCZNY POWIADOMIEŃ */}
             <div className={`fixed top-0 right-0 h-screen w-[85vw] md:w-96 bg-white z-[70] transform transition-transform duration-300 ease-in-out shadow-2xl flex flex-col ${isNotificationsOpen ? "translate-x-0" : "translate-x-full"}`}>
                 <div className="p-5 flex justify-between items-center border-b border-gray-100 bg-gray-50">
                     <div className="flex items-center gap-2">
                         <h3 className="font-bold text-lg text-gray-800">Powiadomienia</h3>
                         {unreadCount > 0 && <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">{unreadCount}</span>}
                     </div>
-                    <div className="flex items-center gap-3">
-                        {unreadCount > 0 && markAllAsRead && (
+
+                    <div className="flex items-center gap-2">
+                        {/* Przycisk czyszczenia - widoczny tylko gdy jest co czyścić */}
+                        {canClear && (
                             <button
-                                onClick={() => markAllAsRead()}
-                                className="text-xs font-bold text-[#4E61F6] hover:text-blue-700 transition-colors"
+                                onClick={handleClearRead}
+                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors mr-1 group relative"
+                                title="Wyczyść przeczytane"
                             >
-                                Odczytaj wszystkie
+                                <BroomIcon className="w-5 h-5" />
+                                <span className="absolute top-full right-0 mt-1 w-max px-2 py-1 text-[10px] text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                    Ukryj przeczytane
+                                </span>
                             </button>
                         )}
+
                         <button onClick={() => setIsNotificationsOpen(false)} className="p-2 bg-white rounded-full text-gray-500 hover:text-gray-800 transition-colors shadow-sm hover:shadow-md">
                             <XIcon className="w-5 h-5" />
                         </button>
                     </div>
                 </div>
 
+                {unreadCount > 0 && markAllAsRead && (
+                    <div className="px-5 py-2 bg-blue-50/50 border-b border-blue-100 flex justify-end">
+                        <button
+                            onClick={() => markAllAsRead()}
+                            className="text-xs font-bold text-[#4E61F6] hover:text-blue-700 transition-colors"
+                        >
+                            Oznacz wszystkie jako przeczytane
+                        </button>
+                    </div>
+                )}
+
                 <div className="flex-grow overflow-y-auto custom-scrollbar p-0">
-                    {notifications && notifications.length > 0 ? (
+                    {visibleNotifications && visibleNotifications.length > 0 ? (
                         <div className="divide-y divide-gray-50">
-                            {notifications.map((notif) => (
+                            {visibleNotifications.map((notif) => (
                                 <div
                                     key={notif.id}
                                     onClick={() => {
-                                        if (!notif.isRead && markAsRead)
-                                            markAsRead(notif.id)
+                                        if (!notif.isRead && markAsRead) markAsRead(notif.id)
+
                                         setIsNotificationsOpen(false)
-                                        if(!isAdmin)
-                                            navigate('/profile?tab=notifications')
-                                    }
-                                }
+
+                                        if (isAdmin) {
+                                            navigate(`/admin?tab=notifications&id=${notif.id}`)
+                                        } else {
+                                            navigate(`/profile?tab=notifications&id=${notif.id}`)
+                                        }
+                                    }}
                                     className={`p-5 hover:bg-gray-50 transition-all cursor-pointer group relative ${!notif.isRead ? 'bg-blue-50/40' : 'bg-white'}`}
                                 >
                                     {!notif.isRead && (
@@ -241,7 +319,11 @@ export default function Navbar() {
                             </div>
                             <div>
                                 <p className="font-bold text-gray-600">Brak powiadomień</p>
-                                <p className="text-xs mt-1">Będziemy Cię informować o ważnych zdarzeniach.</p>
+                                {notifications.length > visibleNotifications.length ? (
+                                    <p className="text-xs mt-1 text-gray-400">Starsze wiadomości są ukryte.</p>
+                                ) : (
+                                    <p className="text-xs mt-1">Będziemy Cię informować o ważnych zdarzeniach.</p>
+                                )}
                             </div>
                         </div>
                     )}
@@ -249,7 +331,7 @@ export default function Navbar() {
 
                 <div className="p-4 border-t border-gray-100 bg-gray-50 text-center">
                     <Link
-                        to={isAdmin ? "/admin" : "/profile?tab=notifications"}
+                        to={isAdmin ? "/admin?tab=notifications" : "/profile?tab=notifications"}
                         onClick={() => setIsNotificationsOpen(false)}
                         className="text-sm font-bold text-gray-600 hover:text-[#4E61F6] transition-colors flex items-center justify-center gap-2"
                     >
@@ -262,7 +344,6 @@ export default function Navbar() {
             </div>
 
             <div className={`fixed inset-0 bg-black/60 z-[60] transition-opacity duration-300 lg:hidden ${isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`} onClick={() => setIsMenuOpen(false)}/>
-
             <div className={`fixed top-0 right-0 h-screen w-[85vw] max-w-sm bg-white z-[70] transform transition-transform duration-300 ease-in-out lg:hidden shadow-2xl flex flex-col ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}>
                 <div className="p-5 flex justify-between items-center border-b border-gray-100">
                     <span className="font-bold text-lg text-gray-800">Menu</span>
@@ -270,7 +351,6 @@ export default function Navbar() {
                         <XIcon className="w-6 h-6" />
                     </button>
                 </div>
-
                 <ul className="flex-grow overflow-y-auto py-4 px-2">
                     {navLinks.map((link) => (
                         <li key={link.label}>
@@ -282,7 +362,6 @@ export default function Navbar() {
                             </Link>
                         </li>
                     ))}
-
                     {isAdmin && (
                         <li>
                             <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-4 py-3.5 rounded-xl mb-1 font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 mt-4 border border-gray-100">
@@ -292,7 +371,6 @@ export default function Navbar() {
                         </li>
                     )}
                 </ul>
-
                 <div className="p-6 border-t border-gray-100 bg-gray-50">
                     {user ? (
                         <div className="space-y-4">

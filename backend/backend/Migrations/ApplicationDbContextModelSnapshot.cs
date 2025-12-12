@@ -411,6 +411,9 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsSensitive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Level")
                         .IsRequired()
                         .HasColumnType("text");
@@ -477,6 +480,9 @@ namespace backend.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("ExpirationWarningSent")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("HouseNumber")
                         .IsRequired()
                         .HasColumnType("text");
@@ -485,6 +491,10 @@ namespace backend.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Pesel")
                         .IsRequired()
                         .HasColumnType("text");
 

@@ -8,9 +8,19 @@ export interface IAuthContext {
     roles: string[]
     login: (email: string, password: string) => Promise<string[] | null>
     logout: () => void
-    updateUser: (userData: IUser) => void
+    updateUser: (userData: {
+        firstName: string;
+        lastName: string;
+        twoFactorEnabled?: boolean;
+        phoneNumber: string | null;
+        roles?: string[];
+        pesel: string | null;
+        birthDate: string | null;
+        email: string
+    }) => void
     isLoading: boolean
     error: string | null
+    setAuthSession: (token: string, user: IUser) => void
 }
 
 export interface IComparisonContext {

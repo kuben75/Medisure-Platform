@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
                             Polityka Prywatności Medisure.pl
                         </h1>
                         <p className="text-gray-500 italic">
-                            Obowiązuje od: 2025 r.
+                            Ostatnia aktualizacja: Grudzień 2025 r.
                         </p>
                     </div>
 
@@ -43,7 +43,7 @@ export default function PrivacyPolicyPage() {
                         <section>
                             <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-[#4E61F6] text-sm font-bold">2</span>
-                                W jakim celu przetwarzamy Twoje dane?
+                                W jakim celu i jakie dane przetwarzamy?
                             </h3>
                             <p className="mb-4">Przetwarzamy dane osobowe wyłącznie w zakresie koniecznym do prawidłowego świadczenia naszych usług. Cele obejmują:</p>
 
@@ -59,25 +59,27 @@ export default function PrivacyPolicyPage() {
                                 <div>
                                     <h4 className="font-bold text-gray-800 mb-1">2.2. Rejestracja i obsługa konta klienta</h4>
                                     <ul className="list-disc pl-5 text-sm text-gray-600 mb-1">
-                                        <li>imię i nazwisko, adres e-mail, numer telefonu, hasło (zaszyfrowane), numer PESEL (wprowadzany po rejestracji)</li>
+                                        <li>imię i nazwisko, adres e-mail, numer telefonu, hasło (zaszyfrowane)</li>
+                                        <li><strong>data urodzenia</strong> (opcjonalnie na etapie rejestracji, wymagana do personalizacji ofert)</li>
                                     </ul>
-                                    <p className="text-sm"><span className="font-semibold">Cel:</span> utworzenie konta, logowanie, obsługa panelu klienta oraz umożliwienie zakupu pakietów medycznych.</p>
+                                    <p className="text-sm"><span className="font-semibold">Cel:</span> utworzenie konta, logowanie, obsługa panelu klienta oraz historia zamówień.</p>
                                 </div>
 
                                 <div>
-                                    <h4 className="font-bold text-gray-800 mb-1">2.3. Wyliczenie przykładowej ceny pakietu w kalkulatorze</h4>
+                                    <h4 className="font-bold text-gray-800 mb-1">2.3. Kalkulator i personalizacja ceny</h4>
                                     <ul className="list-disc pl-5 text-sm text-gray-600 mb-1">
-                                        <li>wiek użytkownika, liczba osób w pakiecie, inne parametry związane z zakresem pakietu</li>
+                                        <li>wiek użytkownika (data urodzenia), liczba osób w pakiecie</li>
                                     </ul>
-                                    <p className="text-sm"><span className="font-semibold">Cel:</span> przedstawienie dopasowanych ofert i orientacyjnej ceny pakietów medycznych.</p>
+                                    <p className="text-sm"><span className="font-semibold">Cel:</span> automatyczne wyliczenie wysokości składki ubezpieczeniowej dopasowanej do profilu ryzyka (wieku).</p>
                                 </div>
 
                                 <div>
-                                    <h4 className="font-bold text-gray-800 mb-1">2.4. Realizacja procesu zakupu pakietu medycznego</h4>
+                                    <h4 className="font-bold text-gray-800 mb-1">2.4. Zawarcie i realizacja umowy ubezpieczenia (Zakup)</h4>
                                     <ul className="list-disc pl-5 text-sm text-gray-600 mb-1">
-                                        <li>imię, nazwisko, numer PESEL, numer telefonu, adres e-mail, dane członków rodziny (pakiety rodzinne)</li>
+                                        <li><strong>numer PESEL</strong> (wymagany do identyfikacji ubezpieczonego)</li>
+                                        <li>imię, nazwisko, adres zamieszkania, numer telefonu, data urodzenia</li>
                                     </ul>
-                                    <p className="text-sm"><span className="font-semibold">Cel:</span> przekazanie danych operatorowi medycznemu w celu aktywacji pakietu.</p>
+                                    <p className="text-sm"><span className="font-semibold">Cel:</span> wystawienie polisy ubezpieczeniowej, weryfikacja tożsamości oraz realizacja płatności.</p>
                                 </div>
 
                                 <div>
@@ -96,10 +98,10 @@ export default function PrivacyPolicyPage() {
                                 Podstawy prawne przetwarzania
                             </h3>
                             <ul className="space-y-2 list-disc pl-6 marker:text-[#4E61F6]">
-                                <li><strong className="text-gray-800">art. 6 ust. 1 lit. b RODO</strong> – niezbędność do realizacji umowy (np. zakup pakietu).</li>
-                                <li><strong className="text-gray-800">art. 6 ust. 1 lit. a RODO</strong> – zgoda użytkownika (np. newsletter, dane z formularza).</li>
-                                <li><strong className="text-gray-800">art. 6 ust. 1 lit. c RODO</strong> – obowiązki prawne Administratora.</li>
-                                <li><strong className="text-gray-800">art. 6 ust. 1 lit. f RODO</strong> – uzasadniony interes Administratora (statystyki, zabezpieczenia).</li>
+                                <li><strong className="text-gray-800">art. 6 ust. 1 lit. b RODO</strong> – niezbędność do wykonania umowy (zakup pakietu, rejestracja konta).</li>
+                                <li><strong className="text-gray-800">art. 6 ust. 1 lit. c RODO</strong> – obowiązki prawne ciążące na Administratorze (np. przepisy podatkowe, ubezpieczeniowe).</li>
+                                <li><strong className="text-gray-800">art. 6 ust. 1 lit. a RODO</strong> – zgoda użytkownika (np. formularz kontaktowy, opcjonalne dane w profilu).</li>
+                                <li><strong className="text-gray-800">art. 6 ust. 1 lit. f RODO</strong> – uzasadniony interes Administratora (dochodzenie roszczeń, statystyki).</li>
                             </ul>
                         </section>
 
@@ -110,26 +112,23 @@ export default function PrivacyPolicyPage() {
                             </h3>
                             <p className="mb-3">Dane mogą być przekazane wyłącznie podmiotom, bez których świadczenie usług nie byłoby możliwe:</p>
                             <ul className="space-y-1 list-disc pl-6 marker:text-[#4E61F6] mb-4">
-                                <li>operatorom medycznym, aby aktywować zakupiony pakiet</li>
-                                <li>firmie zapewniającej hosting strony</li>
-                                <li>firmie obsługującej system mailowy</li>
-                                <li>podmiotom zapewniającym narzędzia analityczne</li>
-                                <li>podmiotom IT wspierającym działanie serwisu</li>
+                                <li>operatorom medycznym (w celu aktywacji usług medycznych)</li>
+                                <li>operatorom płatności (w celu realizacji transakcji)</li>
+                                <li>firmie hostingowej i obsługującej systemy IT</li>
+                                <li>kancelariom prawnym i księgowym (w razie konieczności)</li>
                             </ul>
-                            <p className="text-sm italic">Nigdy nie sprzedajemy Twoich danych i nie udostępniamy ich podmiotom trzecim w celach niezgodnych z prawem.</p>
+                            <p className="text-sm italic">Nie sprzedajemy Twoich danych podmiotom trzecim w celach marketingowych.</p>
                         </section>
 
                         <section>
                             <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-[#4E61F6] text-sm font-bold">5</span>
-                                Jak długo przechowujemy dane?
+                                Okres przechowywania danych
                             </h3>
                             <ul className="space-y-2 list-disc pl-6 marker:text-[#4E61F6]">
-                                <li><span className="font-semibold">dane konta klienta</span> – do czasu usunięcia konta</li>
-                                <li><span className="font-semibold">dane do zakupu pakietu</span> – przez okres wymagany przepisami (np. księgowymi)</li>
-                                <li><span className="font-semibold">dane z formularza kontaktowego</span> – do 12 miesięcy</li>
-                                <li><span className="font-semibold">dane statystyczne</span> – zgodnie z polityką Google Analytics</li>
-                                <li><span className="font-semibold">dane dotyczące polubionych ofert</span> – do czasu usunięcia konta lub odwołania zgody</li>
+                                <li><span className="font-semibold">Dane konta:</span> do momentu usunięcia konta przez użytkownika.</li>
+                                <li><span className="font-semibold">Dane transakcyjne i polisy (w tym PESEL):</span> przez okres wymagany przepisami prawa podatkowego i ubezpieczeniowego (zazwyczaj 5 lat od końca roku kalendarzowego).</li>
+                                <li><span className="font-semibold">Dane kontaktowe:</span> do momentu udzielenia odpowiedzi lub wniesienia sprzeciwu.</li>
                             </ul>
                         </section>
 
@@ -138,85 +137,67 @@ export default function PrivacyPolicyPage() {
                                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-[#4E61F6] text-sm font-bold">6</span>
                                 Twoje prawa
                             </h3>
-                            <p className="mb-3">Masz prawo do:</p>
+                            <p className="mb-3">Zgodnie z RODO przysługuje Ci prawo do:</p>
                             <div className="grid md:grid-cols-2 gap-2 mb-4">
                                 <ul className="list-disc pl-6 marker:text-[#4E61F6]">
-                                    <li>dostępu do swoich danych</li>
-                                    <li>sprostowania danych</li>
-                                    <li>usunięcia danych („prawo do bycia zapomnianym”)</li>
+                                    <li>dostępu do treści swoich danych</li>
+                                    <li>sprostowania danych (np. aktualizacji adresu)</li>
+                                    <li>usunięcia danych (w zakresie, w jakim nie są wymagane prawem)</li>
                                     <li>ograniczenia przetwarzania</li>
                                 </ul>
                                 <ul className="list-disc pl-6 marker:text-[#4E61F6]">
                                     <li>przenoszenia danych</li>
-                                    <li>sprzeciwu wobec przetwarzania</li>
-                                    <li>odwołania zgody w dowolnym momencie</li>
+                                    <li>wniesienia sprzeciwu</li>
+                                    <li>cofnięcia zgody w dowolnym momencie</li>
                                 </ul>
                             </div>
                             <p className="bg-blue-50 p-3 rounded-lg text-blue-800 text-center font-medium">
-                                Aby skorzystać z praw – napisz na: <a href="mailto:kontakt@medisure.pl" className="underline hover:text-blue-600">kontakt@medisure.pl</a>
+                                Wnioski prosimy kierować na adres: <a href="mailto:kontakt@medisure.pl" className="underline hover:text-blue-600">kontakt@medisure.pl</a>
                             </p>
                         </section>
 
                         <section>
                             <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-[#4E61F6] text-sm font-bold">7</span>
-                                Czy podanie danych jest obowiązkowe?
+                                Dobrowolność podania danych
                             </h3>
                             <ul className="space-y-2 list-disc pl-6 marker:text-[#4E61F6]">
-                                <li>Podanie maila i hasła jest niezbędne do rejestracji konta.</li>
-                                <li>Podanie numeru PESEL jest obowiązkowe wyłącznie przy zakupie pakietu.</li>
-                                <li>Formularz kontaktowy wymaga podstawowych danych, byśmy mogli odpowiedzieć.</li>
-                                <li>Brak zgody na cookies może ograniczyć część funkcjonalności strony.</li>
+                                <li><strong>Konto:</strong> Podanie adresu e-mail jest dobrowolne, ale niezbędne do założenia konta.</li>
+                                <li><strong>Data urodzenia:</strong> Podanie jest dobrowolne na etapie rejestracji (można uzupełnić później), ale niezbędne do wyliczenia składki i zakupu polisy.</li>
+                                <li><strong>Zakup polisy:</strong> Podanie numeru PESEL oraz pełnych danych adresowych jest <strong>wymogiem ustawowym i umownym</strong>. Odmowa podania tych danych uniemożliwia zawarcie umowy ubezpieczenia.</li>
                             </ul>
                         </section>
 
                         <section>
                             <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-[#4E61F6] text-sm font-bold">8</span>
-                                Bezpieczeństwo danych
+                                Bezpieczeństwo
                             </h3>
-                            <p className="mb-2">Stosujemy zabezpieczenia techniczne i organizacyjne:</p>
+                            <p className="mb-2">Stosujemy wysokie standardy bezpieczeństwa:</p>
                             <div className="flex flex-wrap gap-2">
                                 <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">szyfrowanie SSL</span>
-                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">zabezpieczenia serwerów</span>
-                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">szyfrowanie haseł</span>
-                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">kopie zapasowe</span>
+                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">hashowanie haseł (Argon2/BCrypt)</span>
+                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">zabezpieczenia 2FA</span>
+                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">regularne kopie zapasowe</span>
                             </div>
-                            <p className="mt-2 text-sm text-gray-500">Robimy wszystko, by Twoje dane były bezpieczne.</p>
                         </section>
 
                         <section>
                             <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-[#4E61F6] text-sm font-bold">9</span>
-                                Pliki cookies
-                            </h3>
-                            <p className="mb-2">Na naszej stronie wykorzystujemy cookies:</p>
-                            <ul className="list-disc pl-6 mb-3 marker:text-[#4E61F6]">
-                                <li>techniczne – niezbędne do działania serwisu</li>
-                                <li>analityczne – statystyki, analiza ruchu</li>
-                                <li>funkcjonalne – zapamiętywanie preferencji</li>
-                                <li>marketingowe – tylko za zgodą użytkownika</li>
-                            </ul>
-                            <p className="text-sm">Możesz w każdej chwili zmienić ustawienia cookies w przeglądarce.</p>
-                        </section>
-
-                        <section>
-                            <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-[#4E61F6] text-sm font-bold">10</span>
-                                Kontakt w sprawach ochrony danych
+                                Kontakt
                             </h3>
                             <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
-                                <p className="mb-4">Jeśli masz pytania dotyczące danych osobowych, skontaktuj się:</p>
-                                <p className="mb-2">📧 e-mail: <a href="mailto:kontakt@medisure.pl" className="text-[#4E61F6] font-bold hover:underline">kontakt@medisure.pl</a></p>
-                                <p className="mb-2">📞 telefon: <a href="tel:+48123456789" className="text-[#4E61F6] font-bold hover:underline">+48 123 456 789</a></p>
-                                <p>📮 lub pisemnie na adres siedziby.</p>
+                                <p className="mb-4">W sprawach dotyczących ochrony danych osobowych:</p>
+                                <p className="mb-2">📧 <a href="mailto:kontakt@medisure.pl" className="text-[#4E61F6] font-bold hover:underline">kontakt@medisure.pl</a></p>
+                                <p>📮 Medisure Sp. z o.o., ul. Grochowska 21, 61-001 Poznań</p>
                             </div>
                         </section>
 
                         <section className="border-t border-gray-200 pt-6">
-                            <h3 className="text-lg font-bold text-gray-800 mb-2">11. Postanowienia końcowe</h3>
+                            <h3 className="text-lg font-bold text-gray-800 mb-2">10. Zmiany w polityce</h3>
                             <p className="text-gray-600 text-sm">
-                                W przyszłości Polityka Prywatności może być aktualizowana. O zmianach poinformujemy poprzez komunikat na stronie.
+                                Polityka jest na bieżąco weryfikowana i aktualizowana w razie potrzeby. Ostatnia modyfikacja: {new Date().toLocaleDateString('pl-PL')}.
                             </p>
                         </section>
                     </div>

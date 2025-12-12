@@ -18,7 +18,7 @@ export interface IChatContext {
     unreadCount: number;
     onlineUsers?: string[];
     userDetails?: any;
-    markAsRead?: (email: string) => Promise<void>;
+    markAsRead?: (selectedUserEmail: string) => Promise<void>;
 }
 export interface IUserDetail {
     email: string
@@ -29,5 +29,6 @@ export interface IUserDetail {
 export interface IExtendedChatContext extends IChatContext {
     onlineUsers: string[]
     userDetails: Record<string, IUserDetail>
-    markAsRead: (email: string) => Promise<void>
+    markAsRead: (selectedUserEmail: string) => Promise<void>
+    currentChatId: string
 }

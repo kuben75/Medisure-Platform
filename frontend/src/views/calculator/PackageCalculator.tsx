@@ -7,14 +7,14 @@ import ComparisonBar from "../../components/ui/ComparisonBar.tsx";
 import type { IFilterState, IPricingPlan } from "../../types/pricing.types.ts";
 import FavoriteButton from "../../components/ui/FavouriteButton.tsx";
 import { usePackagePurchase } from "../../hooks/usePackagePurchase.ts";
-import { useLocation } from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import SpecialistsListModal from "../../components/ui/SpecialistsListModal.tsx";
 import { useAuth } from "../../hooks/useAuth.ts";
 import { useFavorites } from "../../hooks/UseFavourites.ts";
 import CheckoutOverlay from "../../components/ui/CheckoutOverlay.tsx";
-import {calculatePersonalizedPrice} from "../../utils/pricingHelpers.ts";
+import { calculatePersonalizedPrice } from "../../utils/pricingHelpers.ts";
 import PackageDetailsModal from "../../components/ui/PackageDetailsModal.tsx";
-import {SPECIALISTS_LIST} from "../../constants/specialists.tsx";
+import { SPECIALISTS_LIST } from "../../constants/specialists.tsx";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/packages`
 const ITEMS_PER_PAGE = 5
@@ -29,51 +29,35 @@ const BestMatchIcon = () => (
 
 export default function PackageCatalog() {
     const { user } = useAuth()
+
+
     const {
         selectedPlan,
         selectedDuration,
         setSelectedDuration,
+        billingPeriod,
+        setBillingPeriod,
         openModal,
         closeModal,
         priceDetails,
         isCheckoutOpen,
         handleProceedToCheckout,
         closeCheckout,
-        finalizePurchase
-    } = usePackagePurchase();
+        finalizePurchase,
+        options,
+        isBuying
+    } = usePackagePurchase()
 
     const { isFavorite } = useFavorites()
-
     const [specModalOpen, setSpecModalOpen] = useState(false)
     const [specModalData, setSpecModalData] = useState<{ name: string } | null>(null)
-
     const [allPackages, setAllPackages] = useState<IPricingPlan[]>([])
     const [filteredPackages, setFilteredPackages] = useState<IPricingPlan[]>([])
     const [loading, setLoading] = useState(true)
     const [currentPage, setCurrentPage] = useState(1)
     const [highlightedId, setHighlightedId] = useState<number | null>(null)
-
     const hasScrolledToPackage = useRef(false);
     const [showPersonalizedPricing, setShowPersonalizedPricing] = useState(true);
-
-    const handleOpenSpecs = (e: React.MouseEvent, pkg: IPricingPlan) => {
-        e.stopPropagation()
-        setSpecModalData({ name: pkg.name })
-        setSpecModalOpen(true)
-    }
-
-    const [filters, setFilters] = useState<IFilterState>({
-        category: 'all',
-        maxPrice: 2000,
-        minSpecialists: 0,
-        minFacilities: 0,
-        hasDental: false,
-        hasHospital: false,
-        hasRehabilitation: false,
-        searchQuery: '',
-        showYearlyPrice: false,
-        sortOrder: 'default'
-    })
 
     const { addToComparison, removeFromComparison, isInComparison } = useComparison()
     const location = useLocation()
@@ -99,11 +83,9 @@ export default function PackageCatalog() {
             setShowPersonalizedPricing(true)
         else
             setShowPersonalizedPricing(false)
-
     }, [userAge])
 
     const getPersonalizedPrice = useCallback((basePrice: number, category: string) => {
-
         return calculatePersonalizedPrice(basePrice, category, userAge);
     }, [userAge]);
 
@@ -115,19 +97,50 @@ export default function PackageCatalog() {
         return false
     }, [userAge])
 
+    const handleOpenPackageDetails = (pkg: IPricingPlan) => {
+        let packageToOpen = pkg;
+
+        if (showPersonalizedPricing) {
+            const personalizedPrice = getPersonalizedPrice(pkg.priceValue, pkg.category);
+            packageToOpen = {
+                ...pkg,
+                priceValue: personalizedPrice,
+            };
+        }
+
+        openModal(packageToOpen);
+    };
+
+    const handleOpenSpecs = (e: React.MouseEvent, pkg: IPricingPlan) => {
+        e.stopPropagation()
+        setSpecModalData({ name: pkg.name })
+        setSpecModalOpen(true)
+    }
+
+    const [filters, setFilters] = useState<IFilterState>({
+        category: 'all',
+        maxPrice: 2000,
+        minSpecialists: 0,
+        minFacilities: 0,
+        hasDental: false,
+        hasHospital: false,
+        hasRehabilitation: false,
+        searchQuery: '',
+        showYearlyPrice: false,
+        sortOrder: 'default'
+    })
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true)
                 const response = await fetch(API_URL)
                 const data: IPricingPlan[] = await response.json()
-
                 const cleanData = data.map((p) => ({
                     ...p,
                     priceValue: p.priceValue || 0,
                     specialistsCount: p.specialistsCount || 0
                 }))
-
                 setAllPackages(cleanData)
                 setFilteredPackages(cleanData)
             } catch (error) {
@@ -153,7 +166,6 @@ export default function PackageCatalog() {
         if (filters.category !== 'all')
             result = result.filter(p => p.category.toLowerCase() === filters.category.toLowerCase())
 
-
         const currentMaxPrice = filters.showYearlyPrice ? filters.maxPrice / 12 : filters.maxPrice
 
         result = result.filter(p => {
@@ -175,23 +187,15 @@ export default function PackageCatalog() {
             if (favA !== favB) return favB - favA
 
             const categoryOrder: Record<string, number> = {
-                'Individual': 1,
-                'Family': 2,
-                'Senior': 3,
-                'Business': 4
+                'Indywidualny': 1, 'Rodzinny': 2, 'Senior': 3, 'Biznesowy': 4
             }
 
             if (filters.sortOrder === 'default') {
-
                 if (showPersonalizedPricing) {
                     const matchA = checkBestMatch(a) ? 1 : 0
                     const matchB = checkBestMatch(b) ? 1 : 0
-
-                    if (matchA !== matchB)
-                        return matchB - matchA
-
+                    if (matchA !== matchB) return matchB - matchA
                 }
-
                 const orderA = categoryOrder[a.category] || 99
                 const orderB = categoryOrder[b.category] || 99
                 if (orderA !== orderB) return orderA - orderB
@@ -200,22 +204,14 @@ export default function PackageCatalog() {
                 const priceB = showPersonalizedPricing ? getPersonalizedPrice(b.priceValue, b.category) : b.priceValue;
                 return priceA - priceB;
             }
+            const getPriceForSort = (p: IPricingPlan) => showPersonalizedPricing ? getPersonalizedPrice(p.priceValue, p.category) : p.priceValue;
 
             switch (filters.sortOrder) {
-                case 'price_asc':
-                { const pA = showPersonalizedPricing ? getPersonalizedPrice(a.priceValue, a.category) : a.priceValue;
-                    const pB = showPersonalizedPricing ? getPersonalizedPrice(b.priceValue, b.category) : b.priceValue;
-                    return pA - pB; }
-                case 'price_desc':
-                { const pA = showPersonalizedPricing ? getPersonalizedPrice(a.priceValue, a.category) : a.priceValue;
-                    const pB = showPersonalizedPricing ? getPersonalizedPrice(b.priceValue, b.category) : b.priceValue;
-                    return pB - pA; }
-                case 'rating_desc':
-                    return b.averageRating - a.averageRating;
-                case 'rating_asc':
-                    return a.averageRating - b.averageRating;
-                default:
-                    return 0;
+                case 'price_asc': return getPriceForSort(a) - getPriceForSort(b);
+                case 'price_desc': return getPriceForSort(b) - getPriceForSort(a);
+                case 'rating_desc': return b.averageRating - a.averageRating;
+                case 'rating_asc': return a.averageRating - b.averageRating;
+                default: return 0;
             }
         });
 
@@ -224,25 +220,21 @@ export default function PackageCatalog() {
         if (!location.state?.highlightPackageId && !hasScrolledToPackage.current) {
             setCurrentPage(1)
         }
-
     }, [filters, allPackages, userAge, getPersonalizedPrice, isFavorite, location.state, showPersonalizedPricing, checkBestMatch])
 
     useEffect(() => {
         if (!loading && filteredPackages.length > 0 && location.state?.highlightPackageId && !hasScrolledToPackage.current) {
             const targetId = location.state.highlightPackageId;
             const index = filteredPackages.findIndex(p => p.id === targetId);
-
             if (index !== -1) {
                 const targetPage = Math.ceil((index + 1) / ITEMS_PER_PAGE);
                 if (currentPage !== targetPage) setCurrentPage(targetPage);
-
                 setTimeout(() => {
                     const element = document.getElementById(`package-card-${targetId}`);
                     if (element) {
                         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         setHighlightedId(targetId);
                         hasScrolledToPackage.current = true;
-
                         setTimeout(() => setHighlightedId(null), 2500);
                         window.history.replaceState({}, document.title);
                     }
@@ -264,7 +256,6 @@ export default function PackageCatalog() {
     return (
         <section className="py-20 px-4 bg-slate-50 border-t border-gray-200" id="full-catalog">
             <div className="container mx-auto max-w-7xl">
-
                 <div className="text-center mb-8">
                     <span className="text-[#4E61F6] font-bold tracking-wider uppercase text-sm">Pełna oferta</span>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">Znajdź idealne ubezpieczenie</h2>
@@ -296,7 +287,7 @@ export default function PackageCatalog() {
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
                     <div className="w-full lg:w-1/4 flex-shrink-0 transition-all duration-300">
                         <div className="sticky top-24">
-                            <PackageFilters filters={filters} setFilters={setFilters}/>
+                            <PackageFilters filters={filters} setFilters={setFilters} />
                         </div>
                     </div>
 
@@ -329,17 +320,17 @@ export default function PackageCatalog() {
                                 {currentItems.map((pkg) => {
                                     const realSpecialistsCount = SPECIALISTS_LIST.filter(s =>
                                         s.availableInPackages.includes(pkg.name)
-                                    ).length;
+                                    ).length
+                                    const isBusiness = pkg.category === 'Biznesowy'
                                     const personalizedPrice = getPersonalizedPrice(pkg.priceValue, pkg.category)
-                                    const basePrice = pkg.priceValue;
+                                    const basePrice = pkg.priceValue
 
-                                    const priceToDisplayBase = showPersonalizedPricing ? personalizedPrice : basePrice;
+                                    const priceToDisplayBase = showPersonalizedPricing ? personalizedPrice : basePrice
                                     const displayPrice = filters.showYearlyPrice ? (priceToDisplayBase * 12).toFixed(0) : priceToDisplayBase
 
-                                    const isPriceIncreased = userAge !== null && personalizedPrice > basePrice;
-                                    const isBestMatch = checkBestMatch(pkg);
-
-                                    const isHighlighted = highlightedId === pkg.id;
+                                    const isPriceIncreased = userAge !== null && personalizedPrice > basePrice
+                                    const isBestMatch = checkBestMatch(pkg)
+                                    const isHighlighted = highlightedId === pkg.id
 
                                     let cardClasses = "group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border flex flex-col md:flex-row overflow-hidden relative";
 
@@ -353,7 +344,6 @@ export default function PackageCatalog() {
 
                                     return (
                                         <div key={pkg.id} id={`package-card-${pkg.id}`} className={cardClasses}>
-
                                             {isBestMatch && !isHighlighted && (
                                                 <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg z-10 flex items-center shadow-md animate-fade-in">
                                                     <BestMatchIcon />
@@ -381,7 +371,7 @@ export default function PackageCatalog() {
                                                     </h3>
 
                                                     <div className="mt-2">
-                                                        <Rating rating={pkg.averageRating} reviews={pkg.reviews} className="flex items-center gap-1 !mt-0 !mb-0"/>
+                                                        <Rating rating={pkg.averageRating} reviews={pkg.reviews} className="flex items-center gap-1 !mt-0 !mb-0" />
                                                     </div>
                                                 </div>
 
@@ -410,37 +400,49 @@ export default function PackageCatalog() {
                                                                     <SparklesIcon /> Cena indywidualna
                                                                 </div>
                                                             )}
-
-                                                            {!showPersonalizedPricing && isPriceIncreased && (
+                                                            {!showPersonalizedPricing && (
                                                                 <span className="text-xs text-gray-500 font-medium mb-0.5">Cena od:</span>
                                                             )}
-
                                                             <div className="flex items-baseline justify-end gap-1">
                                                                 <span className={`text-3xl font-extrabold ${showPersonalizedPricing && isPriceIncreased ? 'text-purple-600' : 'text-[#4E61F6]'}`}>
                                                                     {displayPrice}
                                                                 </span>
                                                                 <span className="text-2xl text-gray-400 font-bold text-sm">zł</span>
                                                             </div>
-
+                                                            {isBusiness && (
+                                                                <div className="text-[10px] text-gray-400 font-medium mt-1 uppercase tracking-wide">
+                                                                    Cena netto / osoba
+                                                                </div>
+                                                            )}
                                                             <span className="text-xs text-gray-400 font-medium">
-                                                                / {filters.showYearlyPrice ? 'rok' : 'mc'}
+                                                                {!isBusiness && (`/ ${filters.showYearlyPrice ? 'rok' : 'mc'}`)}
                                                             </span>
                                                         </div>
                                                         <div className="mt-1 text-xs text-gray-500 text-right">{pkg.facilitiesCount} placówek</div>
                                                     </div>
                                                     <div className="ml-3">
-                                                        <FavoriteButton packageId={pkg.id} className="bg-white shadow-sm hover:bg-red-50"/>
+                                                        <FavoriteButton packageId={pkg.id} className="bg-white shadow-sm hover:bg-red-50" />
                                                     </div>
                                                 </div>
 
                                                 <div className="space-y-3 mt-auto">
-                                                    <Button variant="primary" className="w-full !py-2.5 text-sm shadow-md" onClick={() => openModal(pkg)}>
-                                                        Szczegóły oferty
-                                                    </Button>
-                                                    <label className={`flex items-center justify-center cursor-pointer w-full py-2 rounded-lg border transition-all ${isInComparison(pkg.id) ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-500 hover:border-blue-300'}`}>
-                                                        <input type="checkbox" className="hidden" checked={isInComparison(pkg.id)} onChange={() => { if (isInComparison(pkg.id)) removeFromComparison(pkg.id); else addToComparison(pkg); }}/>
-                                                        <span className="text-xs font-bold uppercase tracking-wide">{isInComparison(pkg.id) ? "Wybrano" : "+ Porównaj"}</span>
-                                                    </label>
+                                                    {isBusiness ? (
+                                                        <Link to="/kontakt" className="w-full block">
+                                                            <Button variant="secondary" className="w-full !py-2.5 text-sm shadow-md border-blue-200 text-blue-700 hover:bg-blue-50">
+                                                                Poproś o ofertę dla firmy
+                                                            </Button>
+                                                        </Link>
+                                                    ) : (
+                                                        <Button variant="primary" className="w-full !py-2.5 text-sm shadow-md" onClick={() => handleOpenPackageDetails(pkg)}>
+                                                            Szczegóły oferty
+                                                        </Button>
+                                                    )}
+                                                    {!isBusiness && (
+                                                        <label className={`flex items-center justify-center cursor-pointer w-full py-2 rounded-lg border transition-all ${isInComparison(pkg.id) ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-500 hover:border-blue-300'}`}>
+                                                            <input type="checkbox" className="hidden" checked={isInComparison(pkg.id)} onChange={() => { if (isInComparison(pkg.id)) removeFromComparison(pkg.id); else addToComparison(pkg); }} />
+                                                            <span className="text-xs font-bold uppercase tracking-wide">{isInComparison(pkg.id) ? "Wybrano" : "+ Porównaj"}</span>
+                                                        </label>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -466,13 +468,18 @@ export default function PackageCatalog() {
                 isOpen={selectedPlan !== null && !isCheckoutOpen}
                 onClose={closeModal}
                 plan={selectedPlan}
-                userAge={userAge || 30}
+                userAge={userAge || undefined}
                 selectedDuration={selectedDuration}
                 onDurationChange={setSelectedDuration}
+                billingPeriod={billingPeriod}
+                setBillingPeriod={setBillingPeriod}
                 onProceedToCheckout={handleProceedToCheckout}
+                options={options}
+                priceDetails={priceDetails}
+                isBuying={isBuying}
             />
 
-            <ComparisonBar/>
+            <ComparisonBar />
             {specModalData && (
                 <SpecialistsListModal
                     isOpen={specModalOpen}
@@ -480,18 +487,15 @@ export default function PackageCatalog() {
                     packageName={specModalData.name}
                 />
             )}
+
             {selectedPlan && (
                 <CheckoutOverlay
                     isOpen={isCheckoutOpen}
                     onClose={closeCheckout}
                     plan={selectedPlan}
-                    priceDetails={{
-                        ...priceDetails,
-                        total: Math.round(getPersonalizedPrice(selectedPlan.priceValue, selectedPlan.category) * (selectedDuration === '2y' ? 0.85 : 1.0) * priceDetails.months),
-                        monthly: Math.round(getPersonalizedPrice(selectedPlan.priceValue, selectedPlan.category) * (selectedDuration === '2y' ? 0.85 : 1.0)),
-                        originalTotal: Math.round(getPersonalizedPrice(selectedPlan.priceValue, selectedPlan.category) * priceDetails.months)
-                    }}
+                    priceDetails={priceDetails}
                     onFinalize={finalizePurchase}
+                    billingPeriod={billingPeriod}
                 />
             )}
         </section>

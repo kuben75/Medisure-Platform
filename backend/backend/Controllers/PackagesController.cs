@@ -14,11 +14,12 @@ public class PackagesController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogService _logService;
-
-    public PackagesController(ApplicationDbContext context, ILogService logService)
+    private readonly IPricingService _pricingService;
+    public PackagesController(ApplicationDbContext context, ILogService logService, IPricingService pricingService)
     {
         _context = context;
         _logService = logService;
+        _pricingService = pricingService;
     }
 
     [HttpGet]
@@ -115,5 +116,10 @@ public class PackagesController : ControllerBase
             User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null, 
             "info");
         return NoContent();
+    }
+    [HttpGet("options")]
+    public IActionResult GetPricingOptions()
+    {
+        return Ok(_pricingService.GetOptions());
     }
 }

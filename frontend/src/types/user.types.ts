@@ -1,28 +1,30 @@
 export interface IUser {
-    email: string,
-    firstName: string,
-    lastName: string
-    phoneNumber?: string
-    birthDate?: string
-    pesel?: string
-    twoFactorEnabled?: boolean
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: string | null | undefined;
+    birthDate?: string | null;
+    pesel?: string | null;
+    twoFactorEnabled?: boolean;
+    roles?: string[];
 }
 
 export interface IUserDto {
-    id: string
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber?: string | null;
+    birthDate?: string | null;
+    pesel?: string | null;
+    roles: string[];
+    isLocked: boolean;
+}
+export interface IUpdateUserDto {
     firstName: string
     lastName: string
     email: string
     phoneNumber: string
-    birthDate?: string
-    roles: string[]
-}
-
-export interface IUpdateUserDto {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
 }
 
 export interface IUserSubscription {
@@ -42,9 +44,9 @@ export interface IUserSubscription {
     zipCode?: string
 }
 export interface IUserFormModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSaveSuccess: () => void;
-    token: string | null;
-    userToEdit: IUserDto | null;
+    isOpen: boolean
+    onClose: () => void
+    onSaveSuccess: () => void
+    token: string | null
+    userToEdit: IUserDto | null
 }

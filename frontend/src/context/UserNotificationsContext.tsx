@@ -1,7 +1,7 @@
 import {type ReactNode, useEffect, useState} from 'react';
 import {useAuth} from "../hooks/useAuth.ts";
 import type {INotification} from "../types/notifications.types.ts";
-import {UserNotificationsContext as UserNotificationsContext1} from "../hooks/useUserNotifications.ts";
+import {UserNotificationsContext} from "../hooks/useUserNotifications.ts";
 
 
 export const UserNotificationsProvider = ({ children }: { children: ReactNode }) => {
@@ -64,9 +64,9 @@ export const UserNotificationsProvider = ({ children }: { children: ReactNode })
         }
     }
     return (
-        <UserNotificationsContext1 value={{ notifications, unreadCount, markAsRead, markAllAsRead, refreshNotifications: fetchNotifications, deleteNotification }}>
+        <UserNotificationsContext value={{ notifications, unreadCount, markAsRead, markAllAsRead, refreshNotifications: fetchNotifications, deleteNotification }}>
             {children}
-        </UserNotificationsContext1>
+        </UserNotificationsContext>
     )
 }
 

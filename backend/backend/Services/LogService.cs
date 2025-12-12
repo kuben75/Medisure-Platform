@@ -4,7 +4,7 @@ using backend.Models;
 namespace backend.Services;
 public interface ILogService
 {
-    Task LogAsync(string action, string description, string userName, string userId = null, string level = "Info");
+    Task LogAsync(string action, string description, string userName, string userId = null, string level = "Info", bool isSensitive = false);
 }
 
 public class LogService : ILogService
@@ -17,16 +17,17 @@ public class LogService : ILogService
     }
 
     public async Task LogAsync(string action, string description, string userName, string userId = null,
-        string level = "Info")
+        string level = "Info", bool isSensitive = false)
     {
         var log = new SystemLog
         {
             Action = action,
             Description = description,
             UserName = userName ?? "System",
-            UserId = userId ?? null,
+            UserId = userId,
             Level = level,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            IsSensitive = isSensitive
         };
 
         _context.SystemLogs.Add(log);

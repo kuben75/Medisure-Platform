@@ -72,7 +72,7 @@ export default function PackageFilters({ filters, setFilters }: IPackageFiltersP
             <div>
                 <h4 className="font-bold text-gray-800 mb-3 text-sm">Kategoria</h4>
                 <div className="space-y-2">
-                    {['all', 'Individual', 'Family', 'Senior', 'Company'].map((cat) => (
+                    {['all', 'Indywidualny', 'Rodzinny', 'Senior', 'Biznesowy'].map((cat) => (
                         <label key={cat} className="flex items-center cursor-pointer">
                             <input type="radio" name="category" className="text-[#4E61F6] focus:ring-[#4E61F6]"
                                    checked={filters.category === cat} onChange={() => handleChange('category', cat)}/>

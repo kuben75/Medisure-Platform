@@ -4,6 +4,7 @@ namespace backend.DTOs;
 public class SubscribeDto
 {
     public string Duration { get; set; } = "1y";
+    [Required] public string BillingPeriod { get; set; } 
     
     [Required(ErrorMessage = "Ulica jest wymagana.")]
     public string Street { get; set; }
@@ -24,4 +25,10 @@ public class SubscribeDto
     public string PaymentMethod { get; set; }
     [Required] 
     public string TransactionId { get; set; }
+    
+    public DateTime? StartDate { get; set; }
+    
+    [Required(ErrorMessage = "Numer PESEL jest wymagany do zawarcia umowy.")]
+    [RegularExpression(@"^\d{11}$", ErrorMessage = "PESEL musi składać się z 11 cyfr.")]
+    public string Pesel { get; set; }
 }
