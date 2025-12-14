@@ -34,14 +34,7 @@ namespace backend.Controllers
             _configuration = configuration;
             _pricingService = pricingService;
         }
-
-        private int CalculateAge(DateTime birthDate)
-        {
-            var today = DateTime.UtcNow;
-            var age = today.Year - birthDate.Year;
-            if (birthDate.Date > today.AddYears(-age)) age--;
-            return age;
-        }
+        
 
         [HttpPost("{packageId}")]
         public async Task<IActionResult> Subscribe(int packageId, [FromBody] SubscribeDto dto)
@@ -102,23 +95,17 @@ namespace backend.Controllers
                 });
             }
 
-            var birthDate = user.BirthDate ?? DateTime.UtcNow;
-            var age = CalculateAge(birthDate);
+            var basePriceWithAge = _pricingService.CalculateBasePriceWithRiskFactor(
+                package.PriceValue, 
+                package.Category, 
+                user.BirthDate
+            );
 
-            decimal ageMultiplier = 1.0m;
-            if (package.Category == "Indywidualny")
-            {
-                if (age > 30 && age <= 50)
-                    ageMultiplier += (decimal)((age - 30) * 0.015);
-                
-                else if (age > 50)
-                    ageMultiplier += 0.30m + (decimal)((age - 50) * 0.025);
-                
-            }
-
-            var basePriceWithAge = package.PriceValue * ageMultiplier;
-            decimal calculatedAmount =
-                _pricingService.CalculateFinalPrice(basePriceWithAge, dto.Duration, dto.BillingPeriod);
+            decimal calculatedAmount = _pricingService.CalculateFinalPrice(
+                basePriceWithAge, 
+                dto.Duration, 
+                dto.BillingPeriod
+            );
 
             DateTime effectiveStartDate = dto.StartDate.HasValue && dto.StartDate.Value > DateTime.UtcNow
                 ? dto.StartDate.Value.ToUniversalTime()
