@@ -68,7 +68,7 @@ public class ReviewsController : ControllerBase
         await _notificationService.NotifyAllAdminsAsync(
             "Nowa opinia do moderacji", 
             $"Użytkownik {user.Email} dodał opinię do pakietu ID {dto.PackageId}. Sprawdź panel moderacji.", 
-            "Review"
+            "Opinie"
         );
         return Ok(new { Message = "Dziękujemy! Twoja opinia czeka na zatwierdzenie przez moderatora." });
     }
@@ -144,7 +144,7 @@ public class ReviewsController : ControllerBase
             review.UserId,
             "Twoja opinia została zatwierdzona",
             $"Twoja opinia dotycząca pakietu ID {review.PackageId} została zatwierdzona przez moderatora.",
-            "ReviewApproved"
+            "Opinie"
         );
         
         await _logService.LogAsync(

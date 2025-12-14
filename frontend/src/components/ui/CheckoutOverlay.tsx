@@ -2,7 +2,7 @@ import {type ChangeEvent, type FormEvent, useEffect, useState} from 'react';
 import Button from '../ui/Button';
 import {useAuth} from '../../hooks/useAuth';
 import CheckIcon from '../icons/CheckIcon';
-import type {IExtendedProps, TBankOptionType, TPaymentMethodType} from '../../types/pricing.types';
+import type {ICheckoutOverlayProps, TBankOptionType, TPaymentMethodType} from '../../types/pricing.types';
 import UserIcon from "../icons/UserIcon.tsx";
 import LockIcon from "../icons/LockIcon.tsx";
 import CreditCardIcon from "../icons/CreditCardIcon.tsx";
@@ -38,7 +38,7 @@ const calculateAge = (birthDateString: string): number => {
     return age
 }
 
-export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, onFinalize, billingPeriod = 'upfront'}: IExtendedProps) {
+export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, onFinalize, billingPeriod}: ICheckoutOverlayProps) {
     const {user} = useAuth()
     const [step, setStep] = useState<1 | 2>(1)
     const [isProcessing, setIsProcessing] = useState(false)
