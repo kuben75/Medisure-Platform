@@ -23,7 +23,7 @@ public class ContactController : ControllerBase
         await _notificationService.NotifyAllAdminsAsync(
             "Nowe zapytanie ofertowe",
             $"Od: {dto.Name} {dto.Surname} ({dto.Email}).\nTemat: {dto.Topic} \n Wiadomość: {dto.Message}",
-            "Info"
+            "Informacja"
         );
 
         var emailBody = $@"

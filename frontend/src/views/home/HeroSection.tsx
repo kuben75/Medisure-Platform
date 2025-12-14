@@ -243,7 +243,7 @@ export default function HeroSection() {
                                         className="w-full py-3 md:py-4 text-base md:text-lg shadow-lg hover:shadow-blue-500/30 flex items-center justify-center gap-2 group transition-all"
                                         onClick={handleProceedToCalculator}
                                     >
-                                        Dostosuj i Kup
+                                        Dostosuj
                                         <ChevronRightIcon className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform"/>
                                     </Button>
 

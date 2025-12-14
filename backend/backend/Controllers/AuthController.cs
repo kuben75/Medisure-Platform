@@ -126,7 +126,7 @@ public class AuthController : ControllerBase
             newUser.Id,
             "Witamy w Medisure!",
             "Dziękujemy za dołączenie do Medisure. Cieszymy się, że jesteś z nami! Zapoznaj się z regulaminem i zacznij korzystać z naszych usług. Jeśli masz pytania, skontaktuj się z naszym zespołem wsparcia.",
-            "Info"
+            "Informacja"
         );
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
         var encodedToken = WebUtility.UrlEncode(token);
@@ -259,7 +259,7 @@ public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
                 user.Id,
                 "Pakiet wkrótce wygaśnie",
                 $"Twój pakiet '{sub.Package.Name}' wygasa za {daysLeft} dni. Odnów go, aby zachować ciągłość ochrony.",
-                "Warning"
+                "Ostrzeżenie"
             );
         }
     }

@@ -37,7 +37,7 @@ public class AdminController : ControllerBase
         var now = DateTime.UtcNow;
         var sevenDaysFromNow = now.AddDays(7);
 
-        var totalUsers = await _userManager.Users.CountAsync();
+        var totalUsers = await _context.Users.CountAsync();
 
         var totalPackages = await _context.Packages.CountAsync();
 

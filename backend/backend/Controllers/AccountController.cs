@@ -222,7 +222,7 @@ public class AccountController : ControllerBase
         {
             await _userManager.UpdateSecurityStampAsync(user);
 
-            await _notificationService.CreateNotificationAsync(user.Id, "Zmiana hasła", "Twoje hasło zostało zmienione.", "Security");
+            await _notificationService.CreateNotificationAsync(user.Id, "Zmiana hasła", "Twoje hasło zostało zmienione.", "Bezpieczeństwo");
             await _emailService.SendEmailAsync(user.Email, "Zmiana hasła", "Twoje hasło zostało pomyślnie zmienione.");
 
             return Ok(new { Message = "Hasło zostało pomyślnie zmienione." });

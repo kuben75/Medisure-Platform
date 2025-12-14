@@ -109,13 +109,11 @@ namespace backend.Controllers
             if (package.Category == "Indywidualny")
             {
                 if (age > 30 && age <= 50)
-                {
                     ageMultiplier += (decimal)((age - 30) * 0.015);
-                }
+                
                 else if (age > 50)
-                {
                     ageMultiplier += 0.30m + (decimal)((age - 50) * 0.025);
-                }
+                
             }
 
             var basePriceWithAge = package.PriceValue * ageMultiplier;
@@ -299,7 +297,7 @@ namespace backend.Controllers
                     user.Id,
                     "Zakupiono pakiet",
                     $"Twój pakiet {package.Name} został aktywowany. Dziękujemy za zaufanie!",
-                    "Purchase"
+                    "Zakup"
                 );
 
                 _ = _notificationService.NotifyAllAdminsAsync(
