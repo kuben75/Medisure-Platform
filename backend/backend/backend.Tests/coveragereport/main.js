@@ -213,59 +213,59 @@ var assemblies = [
   {
     "name": "backend",
     "classes": [
-      { "name": "backend.Controllers.AccountController", "rp": "backend_AccountController.html", "cl": 0, "ucl": 207, "cal": 207, "tl": 305, "cb": 0, "tb": 56, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Controllers.AdminController", "rp": "backend_AdminController.html", "cl": 0, "ucl": 228, "cal": 228, "tl": 338, "cb": 0, "tb": 68, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Controllers.AuthController", "rp": "backend_AuthController.html", "cl": 0, "ucl": 307, "cal": 307, "tl": 442, "cb": 0, "tb": 62, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Controllers.AccountController", "rp": "backend_AccountController.html", "cl": 51, "ucl": 156, "cal": 207, "tl": 305, "cb": 11, "tb": 56, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Controllers.AdminController", "rp": "backend_AdminController.html", "cl": 57, "ucl": 171, "cal": 228, "tl": 338, "cb": 7, "tb": 68, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Controllers.AuthController", "rp": "backend_AuthController.html", "cl": 148, "ucl": 159, "cal": 307, "tl": 442, "cb": 15, "tb": 62, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Controllers.ChatController", "rp": "backend_ChatController.html", "cl": 0, "ucl": 92, "cal": 92, "tl": 149, "cb": 0, "tb": 42, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Controllers.ContactController", "rp": "backend_ContactController.html", "cl": 0, "ucl": 19, "cal": 19, "tl": 38, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Controllers.FavoritesController", "rp": "backend_FavoritesController.html", "cl": 0, "ucl": 63, "cal": 63, "tl": 107, "cb": 0, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Controllers.FavoritesController", "rp": "backend_FavoritesController.html", "cl": 54, "ucl": 9, "cal": 63, "tl": 107, "cb": 14, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Controllers.NotificationsController", "rp": "backend_NotificationsController.html", "cl": 0, "ucl": 46, "cal": 46, "tl": 89, "cb": 0, "tb": 10, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Controllers.PackagesController", "rp": "backend_PackagesController.html", "cl": 0, "ucl": 76, "cal": 76, "tl": 125, "cb": 0, "tb": 44, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Controllers.PackagesController", "rp": "backend_PackagesController.html", "cl": 64, "ucl": 12, "cal": 76, "tl": 125, "cb": 20, "tb": 44, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Controllers.ReviewsController", "rp": "backend_ReviewsController.html", "cl": 0, "ucl": 141, "cal": 141, "tl": 195, "cb": 0, "tb": 30, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Controllers.SubscriptionsController", "rp": "backend_SubscriptionsController.html", "cl": 0, "ucl": 328, "cal": 328, "tl": 415, "cb": 0, "tb": 56, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Data.ApplicationDbContext", "rp": "backend_ApplicationDbContext.html", "cl": 0, "ucl": 10, "cal": 10, "tl": 20, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Controllers.SubscriptionsController", "rp": "backend_SubscriptionsController.html", "cl": 0, "ucl": 381, "cal": 381, "tl": 400, "cb": 0, "tb": 126, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Data.ApplicationDbContext", "rp": "backend_ApplicationDbContext.html", "cl": 10, "ucl": 0, "cal": 10, "tl": 20, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Data.DbInitializer", "rp": "backend_DbInitializer.html", "cl": 0, "ucl": 406, "cal": 406, "tl": 443, "cb": 0, "tb": 44, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.BroadcastDto", "rp": "backend_BroadcastDto.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 8, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.ChangePasswordDto", "rp": "backend_ChangePasswordDto.html", "cl": 0, "ucl": 4, "cal": 4, "tl": 19, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.ChangeRoleDto", "rp": "backend_ChangeRoleDto.html", "cl": 0, "ucl": 1, "cal": 1, "tl": 6, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.ContactFormDto", "rp": "backend_ContactFormDto.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 12, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.CreateReviewDto", "rp": "backend_CreateReviewDto.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 14, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.DTOs.DashboardStatsDto", "rp": "backend_DashboardStatsDto.html", "cl": 0, "ucl": 4, "cal": 4, "tl": 11, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.DTOs.DashboardStatsDto", "rp": "backend_DashboardStatsDto.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 11, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.Disable2FaDto", "rp": "backend_Disable2FaDto.html", "cl": 0, "ucl": 1, "cal": 1, "tl": 6, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.ForgotPasswordDto", "rp": "backend_ForgotPasswordDto.html", "cl": 0, "ucl": 1, "cal": 1, "tl": 9, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.DTOs.LockUserDto", "rp": "backend_LockUserDto.html", "cl": 0, "ucl": 1, "cal": 1, "tl": 6, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.DTOs.LoginDto", "rp": "backend_LoginDto.html", "cl": 0, "ucl": 2, "cal": 2, "tl": 12, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.DTOs.LockUserDto", "rp": "backend_LockUserDto.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 6, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.DTOs.LoginDto", "rp": "backend_LoginDto.html", "cl": 2, "ucl": 0, "cal": 2, "tl": 12, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.MarkReadDto", "rp": "backend_MarkReadDto.html", "cl": 0, "ucl": 1, "cal": 1, "tl": 6, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.DTOs.RegisterDto", "rp": "backend_RegisterDto.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 21, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.DTOs.RegisterDto", "rp": "backend_RegisterDto.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 21, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.ResetPasswordDto", "rp": "backend_ResetPasswordDto.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 15, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.ReviewDto", "rp": "backend_ReviewDto.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 11, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.SubscribeDto", "rp": "backend_SubscribeDto.html", "cl": 0, "ucl": 11, "cal": 11, "tl": 34, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.TwoFactorDto", "rp": "backend_TwoFactorDto.html", "cl": 0, "ucl": 1, "cal": 1, "tl": 6, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.TwoFactorLoginDto", "rp": "backend_TwoFactorLoginDto.html", "cl": 0, "ucl": 2, "cal": 2, "tl": 10, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.DTOs.UpdateUserDto", "rp": "backend_UpdateUserDto.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.DTOs.UpdateUserDto", "rp": "backend_UpdateUserDto.html", "cl": 5, "ucl": 2, "cal": 7, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.DTOs.UserDto", "rp": "backend_UserDto.html", "cl": 0, "ucl": 8, "cal": 8, "tl": 15, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Hubs.ChatHub", "rp": "backend_ChatHub.html", "cl": 0, "ucl": 221, "cal": 221, "tl": 291, "cb": 0, "tb": 50, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Migrations.AddSecurityUpdate", "rp": "backend_AddSecurityUpdate.html", "cl": 0, "ucl": 996, "cal": 996, "tl": 1101, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Migrations.AddSecurityUpdate1", "rp": "backend_AddSecurityUpdate1.html", "cl": 0, "ucl": 616, "cal": 616, "tl": 679, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Migrations.AddSecurityUpdate12", "rp": "backend_AddSecurityUpdate12.html", "cl": 0, "ucl": 607, "cal": 607, "tl": 672, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Migrations.ApplicationDbContextModelSnapshot", "rp": "backend_ApplicationDbContextModelSnapshot.html", "cl": 0, "ucl": 603, "cal": 603, "tl": 647, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Models.ApplicationUser", "rp": "backend_ApplicationUser.html", "cl": 3, "ucl": 1, "cal": 4, "tl": 12, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Models.ApplicationUser", "rp": "backend_ApplicationUser.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 12, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Models.ChatMessage", "rp": "backend_ChatMessage.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 17, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Models.Favorite", "rp": "backend_Favorite.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 17, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Models.Package", "rp": "backend_Package.html", "cl": 2, "ucl": 13, "cal": 15, "tl": 33, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Models.Favorite", "rp": "backend_Favorite.html", "cl": 3, "ucl": 3, "cal": 6, "tl": 17, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Models.Package", "rp": "backend_Package.html", "cl": 10, "ucl": 5, "cal": 15, "tl": 33, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Models.Review", "rp": "backend_Review.html", "cl": 0, "ucl": 9, "cal": 9, "tl": 22, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Models.SubscriptionOption", "rp": "backend_SubscriptionOption.html", "cl": 6, "ucl": 0, "cal": 6, "tl": 11, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Models.SystemLog", "rp": "backend_SystemLog.html", "cl": 0, "ucl": 8, "cal": 8, "tl": 17, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Models.SystemNotification", "rp": "backend_SystemNotification.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 20, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Models.UserPackage", "rp": "backend_UserPackage.html", "cl": 13, "ucl": 4, "cal": 17, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Services.EmailService", "rp": "backend_EmailService.html", "cl": 0, "ucl": 40, "cal": 40, "tl": 64, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Services.LogService", "rp": "backend_LogService.html", "cl": 0, "ucl": 18, "cal": 18, "tl": 36, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Services.NotificationService", "rp": "backend_NotificationService.html", "cl": 0, "ucl": 51, "cal": 51, "tl": 82, "cb": 0, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Services.PasswordResetTokenProvider<T>", "rp": "backend_PasswordResetTokenProvider_1.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Services.PasswordResetTokenProviderOptions", "rp": "backend_PasswordResetTokenProviderOptions.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Models.SystemLog", "rp": "backend_SystemLog.html", "cl": 7, "ucl": 1, "cal": 8, "tl": 17, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Models.SystemNotification", "rp": "backend_SystemNotification.html", "cl": 6, "ucl": 1, "cal": 7, "tl": 20, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Models.UserPackage", "rp": "backend_UserPackage.html", "cl": 15, "ucl": 2, "cal": 17, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Services.EmailService", "rp": "backend_EmailService.html", "cl": 38, "ucl": 2, "cal": 40, "tl": 64, "cb": 4, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Services.LogService", "rp": "backend_LogService.html", "cl": 18, "ucl": 0, "cal": 18, "tl": 36, "cb": 2, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Services.NotificationService", "rp": "backend_NotificationService.html", "cl": 51, "ucl": 0, "cal": 51, "tl": 82, "cb": 4, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Services.PasswordResetTokenProvider<T>", "rp": "backend_PasswordResetTokenProvider_1.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Services.PasswordResetTokenProviderOptions", "rp": "backend_PasswordResetTokenProviderOptions.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 25, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Services.PdfService", "rp": "backend_PdfService.html", "cl": 202, "ucl": 1, "cal": 203, "tl": 233, "cb": 52, "tb": 58, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Services.PricingService", "rp": "backend_PricingService.html", "cl": 43, "ucl": 1, "cal": 44, "tl": 63, "cb": 6, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "backend.Services.SubscriptionExpirationWorker", "rp": "backend_SubscriptionExpirationWorker.html", "cl": 0, "ucl": 144, "cal": 144, "tl": 169, "cb": 0, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Services.PricingService", "rp": "backend_PricingService.html", "cl": 65, "ucl": 1, "cal": 66, "tl": 91, "cb": 16, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "backend.Services.SubscriptionExpirationWorker", "rp": "backend_SubscriptionExpirationWorker.html", "cl": 134, "ucl": 10, "cal": 144, "tl": 169, "cb": 7, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "backend.Services.UserConnectionManager", "rp": "backend_UserConnectionManager.html", "cl": 28, "ucl": 3, "cal": 31, "tl": 52, "cb": 9, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "Program", "rp": "backend_Program.html", "cl": 0, "ucl": 169, "cal": 169, "tl": 206, "cb": 0, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
@@ -294,16 +294,10 @@ var riskHotspots = [
       { "value": 32, "exceeded": true },
     ]},
   {
-    "assembly": "backend", "class": "backend.Controllers.AccountController", "reportPath": "backend_AccountController.html", "methodName": "UpdateProfile()", "methodShortName": "UpdateProfile()", "fileIndex": 0, "line": 47,
+    "assembly": "backend", "class": "backend.Controllers.SubscriptionsController", "reportPath": "backend_SubscriptionsController.html", "methodName": "Subscribe()", "methodShortName": "Subscribe()", "fileIndex": 0, "line": 41,
     "metrics": [
       { "value": 930, "exceeded": true },
       { "value": 30, "exceeded": true },
-    ]},
-  {
-    "assembly": "backend", "class": "backend.Controllers.FavoritesController", "reportPath": "backend_FavoritesController.html", "methodName": "ToggleFavorite()", "methodShortName": "ToggleFavorite()", "fileIndex": 0, "line": 27,
-    "metrics": [
-      { "value": 506, "exceeded": true },
-      { "value": 22, "exceeded": true },
     ]},
   {
     "assembly": "backend", "class": "backend.Controllers.ChatController", "reportPath": "backend_ChatController.html", "methodName": "GetChatHistory()", "methodShortName": "GetChatHistory()", "fileIndex": 0, "line": 64,
@@ -312,10 +306,10 @@ var riskHotspots = [
       { "value": 20, "exceeded": true },
     ]},
   {
-    "assembly": "backend", "class": "backend.Controllers.PackagesController", "reportPath": "backend_PackagesController.html", "methodName": "DeletePackage()", "methodShortName": "DeletePackage()", "fileIndex": 0, "line": 97,
+    "assembly": "backend", "class": "backend.Controllers.AccountController", "reportPath": "backend_AccountController.html", "methodName": "UpdateProfile()", "methodShortName": "UpdateProfile()", "fileIndex": 0, "line": 47,
     "metrics": [
-      { "value": 342, "exceeded": true },
-      { "value": 18, "exceeded": true },
+      { "value": 334, "exceeded": true },
+      { "value": 30, "exceeded": true },
     ]},
   {
     "assembly": "backend", "class": "backend.Controllers.AdminController", "reportPath": "backend_AdminController.html", "methodName": "DeleteUser()", "methodShortName": "DeleteUser()", "fileIndex": 0, "line": 129,
@@ -325,12 +319,6 @@ var riskHotspots = [
     ]},
   {
     "assembly": "backend", "class": "backend.Controllers.AdminController", "reportPath": "backend_AdminController.html", "methodName": "UpdateUser()", "methodShortName": "UpdateUser()", "fileIndex": 0, "line": 94,
-    "metrics": [
-      { "value": 272, "exceeded": true },
-      { "value": 16, "exceeded": true },
-    ]},
-  {
-    "assembly": "backend", "class": "backend.Controllers.AuthController", "reportPath": "backend_AuthController.html", "methodName": "Login()", "methodShortName": "Login()", "fileIndex": 0, "line": 173,
     "metrics": [
       { "value": 272, "exceeded": true },
       { "value": 16, "exceeded": true },
@@ -346,18 +334,6 @@ var riskHotspots = [
     "metrics": [
       { "value": 272, "exceeded": true },
       { "value": 16, "exceeded": true },
-    ]},
-  {
-    "assembly": "backend", "class": "backend.Controllers.AdminController", "reportPath": "backend_AdminController.html", "methodName": "LockUser()", "methodShortName": "LockUser()", "fileIndex": 0, "line": 184,
-    "metrics": [
-      { "value": 210, "exceeded": true },
-      { "value": 14, "exceeded": false },
-    ]},
-  {
-    "assembly": "backend", "class": "backend.Controllers.PackagesController", "reportPath": "backend_PackagesController.html", "methodName": "UpdatePackage()", "methodShortName": "UpdatePackage()", "fileIndex": 0, "line": 64,
-    "metrics": [
-      { "value": 210, "exceeded": true },
-      { "value": 14, "exceeded": false },
     ]},
   {
     "assembly": "backend", "class": "backend.Hubs.ChatHub", "reportPath": "backend_ChatHub.html", "methodName": "GetEmail()", "methodShortName": "GetEmail()", "fileIndex": 0, "line": 285,
@@ -396,13 +372,19 @@ var riskHotspots = [
       { "value": 10, "exceeded": false },
     ]},
   {
-    "assembly": "backend", "class": "backend.Controllers.PackagesController", "reportPath": "backend_PackagesController.html", "methodName": "CreatePackage()", "methodShortName": "CreatePackage()", "fileIndex": 0, "line": 48,
+    "assembly": "backend", "class": "backend.Controllers.ReviewsController", "reportPath": "backend_ReviewsController.html", "methodName": "AddReview()", "methodShortName": "AddReview()", "fileIndex": 0, "line": 30,
     "metrics": [
       { "value": 110, "exceeded": true },
       { "value": 10, "exceeded": false },
     ]},
   {
-    "assembly": "backend", "class": "backend.Controllers.ReviewsController", "reportPath": "backend_ReviewsController.html", "methodName": "AddReview()", "methodShortName": "AddReview()", "fileIndex": 0, "line": 30,
+    "assembly": "backend", "class": "backend.Controllers.SubscriptionsController", "reportPath": "backend_SubscriptionsController.html", "methodName": "CancelSubscription()", "methodShortName": "CancelSubscription()", "fileIndex": 0, "line": 359,
+    "metrics": [
+      { "value": 110, "exceeded": true },
+      { "value": 10, "exceeded": false },
+    ]},
+  {
+    "assembly": "backend", "class": "backend.Controllers.SubscriptionsController", "reportPath": "backend_SubscriptionsController.html", "methodName": "CancelSubscription()", "methodShortName": "CancelSubscription()", "fileIndex": 0, "line": 372,
     "metrics": [
       { "value": 110, "exceeded": true },
       { "value": 10, "exceeded": false },
@@ -418,6 +400,12 @@ var riskHotspots = [
     "metrics": [
       { "value": 110, "exceeded": true },
       { "value": 10, "exceeded": false },
+    ]},
+  {
+    "assembly": "backend", "class": "backend.Controllers.AdminController", "reportPath": "backend_AdminController.html", "methodName": "LockUser()", "methodShortName": "LockUser()", "fileIndex": 0, "line": 184,
+    "metrics": [
+      { "value": 95, "exceeded": true },
+      { "value": 14, "exceeded": false },
     ]},
   {
     "assembly": "backend", "class": "backend.Controllers.AuthController", "reportPath": "backend_AuthController.html", "methodName": "ConfirmEmail()", "methodShortName": "ConfirmEmail()", "fileIndex": 0, "line": 152,
@@ -438,10 +426,10 @@ var riskHotspots = [
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "backend", "class": "backend.Services.SubscriptionExpirationWorker", "reportPath": "backend_SubscriptionExpirationWorker.html", "methodName": "ExecuteAsync()", "methodShortName": "ExecuteAsync()", "fileIndex": 0, "line": 20,
+    "assembly": "backend", "class": "backend.Controllers.AuthController", "reportPath": "backend_AuthController.html", "methodName": "Login()", "methodShortName": "Login()", "fileIndex": 0, "line": 173,
     "metrics": [
-      { "value": 72, "exceeded": true },
-      { "value": 8, "exceeded": false },
+      { "value": 57, "exceeded": true },
+      { "value": 16, "exceeded": true },
     ]},
   {
     "assembly": "backend", "class": "backend.Controllers.AccountController", "reportPath": "backend_AccountController.html", "methodName": "DisableTwoFactor()", "methodShortName": "DisableTwoFactor()", "fileIndex": 0, "line": 276,
@@ -451,12 +439,6 @@ var riskHotspots = [
     ]},
   {
     "assembly": "backend", "class": "backend.Controllers.AdminController", "reportPath": "backend_AdminController.html", "methodName": "UnlockUser()", "methodShortName": "UnlockUser()", "fileIndex": 0, "line": 266,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "backend", "class": "backend.Controllers.AuthController", "reportPath": "backend_AuthController.html", "methodName": "GetClientIpAddress()", "methodShortName": "GetClientIpAddress()", "fileIndex": 0, "line": 51,
     "metrics": [
       { "value": 42, "exceeded": true },
       { "value": 6, "exceeded": false },
@@ -472,6 +454,18 @@ var riskHotspots = [
     "metrics": [
       { "value": 40, "exceeded": true },
       { "value": 40, "exceeded": true },
+    ]},
+  {
+    "assembly": "backend", "class": "backend.Controllers.PackagesController", "reportPath": "backend_PackagesController.html", "methodName": "DeletePackage()", "methodShortName": "DeletePackage()", "fileIndex": 0, "line": 97,
+    "metrics": [
+      { "value": 36, "exceeded": true },
+      { "value": 18, "exceeded": true },
+    ]},
+  {
+    "assembly": "backend", "class": "backend.Controllers.FavoritesController", "reportPath": "backend_FavoritesController.html", "methodName": "ToggleFavorite()", "methodShortName": "ToggleFavorite()", "fileIndex": 0, "line": 27,
+    "metrics": [
+      { "value": 22, "exceeded": false },
+      { "value": 22, "exceeded": true },
     ]},
 ];
 
