@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-test-backend:
-    name:  Backend Build & Test
+    name: Backend Build & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,8 +24,8 @@ jobs:
       - name: Build Backend
         run: dotnet build backend/backend/backend.csproj --no-restore --configuration Release
 
-      - name:  Run Unit Tests
-        run: dotnet test backend/backend/backend.Tests/backend.Tests.csproj --no-build --verbosity normal
+      - name: 🧪 Run Unit Tests
+        run: dotnet test backend/backend/backend.Tests/backend.Tests.csproj --verbosity normal
 
   build-frontend:
     name:  Frontend Build

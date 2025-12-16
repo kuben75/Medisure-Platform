@@ -178,7 +178,7 @@ export default function HeroSection() {
 
             <Modal isOpen={selectedPlan !== null} onClose={closeModal} className="w-[95%] md:w-full max-w-lg bg-white overflow-hidden p-0 rounded-2xl md:rounded-3xl mx-auto my-auto">
                 {selectedPlan && (
-                    <div className="text-gray-800 relative max-h-[90vh] overflow-y-auto custom-scrollbar"> {/* Scrollbar dla małych ekranów */}
+                    <div className="text-gray-800 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
                         <div className="h-32 md:h-40 bg-gradient-to-br from-[#4E61F6] to-[#4338ca] flex flex-col items-center justify-center relative p-4 md:p-6 text-center shrink-0">
                         <span className="inline-block bg-white/20 backdrop-blur-md px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[9px] md:text-[10px] text-white font-bold uppercase tracking-wider mb-2 border border-white/10">
                             Wybrany Pakiet
@@ -243,7 +243,7 @@ export default function HeroSection() {
                                         className="w-full py-3 md:py-4 text-base md:text-lg shadow-lg hover:shadow-blue-500/30 flex items-center justify-center gap-2 group transition-all"
                                         onClick={handleProceedToCalculator}
                                     >
-                                        Dostosuj
+                                        Wybierz pakiet
                                         <ChevronRightIcon className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform"/>
                                     </Button>
 

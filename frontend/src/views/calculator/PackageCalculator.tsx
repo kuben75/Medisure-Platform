@@ -7,7 +7,7 @@ import ComparisonBar from "../../components/ui/ComparisonBar.tsx";
 import type { IFilterState, IPricingPlan } from "../../types/pricing.types.ts";
 import FavoriteButton from "../../components/ui/FavouriteButton.tsx";
 import { usePackagePurchase } from "../../hooks/usePackagePurchase.ts";
-import {Link, useLocation} from "react-router-dom";
+import {Link, useLocation, useSearchParams} from "react-router-dom";
 import SpecialistsListModal from "../../components/ui/SpecialistsListModal.tsx";
 import { useAuth } from "../../hooks/useAuth.ts";
 import { useFavorites } from "../../hooks/UseFavourites.ts";
@@ -15,7 +15,6 @@ import CheckoutOverlay from "../../components/ui/CheckoutOverlay.tsx";
 import { calculatePersonalizedPrice } from "../../utils/pricingHelpers.ts";
 import PackageDetailsModal from "../../components/ui/PackageDetailsModal.tsx";
 import { SPECIALISTS_LIST } from "../../constants/specialists.tsx";
-
 const API_URL = `${import.meta.env.VITE_API_URL}/packages`
 const ITEMS_PER_PAGE = 5
 
@@ -29,23 +28,10 @@ const BestMatchIcon = () => (
 
 export default function PackageCatalog() {
     const { user } = useAuth()
-
-
-    const {
-        selectedPlan,
-        selectedDuration,
-        setSelectedDuration,
-        billingPeriod,
-        setBillingPeriod,
-        openModal,
-        closeModal,
-        priceDetails,
-        isCheckoutOpen,
-        handleProceedToCheckout,
-        closeCheckout,
-        finalizePurchase,
-        options,
-        isBuying
+    const [searchParams] = useSearchParams();
+    const {selectedPlan, selectedDuration, setSelectedDuration, billingPeriod, setBillingPeriod, openModal,
+        closeModal, priceDetails, isCheckoutOpen, handleProceedToCheckout, closeCheckout, finalizePurchase,
+        options, isBuying
     } = usePackagePurchase()
 
     const { isFavorite } = useFavorites()
@@ -73,6 +59,44 @@ export default function PackageCatalog() {
         }
         return null
     }, [user])
+
+    useEffect(() => {
+        if (loading || allPackages.length === 0) return;
+
+        if (location.state?.highlightPackageId) {
+            const targetId = location.state.highlightPackageId;
+            const targetPkg = allPackages.find(p => p.id === targetId);
+
+            if (targetPkg) {
+                setFilters(prev => ({
+                    ...prev,
+                    category: 'all',
+                    searchQuery: '',
+                    maxPrice: Math.max(prev.maxPrice, targetPkg.priceValue + 500)
+                }));
+                return;
+            }
+        }
+
+        const categoryFromUrl = searchParams.get('category');
+        const validCategories = ['Indywidualny', 'Rodzinny', 'Senior', 'Biznesowy'];
+
+        if (categoryFromUrl && validCategories.includes(categoryFromUrl)) {
+            setFilters(prev => ({
+                ...prev,
+                category: categoryFromUrl,
+                searchQuery: '',
+                maxPrice: 10000
+            }));
+
+            setTimeout(() => {
+                const catalogSection = document.getElementById('full-catalog');
+                if (catalogSection) {
+                    catalogSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+    }, [loading, allPackages, location.state, searchParams])
 
     useEffect(() => {
         setHighlightedId(null)

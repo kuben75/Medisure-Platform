@@ -40,7 +40,7 @@ public class FavoritesController : ControllerBase
             _context.Favorites.Remove(existingFavorite);
             await _context.SaveChangesAsync();
             await _logService.LogAsync(
-                "REMOVE_FAVORITE", 
+                "USUN_ULUBIONE", 
                 $"Użytkownik '{User.Identity?.Name ?? "Nieznany"}' usunął pakiet '{package.Name}' z ulubionych.", 
                 User.Identity?.Name ?? "Nieznany", 
                 userId);
@@ -56,7 +56,7 @@ public class FavoritesController : ControllerBase
             _context.Favorites.Add(newFavorite);
             await _context.SaveChangesAsync();
             await _logService.LogAsync(
-                "ADD_FAVORITE", 
+                "DODAJ_ULUBIONE", 
                 $"Użytkownik '{User.Identity?.Name ?? "Nieznany"}' dodał pakiet '{package.Name}' do ulubionych.", 
                 User.Identity?.Name ?? "Nieznany", 
                 userId);

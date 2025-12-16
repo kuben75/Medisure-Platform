@@ -60,7 +60,7 @@ public class AccountController : ControllerBase
 
         if (!await _userManager.CheckPasswordAsync(user, updateDto.CurrentPassword))
         {
-            await _logService.LogAsync("SECURITY_FAIL", "Błędne hasło (zmiana email)", user.UserName, user.Id, "Warning");
+            await _logService.LogAsync("BEZPIECZENSTWO", "Błędne hasło (zmiana email)", user.UserName, user.Id, "Warning");
             return BadRequest(new { Message = "Podane hasło jest nieprawidłowe." });
         }
 
@@ -80,7 +80,7 @@ public class AccountController : ControllerBase
 
             if (!is2faValid)
             {
-                await _logService.LogAsync("SECURITY_FAIL", "Błędny kod 2FA (zmiana email)", user.UserName, user.Id, "Warning");
+                await _logService.LogAsync("BEZPIECZENSTWO", "Błędny kod 2FA (zmiana email)", user.UserName, user.Id, "Warning");
                 return BadRequest(new { Message = "Nieprawidłowy kod weryfikacyjny 2FA." });
             }
         }
@@ -109,7 +109,7 @@ public class AccountController : ControllerBase
     var updateResult = await _userManager.UpdateAsync(user);
     if (!updateResult.Succeeded) 
     {
-        await _logService.LogAsync("UPDATE_PROFILE_FAILED", $"Błąd DB: {string.Join(", ", updateResult.Errors.Select(e => e.Description))}", user.UserName, user.Id, "Error");
+        await _logService.LogAsync("EDYCJA_PROFILU", $"Błąd DB: {string.Join(", ", updateResult.Errors.Select(e => e.Description))}", user.UserName, user.Id, "Error");
         return BadRequest(updateResult.Errors);
     }
 
@@ -174,7 +174,7 @@ public class AccountController : ControllerBase
                 
         }
 
-        await _logService.LogAsync("UPDATE_PROFILE", $"Profil użytkownika '{user.UserName}' został zaktualizowany.", user.UserName, user.Id);
+        await _logService.LogAsync("EDYCJA_PROFILU", $"Profil użytkownika '{user.UserName}' został zaktualizowany.", user.UserName, user.Id);
         return Ok(new
         {
             email = user.Email,
@@ -211,7 +211,7 @@ public class AccountController : ControllerBase
 
             if (!is2faValid)
             {
-                await _logService.LogAsync("SECURITY_FAIL", "Błędny kod 2FA (zmiana hasła)", user.UserName, user.Id, "Warning");
+                await _logService.LogAsync("BEZPIECZENSTWO", "Błędny kod 2FA (zmiana hasła)", user.UserName, user.Id, "Warning");
                 return BadRequest(new { Message = "Nieprawidłowy kod weryfikacyjny 2FA." });
             }
         }
@@ -265,7 +265,7 @@ public class AccountController : ControllerBase
         }
 
         await _userManager.SetTwoFactorEnabledAsync(user, true);
-        await _logService.LogAsync("2FA_ENABLED", $"Użytkownik {user.Email} włączył 2FA.", user.Email, user.Id,
+        await _logService.LogAsync("2FA_WLACZENIE", $"Użytkownik {user.Email} włączył 2FA.", user.Email, user.Id,
             "Security");
 
         return Ok(new { Message = "Weryfikacja dwuetapowa została włączona." });
