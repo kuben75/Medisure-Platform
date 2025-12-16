@@ -30,14 +30,16 @@ public class SubscriptionExpirationWorker : BackgroundService
                     var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
                     var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
 
-                    var targetDate = DateTime.UtcNow.AddDays(7).Date;
-                    
+                    var thresholdDate = DateTime.UtcNow.AddDays(7).Date;
+                    var today = DateTime.UtcNow.Date;
+                
                     var expiringSubscriptions = await context.UserPackages
                         .Include(u => u.User)
                         .Include(p => p.Package)
                         .Where(s => s.Status == "Active" 
                                     && !s.ExpirationWarningSent
-                                    && s.EndDate.Date == targetDate)
+                                    && s.EndDate.Date <= thresholdDate  
+                                    && s.EndDate.Date >= today)         
                         .ToListAsync(stoppingToken);
 
                     foreach (var sub in expiringSubscriptions)
@@ -78,7 +80,7 @@ public class SubscriptionExpirationWorker : BackgroundService
                                         
                                         <p style='color: #6b7280; margin: 0 0 25px 0; font-size: 16px; line-height: 1.5;'>
                                             Cześć <strong>{sub.User.FirstName}</strong>! <br>
-                                            Zauważyliśmy, że Twój pakiet medyczny wkrótce straci ważność. Nie pozwól, aby Twoja ochrona wygasła.
+                                            Zauważyliśmy, że Twój pakiet medyczny wkrótce straci ważność. Skontaktuj się z nami, aby przedłużyć swoją ochronę i nadal korzystać z naszych usług.
                                         </p>
                                     </td>
                                 </tr>
@@ -144,7 +146,7 @@ public class SubscriptionExpirationWorker : BackgroundService
                         await notificationService.CreateNotificationAsync(
                             sub.UserId, 
                             "Subskrypcja wygasa", 
-                            $"Twój pakiet {sub.Package.Name} wygasa za 7 dni.", 
+                            $"Twój pakiet {sub.Package.Name} wygasa za 7 dni. Odnów go, aby zachować ciągłość ochrony.", 
                             "System"
                         );
 
@@ -163,7 +165,7 @@ public class SubscriptionExpirationWorker : BackgroundService
                 _logger.LogError(ex, "Błąd podczas sprawdzania subskrypcji.");
             }
             
-            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
         }
     }
 }

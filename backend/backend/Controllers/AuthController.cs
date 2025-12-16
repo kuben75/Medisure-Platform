@@ -432,7 +432,7 @@ public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             await _userManager.SetUserNameAsync(user, newEmail);
             await _userManager.UpdateSecurityStampAsync(user);
-            await _logService.LogAsync("EMAIL_CHANGED", $"Użytkownik zmienił email na {newEmail}", newEmail, user.Id, "Info");
+            await _logService.LogAsync("ZMIANA_EMAIL", $"Użytkownik zmienił email na {newEmail}", newEmail, user.Id, "Info");
             return Ok(new { Message = "Adres e-mail został pomyślnie zmieniony." });
         }
 

@@ -144,7 +144,7 @@ public class AdminController : ControllerBase
         if (result.Succeeded)
         {
             await _logService.LogAsync(
-                "DELETE_USER",
+                "USUNIECIE_UZYTKOWNIKA",
                 $"Użytkownik '{user.Email}' został usunięty przez {User.Identity?.Name ?? "Admin"}.",
                 User.Identity?.Name ?? "Admin",
                 User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null,
@@ -251,7 +251,7 @@ public class AdminController : ControllerBase
             }
             catch (Exception ex)
             {
-                await _logService.LogAsync("EMAIL_FAILED",
+                await _logService.LogAsync("BLAD_EMAIL",
                     $"Nie udało się wysłać powiadomienia o blokadzie: {ex.Message}", "System", null, "Error");
             }
 
@@ -309,7 +309,7 @@ public class AdminController : ControllerBase
             }
             catch (Exception ex)
             {
-                await _logService.LogAsync("BŁĄD_EMAIL", $"Błąd wysyłki info o odblokowaniu: {ex.Message}", "System",
+                await _logService.LogAsync("BLAD_EMAIL", $"Błąd wysyłki info o odblokowaniu: {ex.Message}", "System",
                     null, "Error");
             }
 

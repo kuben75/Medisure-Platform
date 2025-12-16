@@ -49,7 +49,7 @@ public class PackagesController : ControllerBase
         _context.Packages.Add(package);
         await _context.SaveChangesAsync();
         await _logService.LogAsync(
-            "CREATE_PACKAGE", 
+            "STWORZENIE_PAKIETU", 
             $"Pakiet '{package.Name}' został utworzony przez {User.Identity?.Name ?? "Admin"}.", 
             User.Identity?.Name ?? "Admin", 
             User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null, 
@@ -83,7 +83,7 @@ public class PackagesController : ControllerBase
 
         await _context.SaveChangesAsync();
         await _logService.LogAsync(
-            "UPDATE_PACKAGE", 
+            "EDYCJA_PAKIETU", 
             $"Pakiet '{packageFromDb.Name}' został zaktualizowany przez {User.Identity?.Name ?? "Admin"}.", 
             User.Identity?.Name ?? "Admin", 
             User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null, 
@@ -99,7 +99,7 @@ public class PackagesController : ControllerBase
         if (package == null)
         {
             await _logService.LogAsync(
-                "DELETE_PACKAGE_FAILED", 
+                "BLAD_PAKIETU", 
                 $"Próba usunięcia nieistniejącego pakietu o ID {id}.", 
                 User.Identity?.Name ?? "Admin", 
                 User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null, 
@@ -110,7 +110,7 @@ public class PackagesController : ControllerBase
         _context.Packages.Remove(package);
         await _context.SaveChangesAsync();
         await _logService.LogAsync(
-            "DELETE_PACKAGE", 
+            "USUNIECIE_PAKIETU", 
             $"Pakiet '{package.Name}' został usunięty przez {User.Identity?.Name ?? "Admin"}.", 
             User.Identity?.Name ?? "Admin", 
             User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null, 

@@ -59,7 +59,7 @@ public class ReviewsController : ControllerBase
         _context.Reviews.Add(review);
         await _context.SaveChangesAsync();
         await _logService.LogAsync(
-            "ADD_REVIEW",
+            "DODANIE_OPINII",
             $"Użytkownik {user.Email} dodał opinię dla pakietu ID {dto.PackageId}.",
             user.Email ?? "Unknown",
             user.Id,
@@ -148,7 +148,7 @@ public class ReviewsController : ControllerBase
         );
         
         await _logService.LogAsync(
-            "APPROVE_REVIEW",
+            "ZAAKCEPTOWANIE_OPINII",
             $"Opinia ID {id} została zatwierdzona.",
             User.Identity?.Name ?? "Admin",
             User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null,
@@ -165,7 +165,7 @@ public class ReviewsController : ControllerBase
         _context.Reviews.Remove(review);
         await _context.SaveChangesAsync();
         await _logService.LogAsync(
-            "REJECT_REVIEW",
+            "ODRZUCENIE_OPINII",
             $"Opinia ID {id} została odrzucona i usunięta.",
             User.Identity?.Name ?? "Admin",
             User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null,

@@ -52,7 +52,9 @@ export default function UserProfile() {
 
     const isAdmin = roles?.includes('Admin')
     const [searchTerm, setSearchTerm] = useState('')
+
     const [visibleCount, setVisibleCount] = useState(3)
+    const [favVisibleCount, setFavVisibleCount] = useState(5)
 
     const handleLogout = () => {
         logout()
@@ -108,9 +110,13 @@ export default function UserProfile() {
 
     const displayedSubscriptions = filteredSubscriptions.slice(0, visibleCount)
     const hasMore = filteredSubscriptions.length > visibleCount
-
     const handleShowMore = () => setVisibleCount(prev => prev + 5)
     const handleCollapse = () => setVisibleCount(5)
+
+    const displayedFavorites = favorites.slice(0, favVisibleCount)
+    const favHasMore = favorites.length > favVisibleCount
+    const handleShowMoreFav = () => setFavVisibleCount(prev => prev + 5)
+    const handleCollapseFav = () => setFavVisibleCount(5)
 
     return (
         <div className="container mx-auto px-0 md:px-4 py-4 md:py-12 mt-12 md:mt-16 max-w-6xl">
@@ -297,24 +303,46 @@ export default function UserProfile() {
                                     {activeTab === 'favorites' && (
                                         <div className="space-y-4 animate-fade-in">
                                             <h2 className="text-xl font-bold text-gray-800 mb-6 border-b border-gray-100 pb-4">Zapisane oferty</h2>
-                                            {favorites.length > 0 ? (
-                                                <div className="grid gap-4">
-                                                    {favorites.map(fav => (
-                                                        <div key={fav.id} className="border border-gray-200 bg-white rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-md transition-all hover:border-[#4E61F6]">
-                                                            <div>
-                                                                <h3 className="text-lg font-bold text-gray-800">{fav.name}</h3>
-                                                                <div className="flex items-center gap-2 mt-1">
-                                                                    <span className="text-[#4E61F6] font-bold text-lg">{fav.price}</span>
-                                                                    <span className="text-xs text-gray-400">/ mies</span>
+                                            {displayedFavorites.length > 0 ? (
+                                                <>
+                                                    <div className="grid gap-4">
+                                                        {displayedFavorites.map(fav => (
+                                                            <div key={fav.id} className="border border-gray-200 bg-white rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-md transition-all hover:border-[#4E61F6]">
+                                                                <div>
+                                                                    <h3 className="text-lg font-bold text-gray-800">{fav.name}</h3>
+                                                                    <div className="flex items-center gap-2 mt-1">
+                                                                        <span className="text-[#4E61F6] font-bold text-lg">{fav.price}</span>
+                                                                        <span className="text-xs text-gray-400">/ mies</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center gap-3 w-full sm:w-auto">
+                                                                    <FavoriteButton packageId={fav.id}/>
+                                                                    <Button
+                                                                        variant="primary"
+                                                                        className="!text-xs !py-2.5 flex-grow sm:flex-grow-0 text-center"
+                                                                        onClick={() => navigate('/kalkulator', { state: { highlightPackageId: fav.id } })}
+                                                                    >
+                                                                        Zobacz ofertę
+                                                                    </Button>
                                                                 </div>
                                                             </div>
-                                                            <div className="flex items-center gap-3 w-full sm:w-auto">
-                                                                <FavoriteButton packageId={fav.id}/>
-                                                                <Button variant="primary" className="!text-xs !py-2.5 flex-grow sm:flex-grow-0 text-center" onClick={() => navigate('/kalkulator')}>Zobacz ofertę</Button>
-                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {(favHasMore || favVisibleCount > 5) && (
+                                                        <div className="text-center pt-4">
+                                                            {favHasMore ? (
+                                                                <button onClick={handleShowMoreFav} className="text-sm font-bold text-[#4E61F6] hover:bg-blue-50 px-6 py-2 rounded-full transition-colors">
+                                                                    Pokaż więcej ({favorites.length - favVisibleCount}) ▼
+                                                                </button>
+                                                            ) : (
+                                                                <button onClick={handleCollapseFav} className="text-sm font-bold text-gray-500 hover:bg-gray-100 px-6 py-2 rounded-full transition-colors">
+                                                                    Zwiń listę ▲
+                                                                </button>
+                                                            )}
                                                         </div>
-                                                    ))}
-                                                </div>
+                                                    )}
+                                                </>
                                             ) : (
                                                 <EmptyState msg="Nie masz ulubionych ofert." btnAction={() => navigate('/kalkulator')}/>
                                             )}

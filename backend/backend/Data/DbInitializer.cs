@@ -32,7 +32,6 @@ public static class DbInitializer
                 var mockPackages = GetPackages(); 
                 await dbContext.Packages.AddRangeAsync(mockPackages);
                 await dbContext.SaveChangesAsync();
-                Console.WriteLine("--> Pakiety dodane.");
             }
 
             if (!await dbContext.Roles.AnyAsync())
@@ -44,7 +43,6 @@ public static class DbInitializer
                     new IdentityRole { Name = "User" }
                 };
                 foreach (var role in roles) await roleManager.CreateAsync(role);
-                Console.WriteLine("--> Role dodane.");
             }
 
 

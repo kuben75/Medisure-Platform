@@ -67,12 +67,6 @@ export default function CalculatorPage() {
         }
     }, [user])
 
-    const calculatePriceLocal = (base: number, category: string, age: number) => {
-        if (category === 'Indywidualny' && age > 30)
-            return base + (age - 30) * 1.5
-        return base
-    }
-
     const handleCalculate = (data: { type: string; age: number; familySize?: string; companySize?: number; maxPrice?: number }) => {
         setLoading(true)
 
@@ -103,9 +97,9 @@ export default function CalculatorPage() {
             }
             else {
                 const plansWithRealPrices = categoryPlans.map(p => {
-                    const calculated = calculatePriceLocal(p.priceValue, p.category, data.age);
+                    const calculated = calculatePersonalizedPrice(p.priceValue, p.category, data.age);
                     return { ...p, calculatedPrice: calculated };
-                }).sort((a, b) => a.calculatedPrice - b.calculatedPrice); // Sortujemy od najtańszego
+                }).sort((a, b) => a.calculatedPrice - b.calculatedPrice); // Sortujemy wg wyliczonej ceny
 
                 const budgetLimit = data.maxPrice || 100000;
                 const affordablePlans = plansWithRealPrices.filter(p => p.calculatedPrice <= budgetLimit);
@@ -118,9 +112,7 @@ export default function CalculatorPage() {
                 }
 
                 if (recommended) basePrice = (recommended as any).calculatedPrice || recommended.priceValue
-
-                 else basePrice = 59
-
+                else basePrice = 59
             }
 
             setResultPrice(Math.round(basePrice))

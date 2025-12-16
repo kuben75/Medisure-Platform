@@ -49,7 +49,7 @@ namespace backend.Controllers
 
             if (user == null)
             {
-                await _logService.LogAsync("SUBSCRIBE_FAILED", $"Brak usera: {userIdOrEmail}", "System", null, "Error");
+                await _logService.LogAsync("NIEAUTORYZOWANY_ZAKUP", $"Brak usera: {userIdOrEmail}", "System", null, "Error");
                 return BadRequest(new { Message = "Nie znaleziono użytkownika." });
             }
 
@@ -81,7 +81,7 @@ namespace backend.Controllers
 
             if (package.Category == "Biznesowy")
             {
-                await _logService.LogAsync("UNAUTHORIZED_PURCHASE_ATTEMPT",
+                await _logService.LogAsync("NIEAUTORYZOWANY_ZAKUP",
                     $"Próba zakupu pakietu B2B przez API: {package.Name}, User: {user.Email}",
                     "System",
                     user.Id,
@@ -162,7 +162,7 @@ namespace backend.Controllers
             _context.UserPackages.Add(subscription);
             await _context.SaveChangesAsync();
 
-            await _logService.LogAsync("SUBSCRIBE_SUCCESS", $"Zakup: {package.Name}, ID: {subscription.Id}", user.Email,
+            await _logService.LogAsync("ZAKUP_SUKCES", $"Zakup: {package.Name}, ID: {subscription.Id}", user.Email,
                 user.Id, "Success");
             var frontendUrl = _configuration["FrontendUrl"];
 
@@ -278,7 +278,7 @@ namespace backend.Controllers
                     pdfBytes,
                     $"Polisa_{subscription.TransactionId}.pdf"
                 );
-                await _logService.LogAsync("EMAIL_SENT", $"Wysłano potwierdzenie zakupu na: {user.Email}", "System",
+                await _logService.LogAsync("EMAIL_SUKCES", $"Wysłano potwierdzenie zakupu na: {user.Email}", "System",
                     user.Id, "Success");
                 await _notificationService.CreateNotificationAsync(
                     user.Id,
@@ -295,7 +295,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                await _logService.LogAsync("EMAIL_FAILED", $"Błąd wysyłki po zakupie: {ex.Message}", "System", null,
+                await _logService.LogAsync("EMAIL_BLAD", $"Błąd wysyłki po zakupie: {ex.Message}", "System", null,
                     "Error");
             }
 
@@ -380,7 +380,7 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
 
             await _logService.LogAsync(
-                "SUBSCRIPTION_CANCELLED",
+                "ANULOWANIE_SUBSKRYBCJI",
                 $"Użytkownik anulował subskrypcję {subscription.Package.Name} (ID: {subscription.Id}).",
                 User.Identity?.Name,
                 userId,
