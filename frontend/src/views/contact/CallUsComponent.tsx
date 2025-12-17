@@ -17,7 +17,7 @@ export default function CallUsComponent() {
                             <PhoneIcon className="w-8 h-8"/>
                         </div>
                         <h3 className="text-xl font-bold text-gray-800 mb-1">Infolinia</h3>
-                        <p className="text-2xl font-extrabold text-blue-600 mb-2">+48 222 222 222</p>
+                        <p className="text-2xl font-extrabold text-blue-600 mb-2">+48 123 456 789</p>
                         <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold">Pn - Pt: 8:00 - 18:00</p>
                     </a>
 

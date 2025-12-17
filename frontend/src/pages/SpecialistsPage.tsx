@@ -9,7 +9,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 
 const CATEGORY_GROUPS: Record<string, string[]> = {
     "Podstawowa i Rodzinna": ["Podstawowa", "Pediatria", "Geriatria", "Medycyna rodzinna"],
-    "Specjaliści Wewnętrzni": [
+    "Specjaliści do chorób wewnętrznych": [
         "Kardiologia", "Endokrynologia", "Diabetologia", "Gastrologia", "Nefrologia",
         "Pulmonologia", "Reumatologia", "Neurologia", "Alergologia", "Hematologia",
         "Onkologia", "Choroby zakaźne", "Choroby wewnętrzne"
