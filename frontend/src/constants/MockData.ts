@@ -1,20 +1,24 @@
-import type {IPartner} from "../types/partners.types.ts";
+import type { IPartner } from "../types/partners.types.ts"
+import luxmedLogo from '../assets/luxmed.svg'
+import medicoverLogo from '../assets/medicover.svg'
+import enelmedLogo from '../assets/enelmed.svg'
+import pzuLogo from '../assets/pzu.svg'
 
 export const partners: IPartner[] = [
     {
         name: "Luxmed",
-        src: "src/assets/luxmed.svg"
+        src: luxmedLogo
     },
     {
         name: "Medicover",
-        src: "src/assets/medicover.svg"
+        src: medicoverLogo
     },
     {
         name: "Enel-Med",
-        src: "src/assets/enelmed.svg"
+        src: enelmedLogo
     },
     {
         name: "PZU Zdrowie",
-        src: "src/assets/pzu.svg"
+        src: pzuLogo
     }
 ]

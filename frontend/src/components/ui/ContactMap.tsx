@@ -13,7 +13,7 @@ const customIcon = new L.Icon({
 });
 
 export default function ContactMap() {
-    const position: [number, number] = [52.3965, 16.8720]; // Poznań
+    const position: [number, number] = [52.3965, 16.8720]
 
     const googleMapsLink = `https://www.google.com/maps/dir/?api=1&destination=${position[0]},${position[1]}`;
 

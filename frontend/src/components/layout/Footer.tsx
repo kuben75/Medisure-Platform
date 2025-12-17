@@ -86,6 +86,7 @@ export default function Footer() {
                             <FooterLink to="/specjalisci">Lista specjalistów</FooterLink>
                             <FooterLink to="/kontakt">Zgłoś problem</FooterLink>
                             <FooterLink to="/regulamin">Regulamin Serwisu</FooterLink>
+                            <FooterLink to="/polityka-cookies">Polityka Plików Cookies</FooterLink>
                             <FooterLink to="/polityka-prywatnosci">Polityka Prywatności</FooterLink>
                         </ul>
                     </div>

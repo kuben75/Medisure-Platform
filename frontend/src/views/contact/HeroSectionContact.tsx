@@ -1,3 +1,5 @@
+
+import adviserImage from '../../assets/doradca.svg';
 export default function HelpSection() {
     return (
         <section
@@ -41,7 +43,7 @@ export default function HelpSection() {
                         className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl transform rotate-3 scale-105 opacity-20 blur-sm"></div>
 
                     <img
-                        src="src/assets/doradca.svg"
+                        src={adviserImage}
                         alt="Doradca klienta"
                         className="relative w-full max-w-md object-cover rounded-2xl "
                     />

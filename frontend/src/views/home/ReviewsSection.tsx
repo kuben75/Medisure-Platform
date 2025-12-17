@@ -17,9 +17,8 @@ export default function ReviewsSection() {
                 const response = await fetch(API_URL)
                 if (response.ok) {
                     const data = await response.json()
-                    if (data && data.length > 0) {
+                    if (data && data.length > 0)
                         setReviews(data)
-                    }
                 }
             } catch (error) {
                 console.error("Błąd pobierania opinii:", error)
@@ -33,23 +32,22 @@ export default function ReviewsSection() {
     const displayReviews = reviews.length > 0 ? reviews : DEFAULT_REVIEWS;
 
     useEffect(() => {
-        if (isPaused) return;
+        if (isPaused) return
         const interval = setInterval(() => {
-            setCurrentReview((prev) => (prev + 1) % displayReviews.length);
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [displayReviews.length, isPaused]);
+            setCurrentReview((prev) => (prev + 1) % displayReviews.length)
+        }, 5000)
+        return () => clearInterval(interval)
+    }, [displayReviews.length, isPaused])
 
-    const handleDotClick = (index: number) => {
-        setCurrentReview(index)
-    }
+    const handleDotClick = (index: number) => setCurrentReview(index)
 
-    if (loading) return null;
+
+    if (loading) return null
 
     const currentData = displayReviews[currentReview];
 
     return (
-        <section className="py-16 md:py-24 px-4 bg-slate-50/50">
+        <section className="py-16 md:py-24 px-4 bg-white border-t border-gray-100">
             <div className="max-w-4xl mx-auto text-center">
 
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 md:mb-12">
