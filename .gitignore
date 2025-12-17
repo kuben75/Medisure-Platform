@@ -34,10 +34,11 @@ bld/
 project.lock.json
 project.fragment.lock.json
 artifacts/
-
+# Raports
 TestResults/
+CoverageReports/
+coveragereport/
 *.html
-
-# Seq / Logi
+#Logs and SEQ
 Logs/
 Seq/
