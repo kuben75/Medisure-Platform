@@ -9,22 +9,22 @@ const whyUsItems = [
     {
         icon: <StethoscopeIcon />,
         title: "Pewność i ochrona zdrowia",
-        desc: "Współpracujemy tylko z certyfikowanymi placówkami medycznymi o najwyższym standardzie."
+        desc: "Agregujemy oferty wyłącznie od sprawdzonych dostawców usług medycznych."
     },
     {
         icon: <PillIcon />,
         title: "Nowoczesne leczenie",
-        desc: "Dostęp do najnowszych technologii medycznych i e-recept bez wychodzenia z domu."
+        desc: "Możliwość wyboru pakietów obejmujących telemedycynę i szybki kontakt z lekarzem bez wychodzenia z domu."
     },
     {
         icon: <FilePlusIcon />,
         title: "Elastyczna oferta",
-        desc: "Pakiety dopasowane do Twojego budżetu i potrzeb. Możesz je zmieniać w trakcie trwania umowy."
+        desc: "Elastyczne subskrypcje bez długoterminowych zobowiązań. Możesz zrezygnować w dowolnym momencie."
     },
     {
         icon: <UsersIcon />,
         title: "Zaufanie klientów",
-        desc: "Tysiące zadowolonych pacjentów, którzy powierzyli nam swoje zdrowie."
+        desc: "Podejmuj decyzje w oparciu o opinie i oceny innych użytkowników naszej platformy."
     },
     {
         icon: <ClockIcon />,
@@ -34,7 +34,7 @@ const whyUsItems = [
     {
         icon: <ShieldIcon className="w-6 h-6"/>,
         title: "Bezpieczeństwo danych",
-        desc: "Twoje dane medyczne i osobowe są chronione zgodnie z najwyższymi standardami RODO."
+        desc: "Twoje konto jest chronione nowoczesnymi metodami autoryzacji (2FA) i szyfrowaniem danych."
     }
 ]
 
