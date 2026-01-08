@@ -1,15 +1,16 @@
 import React from "react";
-import type {IPricingPlan, ISubscriptionOption, TBillingType} from "./pricing.types.ts";
+import type {ICalculationData, IPricingPlan, ISubscriptionOption, TBillingType} from "./pricing.types.ts";
+import type {IUser} from "./user.types.ts";
 
-export type IconProps = {
+export interface IIconProps {
     className?: string | "w-6 h-6"
     props?: React.SVGProps<SVGSVGElement>
     isFilled?: string
 }
-export type TModalProps = {
-    isOpen: boolean,
-    onClose: () => void,
-    children?: React.ReactNode,
+export interface IModalProps {
+    isOpen: boolean
+    onClose: () => void
+    children?: React.ReactNode
     className?: string
 }
 
@@ -18,9 +19,9 @@ export interface IEditProfileModalProps {
     onClose: () => void
 }
 
-export type TRatingProps = {
-    rating: number,
-    reviews: number,
+export interface IRatingProps {
+    rating: number
+    reviews: number
     className?: string
 }
 export interface IFavoritesContext {
@@ -41,13 +42,7 @@ export interface IComparisonModalProps {
 }
 
 export interface IHeroCalcProps {
-    onCalculate: (data: {
-        type: string;
-        age: number;
-        familySize?: string;
-        companySize?: number;
-        maxPrice?: number;
-    }) => void;
+    onCalculate: (data: ICalculationData) => void;
     isCalculating: boolean;
     initialAge?: number | undefined;
 }
@@ -57,15 +52,11 @@ export interface IFaqItem {
     a: string
 }
 
-export type AccordionProps = {
+export interface IAccordionProps {
     question: string
     answer: string
     isOpen?: boolean
     onToggle?: () => void
-}
-export interface ExtendedPackageDetailsModalProps extends IPackageDetailsModalProps {
-    billingPeriod: TBillingType;
-    setBillingPeriod: (val: TBillingType) => void;
 }
 export interface IPackageDetailsModalProps {
     isOpen: boolean
@@ -86,4 +77,60 @@ export interface IPackageDetailsModalProps {
         discountLabel: string
     }
     isBuying: boolean
+    billingPeriod: TBillingType;
+    setBillingPeriod: (val: TBillingType) => void
+}
+export interface IPackageCardProps {
+    pkg: IPricingPlan;
+    isHighlighted: boolean;
+    isBestMatch: boolean;
+    displayPrice: string | number;
+    isPriceIncreased: boolean;
+    showPersonalizedPricing: boolean;
+    showYearlyPrice: boolean;
+    isInComparison: boolean;
+    onToggleComparison: () => void;
+    onOpenSpecs: (e: React.MouseEvent) => void;
+    onOpenDetails: () => void;
+}
+
+export interface IProfileSidebarProps {
+    user: IUser | null;
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
+    unreadCount: number;
+    onEditProfile: () => void;
+    onChangePassword: () => void;
+    onOpen2FA: () => void;
+}
+
+export interface IPackageTableProps {
+    packages: IPricingPlan[]
+    onEdit: (pkg: IPricingPlan) => void
+    onDelete: (id: number) => void
+}
+
+export interface IPackageFormData {
+    name: string
+    price: string
+    priceValue: number
+    category: string
+    description: string
+    features: string
+    averageRating: number
+    reviews: number
+    specialistsCount: number
+    facilitiesCount: number
+    hasDentalCare: boolean
+    hasHospitalization: boolean
+    hasRehabilitation: boolean
+    isFeatured: boolean
+}
+
+export interface IPackageFormModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onPackageAdded: () => void;
+    token: string | null;
+    packageToEdit: IPricingPlan | null;
 }

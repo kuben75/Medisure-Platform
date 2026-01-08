@@ -1,73 +1,48 @@
+import {useMemo} from 'react';
+import type {IChatBubbleProps} from "../../types/chat.types.ts";
+import {CheckChatIcon} from "../icons/CheckChatIcon.tsx";
+import RobotIcon from "../icons/RobotIcon.tsx";
+import {AVATAR_COLORS, QUICK_OPTIONS, SIZE_CLASSES} from "../../constants/ui.ts";
+import type {IAvatarProps} from "../../types/user.types.ts";
 
-export const SendIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-    </svg>
-)
 
-export const CheckIcon = ({ double = false, className = "w-3 h-3" }: { double?: boolean, className?: string }) => (
-    <div className="flex -space-x-1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}>
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        </svg>
-        {double && (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}>
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-        )}
-    </div>
-)
-export const RobotIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-        <path d="M16.5 7.5h-9v9h9v-9z" />
-        <path fillRule="evenodd" d="M8.25 2.25A.75.75 0 019 3v.75h2.25V3a.75.75 0 011.5 0v.75H15V3a.75.75 0 011.5 0v.75h.75a3 3 0 013 3v.75H21A.75.75 0 0121 9h-.75v2.25H21a.75.75 0 010 1.5h-.75V15H21a.75.75 0 010 1.5h-.75v.75a3 3 0 01-3 3h-.75V21a.75.75 0 01-1.5 0v-.75h-2.25V21a.75.75 0 01-1.5 0v-.75H9V21a.75.75 0 01-1.5 0v-.75h-.75a3 3 0 01-3-3v-.75H3A.75.75 0 013 15h.75v-2.25H3a.75.75 0 010-1.5h.75V9H3a.75.75 0 010-1.5h.75v-.75a3 3 0 013-3h.75V3a.75.75 0 01.75-.75zM6 6.75A1.5 1.5 0 004.5 8.25v7.5A1.5 1.5 0 006 17.25h12a1.5 1.5 0 001.5-1.5v-7.5A1.5 1.5 0 0018 6.75H6z" clipRule="evenodd" />
-    </svg>
-);
-export const Avatar = ({ name, size = "md", className = "" }: { name: string, size?: "sm" | "md" | "lg", className?: string }) => {
+export const Avatar = ({ name, size = "md", className = "" }: IAvatarProps) => {
     const safeName = (name || "").trim() || "?"
-    const isSystem = safeName.toLowerCase() === "system";
-    let initials = ""
-    if (safeName.includes("@")) {
-        initials = safeName.substring(0, 2).toUpperCase()
-    } else {
-        initials = safeName
+    const isSystem = safeName.toLowerCase() === "system"
+
+
+    const colorClass = useMemo(() => {
+        if (isSystem) return "bg-indigo-600 border-indigo-100";
+
+        let hash = 0;
+        for (let i = 0; i < safeName.length; i++) {
+            hash = safeName.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+    }, [safeName, isSystem]);
+
+    const initials = useMemo(() => {
+        if (isSystem) return null;
+        if (safeName.includes("@")) return safeName.substring(0, 2).toUpperCase();
+
+        return safeName
             .split(' ')
             .filter(n => n.length > 0)
             .map(n => n[0])
             .join('')
             .toUpperCase()
-            .slice(0, 2)
-    }
+            .slice(0, 2);
+    }, [safeName, isSystem])
 
-    const sizeClasses = {
-        sm: "w-8 h-8 text-xs",
-        md: "w-10 h-10 text-sm",
-        lg: "w-12 h-12 text-base"
-    }
     if (isSystem) {
         return (
-            <div className={`${sizeClasses[size]} rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-indigo-100 ${className}`}>
+            <div className={`${SIZE_CLASSES[size]} rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-indigo-100 ${className}`}>
                 <RobotIcon className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"} />
             </div>
         )
     }
-    const colors = [
-        'from-blue-500 to-blue-600',
-        'from-violet-500 to-violet-600',
-        'from-fuchsia-500 to-fuchsia-600',
-        'from-emerald-500 to-emerald-600',
-        'from-amber-500 to-amber-600',
-        'from-rose-500 to-rose-600',
-    ]
-
-    let hash = 0;
-    for (let i = 0; i < safeName.length; i++) {
-        hash = safeName.charCodeAt(i) + ((hash << 5) - hash)
-    }
-    const colorIndex = Math.abs(hash) % colors.length
-
     return (
-        <div className={`${sizeClasses[size]} rounded-full bg-gradient-to-br ${colors[colorIndex]} text-white flex items-center justify-center font-bold shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-gray-100 ${className}`}>
+        <div className={`${SIZE_CLASSES[size]} rounded-full bg-gradient-to-br ${colorClass} text-white flex items-center justify-center font-bold shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-gray-100 ${className}`}>
             {initials}
         </div>
     )
@@ -87,19 +62,22 @@ export const DateSeparator = ({ date }: { date: Date }) => {
             <span className="text-[10px] uppercase font-bold text-gray-400 px-3 tracking-widest">{label}</span>
             <div className="h-[1px] bg-gray-200 w-12"></div>
         </div>
-    );
-};
-
-interface ChatBubbleProps {
-    message: string;
-    isMe: boolean;
-    timestamp: Date;
-    senderName?: string;
-    isRead?: boolean;
+    )
 }
 
-export const ChatBubble = ({ message, isMe, timestamp, senderName, isRead }: ChatBubbleProps) => {
+export const ChatBubble = ({ message, isMe, timestamp, senderName, isRead }: IChatBubbleProps) => {
     const isSystem = senderName === "System";
+
+    let bubbleClass = "px-4 py-2.5 text-[14px] leading-relaxed relative shadow-sm transition-all ";
+
+    if (isMe)
+        bubbleClass += "bg-[#4E61F6] text-white rounded-2xl rounded-tr-sm";
+     else if (isSystem)
+        bubbleClass += "bg-indigo-50 border border-indigo-100 text-indigo-900 rounded-2xl rounded-tl-sm";
+     else
+        bubbleClass += "bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-tl-sm";
+
+
     return (
         <div className={`flex w-full mb-3 ${isMe ? 'justify-end' : 'justify-start'} group animate-fade-in-up`}>
             {!isMe && senderName && (
@@ -112,15 +90,8 @@ export const ChatBubble = ({ message, isMe, timestamp, senderName, isRead }: Cha
                 {isSystem && !isMe && (
                     <span className="text-[10px] text-indigo-500 font-bold mb-1 ml-2">Asystent Medisure</span>
                 )}
-                <div
-                    className={`px-4 py-2.5 text-[14px] leading-relaxed relative shadow-sm transition-all
-                    ${isMe
-                        ? 'bg-[#4E61F6] text-white rounded-2xl rounded-tr-sm'
-                        : isSystem 
-                            ? 'bg-indigo-50 border border-indigo-100 text-indigo-900 rounded-2xl rounded-tl-sm'
-                            : 'bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-tl-sm'
-                    }`}
-                >
+
+                <div className={bubbleClass}>
                     {message}
                 </div>
 
@@ -129,9 +100,8 @@ export const ChatBubble = ({ message, isMe, timestamp, senderName, isRead }: Cha
                         {timestamp.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
                     </span>
                     {isMe && (
-                        <div
-                            className={`transition-colors duration-300 ${isRead ? 'text-[#4E61F6]' : 'text-gray-300'}`}>
-                            <CheckIcon double={true}/>
+                        <div className={`transition-colors duration-300 ${isRead ? 'text-[#4E61F6]' : 'text-gray-300'}`}>
+                            <CheckChatIcon double={true}/>
                         </div>
                     )}
                 </div>
@@ -140,20 +110,19 @@ export const ChatBubble = ({ message, isMe, timestamp, senderName, isRead }: Cha
     )
 }
 
-export const QuickReplies = ({onSelect}: { onSelect: (text: string) => void }) => {
-    const options = ["👋 Dzień dobry", "💰 Cennik", "📅 Umów wizytę", "📍 Gdzie jesteście?"];
+export const QuickReplies = ({ onSelect }: { onSelect: (text: string) => void }) => {
 
     return (
         <div className="flex gap-2 overflow-x-auto pb-2 px-1 scrollbar-hide">
-            {options.map((opt) => (
+            {QUICK_OPTIONS.map((opt) => (
                 <button
                     key={opt}
                     onClick={() => onSelect(opt)}
-                    className="whitespace-nowrap px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-600 text-xs rounded-full hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm"
+                    className="whitespace-nowrap px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-600 text-xs rounded-full hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm active:scale-95"
                 >
                     {opt}
                 </button>
             ))}
         </div>
-    );
-};
+    )
+}

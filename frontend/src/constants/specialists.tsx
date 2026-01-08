@@ -83,7 +83,7 @@ export const SPECIALISTS_LIST: ISpecialist[] = [
         category: "Pediatria",
         experienceYears: 12,
         gender: 'female',
-        imageUrl: getDocImg('female', 22),
+        imageUrl: getDocImg('female', 14),
         description: "Empatyczna pediatra uwielbiana przez małych pacjentów. Specjalizuje się w rozwoju niemowląt i szczepieniach ochronnych.",
         availableInPackages: FAMILY_FOCUS
     },

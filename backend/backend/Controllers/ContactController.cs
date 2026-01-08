@@ -1,6 +1,6 @@
-﻿using backend.Services;
+﻿using backend.DTOs;
+using backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using backend.DTOs;
 
 namespace backend.Controllers;
 
@@ -8,31 +8,17 @@ namespace backend.Controllers;
 [Route("api/contact")]
 public class ContactController : ControllerBase
 {
-    private readonly INotificationService _notificationService;
-    private readonly IEmailService _emailService;
+    private readonly IContactService _contactService;
 
-    public ContactController(INotificationService notificationService, IEmailService emailService)
+    public ContactController(IContactService contactService)
     {
-        _notificationService = notificationService;
-        _emailService = emailService;
+        _contactService = contactService;
     }
 
     [HttpPost]
     public async Task<IActionResult> SendMessage([FromBody] ContactFormDto dto)
     {
-        await _notificationService.NotifyAllAdminsAsync(
-            "Nowe zapytanie ofertowe",
-            $"Od: {dto.Name} {dto.Surname} ({dto.Email}).\nTemat: {dto.Topic} \n Wiadomość: {dto.Message}",
-            "Informacja"
-        );
-
-        var emailBody = $@"
-                <h3>Dziękujemy za kontakt, {dto.Name}!</h3>
-                <p>Twoje zapytanie w sprawie: <strong>{dto.Topic}</strong> zostało przyjęte.</p>
-                <p>Nasz zespół skontaktuje się z Tobą w ciągu 24h.</p>
-            ";
-        _ = _emailService.SendEmailAsync(dto.Email, "Potwierdzenie zgłoszenia - Medisure", emailBody);
-
+        await _contactService.HandleContactFormAsync(dto);
         return Ok(new { Message = "Wiadomość wysłana." });
     }
 }

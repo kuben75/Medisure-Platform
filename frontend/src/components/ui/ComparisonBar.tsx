@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Button from '../ui/Button.tsx';
-import ComparisonModal from './ComparisonModal.tsx';
+import ComparisonModal from './modals/ComparisonModal.tsx';
 import {useComparison} from "../../hooks/useComparison.ts";
 
 export default function ComparisonBar() {

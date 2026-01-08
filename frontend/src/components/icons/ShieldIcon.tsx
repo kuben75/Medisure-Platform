@@ -1,6 +1,6 @@
-import type {IconProps} from "../../types/ui.types.ts";
+import type {IIconProps} from "../../types/ui.types.ts";
 
-export default function ShieldIcon({className}: IconProps) {
+export default function ShieldIcon({className}: IIconProps) {
     return (
         <svg
             className={className}

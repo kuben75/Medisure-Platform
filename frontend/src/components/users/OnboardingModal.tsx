@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Modal from '../ui/Modal.tsx';
+import Modal from '../ui/modals/Modal.tsx';
 import Button from '../ui/Button.tsx';
 import BirthDatePicker from '../ui/BirthDatePicker.tsx';
 import {useAuth} from "../../hooks/useAuth.ts";

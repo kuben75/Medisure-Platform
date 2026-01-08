@@ -1,5 +1,5 @@
-import React from "react";
-import type {IUserSubscription} from "./user.types.ts";
+import React from "react"
+import type {IUserSubscription} from "./user.types.ts"
 
 export type TPaymentMethodType = 'card' | 'transfer' | 'paypal' | 'gpay'
 export type TBankOptionType = 'blik' | 'mbank' | 'pko' | 'ing' | 'pekao' | 'millenium' | 'alior'
@@ -29,6 +29,7 @@ export interface IPricingPlan {
     averageRating: number
     reviews: number
     isFeatured?: boolean
+    calculatedPrice?: number
 }
 
 export interface ICalculationResultsProps {
@@ -93,4 +94,28 @@ export interface ISubscriptionDetailsModalProps {
     onClose: () => void
     subscription: IUserSubscription | null
     onRefresh?: () => void
+}
+export interface ICalculationData {
+    type: string
+    age: number
+    familySize?: string
+    companySize?: number
+    maxPrice?: number
+}
+
+export interface IComparisonContext {
+    selectedPackages: IPricingPlan[]
+    addToComparison: (pkg: IPricingPlan) => void
+    removeFromComparison: (packageId: number) => void
+    isInComparison: (packageId: number) => boolean
+    clearComparison: () => void
+    limit: number
+}
+
+export interface IUseCheckoutFormProps {
+    isOpen: boolean;
+    plan: IPricingPlan;
+    priceDetails: IPriceDetails;
+    billingPeriod: TBillingType;
+    onFinalize: (method: string, txId: string, addressData: any) => Promise<void>
 }

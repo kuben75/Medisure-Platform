@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useChat } from '../../context/ChatContext';
-import type { IChatMessage } from "../../types/chat.types";
-import { Avatar, ChatBubble, DateSeparator, SendIcon } from "../ui/ChatUiComponents.tsx";
-import { formatTime } from "../../utils/FormatTime.tsx";
-import CannedIcon from "../icons/CannedIcon.tsx";
-import ArrowLeftIcon from "../icons/ArrowLeftIcon.tsx";
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import type { IChatMessage } from "../../types/chat.types"
+import { Avatar, ChatBubble, DateSeparator } from "../ui/ChatUiComponents.tsx"
+import { formatTime } from "../../utils/FormatTime.tsx"
+import CannedIcon from "../icons/CannedIcon.tsx"
+import ArrowLeftIcon from "../icons/ArrowLeftIcon.tsx"
+import { useChat } from "../../hooks/useChat.ts"
+import SendIcon from "../icons/SendIcon.tsx";
 
 const cannedResponses = [
     "Dzień dobry!",
@@ -15,52 +16,52 @@ const cannedResponses = [
 ]
 
 export default function AdminChatPanel() {
-    const { messages, sendMessageToUser, onlineUsers, userDetails, markAsRead } = useChat();
-    const [selectedUserEmail, setSelectedUserEmail] = useState<string | null>(null);
-    const [replyInput, setReplyInput] = useState("");
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filter, setFilter] = useState<'all' | 'unread' | 'online'>('all');
-    const bottomRef = useRef<HTMLDivElement>(null);
+    const { messages, sendMessageToUser, onlineUsers, userDetails, markAsRead } = useChat()
+    const [selectedUserEmail, setSelectedUserEmail] = useState<string | null>(null)
+    const [replyInput, setReplyInput] = useState("")
+    const [searchTerm, setSearchTerm] = useState("")
+    const [filter, setFilter] = useState<'all' | 'unread' | 'online'>('all')
+    const bottomRef = useRef<HTMLDivElement>(null)
     const [showCanned, setShowCanned] = useState(false)
 
     const conversationList = useMemo(() => {
-        const groups: Record<string, { msgs: IChatMessage[], unread: number, lastMsg: IChatMessage, hasUserInteraction: boolean }> = {}
+        const groups: Record<string, { msgs: IChatMessage[], unread: number, lastMsg: IChatMessage, hasUserInteraction: boolean }> = {};
 
         messages.forEach(msg => {
             let key = ""
-
             if (msg.type === "UserToAdmin") key = msg.user
             else key = msg.targetUserEmail || "unknown"
-
             key = key.toLowerCase()
-            if (!key || key === "unknown" || key === "admin" || key === "system") return
 
-            if (!groups[key]) groups[key] = { msgs: [], unread: 0, lastMsg: msg, hasUserInteraction: false }
+            if (!key || key === "unknown" || key === "admin" || key === "system")
+                return
+
+            if (!groups[key])
+                groups[key] = { msgs: [], unread: 0, lastMsg: msg, hasUserInteraction: false }
 
             groups[key].msgs.push(msg)
 
-            if (new Date(msg.timestamp) > new Date(groups[key].lastMsg.timestamp)) {
+            if (new Date(msg.timestamp) > new Date(groups[key].lastMsg.timestamp))
                 groups[key].lastMsg = msg
-            }
 
-            if (msg.type === "UserToAdmin" && !msg.isRead) {
+            if (msg.type === "UserToAdmin" && !msg.isRead)
                 groups[key].unread++
-            }
 
-            if (msg.type === "UserToAdmin") {
-                groups[key].hasUserInteraction = true;
-            }
+            if (msg.type === "UserToAdmin")
+                groups[key].hasUserInteraction = true
+
         })
-
         return Object.entries(groups)
             .map(([email, data]) => {
-                const details = userDetails?.[email]
-                let displayName = email
+                const details = userDetails?.[email];
+                let displayName = email;
+
                 if (details && (details.firstName || details.lastName)) {
-                    displayName = `${details.firstName || ''} ${details.lastName || ''}`.trim()
+                    displayName = `${details.firstName || ''} ${details.lastName || ''}`.trim();
                 }
 
-                const isOnline = onlineUsers?.includes(email) || false
+                const isOnline = onlineUsers?.includes(email) || false;
+
                 data.msgs.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
                 return {
@@ -68,41 +69,43 @@ export default function AdminChatPanel() {
                     displayName,
                     ...data,
                     isOnline
-                };
+                }
             })
             .filter(c => c.hasUserInteraction)
             .sort((a, b) => new Date(b.lastMsg.timestamp).getTime() - new Date(a.lastMsg.timestamp).getTime());
     }, [messages, onlineUsers, userDetails]);
 
     const filteredList = conversationList.filter(c => {
-        const matchesSearch = c.displayName.toLowerCase().includes(searchTerm.toLowerCase()) || c.email.includes(searchTerm.toLowerCase());
+        const term = searchTerm.toLowerCase();
+        const matchesSearch = c.displayName.toLowerCase().includes(term) || c.email.toLowerCase().includes(term);
+
         const matchesFilter =
             filter === 'all' ? true :
                 filter === 'unread' ? c.unread > 0 :
-                    filter === 'online' ? c.isOnline : true
+                    filter === 'online' ? c.isOnline : true;
 
-        return matchesSearch && matchesFilter
-    })
+        return matchesSearch && matchesFilter;
+    });
 
     useEffect(() => {
         if (selectedUserEmail) {
-            bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 
             const conversation = conversationList.find(c => c.email === selectedUserEmail);
-
             if (conversation && conversation.unread > 0) {
                 markAsRead(selectedUserEmail);
             }
         }
-    }, [selectedUserEmail, messages, conversationList, markAsRead])
+    }, [selectedUserEmail, messages, conversationList, markAsRead]);
 
     const handleSendReply = async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (!selectedUserEmail || !replyInput.trim()) return
-        await sendMessageToUser(selectedUserEmail, replyInput)
-        setReplyInput("")
-        setShowCanned(false)
-    }
+        e.preventDefault();
+        if (!selectedUserEmail || !replyInput.trim()) return;
+
+        await sendMessageToUser(selectedUserEmail, replyInput);
+        setReplyInput("");
+        setShowCanned(false);
+    };
 
     const activeConversation = selectedUserEmail ? conversationList.find(c => c.email === selectedUserEmail) : null;
 
@@ -120,8 +123,8 @@ export default function AdminChatPanel() {
             }
 
             const isOutgoing = msg.type === "AdminToUser";
-
             let senderName = "Ty";
+
             if (!isOutgoing) {
                 senderName = activeConversation?.displayName || "User";
             } else if (msg.user === "System") {
@@ -137,10 +140,10 @@ export default function AdminChatPanel() {
                     senderName={senderName}
                     isRead={true}
                 />
-            )
+            );
         }
-        return result
-    }
+        return result;
+    };
 
     return (
         <div className="mt-4 md:mt-8 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col md:flex-row min-h-[25vh] md:h-[700px] font-sans">
@@ -178,7 +181,7 @@ export default function AdminChatPanel() {
                 <div className="flex-grow overflow-y-auto custom-scrollbar bg-gray-50/30">
                     {filteredList.length === 0 ? (
                         <div className="p-8 text-center text-gray-400 text-xs uppercase tracking-widest mt-10">
-                            {messages.length > 0 ? "Brak aktywnych użytkowników" : "Brak wyników"}
+                            {messages.length > 0 ? "Brak wyników" : "Brak aktywnych użytkowników"}
                         </div>
                     ) : (
                         filteredList.map(c => {
@@ -197,11 +200,18 @@ export default function AdminChatPanel() {
                                         {c.isOnline && <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>}
                                     </div>
                                     <div className="overflow-hidden flex-1 flex flex-col justify-center">
-                                        <div className="flex justify-between items-center mb-0.5">
-                                            <span className={`text-sm truncate ${hasUnread ? 'font-bold text-gray-900' : 'font-semibold text-gray-600'}`}>{c.displayName}</span>
-                                            <span className={`text-[10px] ${hasUnread ? 'text-[#4E61F6] font-bold' : 'text-gray-400'}`}>{formatTime(new Date(c.lastMsg.timestamp))}</span>
+                                        <div className="flex justify-between items-start mb-0.5">
+                                            <div className="flex flex-col overflow-hidden mr-2">
+                                                <span className={`text-sm truncate ${hasUnread ? 'font-bold text-gray-900' : 'font-semibold text-gray-600'}`}>
+                                                    {c.displayName}
+                                                </span>
+                                            </div>
+                                            <span className={`text-[10px] whitespace-nowrap ${hasUnread ? 'text-[#4E61F6] font-bold' : 'text-gray-400'}`}>
+                                                {formatTime(new Date(c.lastMsg.timestamp))}
+                                            </span>
                                         </div>
-                                        <div className="flex justify-between items-center">
+
+                                        <div className="flex justify-between items-center mt-1">
                                             <p className={`text-xs truncate max-w-[150px] ${hasUnread ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>
                                                 {c.lastMsg.user === 'System' && <span className="opacity-100 mr-1">🤖</span>}
                                                 {c.lastMsg.user === 'Admin' && <span className="opacity-60 mr-1">Ty: </span>}
@@ -234,18 +244,19 @@ export default function AdminChatPanel() {
 
                                 <Avatar name={activeConversation.displayName} size="md" />
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                                        {activeConversation.displayName}
+                                    <h3 className="text-sm font-bold text-gray-800 flex flex-col md:flex-row md:items-center md:gap-2">
+                                        <span>{activeConversation.displayName}</span>
+                                        {activeConversation.email !== activeConversation.displayName && (
+                                            <span className="text-xs text-gray-400 font-normal md:before:content-['•'] md:before:mr-2 md:before:text-gray-300">
+                                                {activeConversation.email}
+                                            </span>
+                                        )}
                                     </h3>
-                                    <div className="flex items-center gap-1.5">
+
+                                    <div className="flex items-center gap-1.5 mt-0.5">
                                         <div className={`w-1.5 h-1.5 rounded-full ${activeConversation.isOnline ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                                         <p className="text-xs text-gray-500">
                                             {activeConversation.isOnline ? 'Aktywny teraz' : 'Offline'}
-                                        </p>
-
-                                        <span className="text-gray-300 mx-1">•</span>
-                                        <p className="text-xs text-gray-400">
-                                            {formatTime(new Date(activeConversation.lastMsg.timestamp))}
                                         </p>
                                     </div>
                                 </div>
@@ -280,8 +291,7 @@ export default function AdminChatPanel() {
                                 <button
                                     type="button"
                                     onClick={() => setShowCanned(!showCanned)}
-                                    className={`p-2 md:p-2.5 rounded-full transition-colors flex-shrink-0 ${showCanned ? 'bg-[#4E61F6] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-                                >
+                                    className={`p-2 md:p-2.5 rounded-full transition-colors flex-shrink-0 ${showCanned ? 'bg-[#4E61F6] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
                                     <CannedIcon />
                                 </button>
 

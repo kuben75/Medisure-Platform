@@ -4,12 +4,19 @@ namespace backend.Services;
 
 public class PricingService : IPricingService
 {
+    
+    private const string DurationYearly = "yearly";
+    private const string DurationBiennial = "biennial";
+    private const string Duration7Days = "7d";
+    private const string BillingMonthly = "monthly";
+    private const string CategoryIndividual = "Indywidualny";
+    
     private readonly List<SubscriptionOption> _options = new List<SubscriptionOption>
     {
         
         new SubscriptionOption 
         { 
-            Id = "yearly",
+            Id = DurationYearly,
             Label = "1 Rok", 
             Description = "Standardowa umowa na rok.",
             Months = 12, 
@@ -18,7 +25,7 @@ public class PricingService : IPricingService
         },
         new SubscriptionOption 
         { 
-            Id = "biennial", 
+            Id = DurationBiennial, 
             Label = "2 Lata", 
             Description = "Długoterminowa ochrona.",
             Months = 24, 
@@ -27,7 +34,7 @@ public class PricingService : IPricingService
         },
         new SubscriptionOption 
         { 
-            Id = "7d", 
+            Id = Duration7Days, 
             Label = "7 dni (test)", 
             Description = "Okres próbny",
             Months = 0, 
@@ -42,13 +49,13 @@ public class PricingService : IPricingService
 
     public decimal CalculateFinalPrice(decimal baseMonthlyPrice, string durationId, string billingPeriod)
     {
-        if (durationId == "7d") return 1.00m; 
+        if (durationId == Duration7Days) return 1.00m; 
 
         var option = GetOption(durationId);
         if (option == null) return baseMonthlyPrice;
 
 
-        if (billingPeriod == "monthly") return baseMonthlyPrice;
+        if (billingPeriod == BillingMonthly) return baseMonthlyPrice;
         
         decimal totalBase = baseMonthlyPrice * option.Months;
         
@@ -62,7 +69,7 @@ public class PricingService : IPricingService
     }
     public decimal CalculateBasePriceWithRiskFactor(decimal basePackagePrice, string category, DateTime? birthDate)
     {
-        if (category != "Indywidualny") 
+        if (category != CategoryIndividual) 
             return basePackagePrice;
 
         var actualBirthDate = birthDate ?? DateTime.UtcNow;

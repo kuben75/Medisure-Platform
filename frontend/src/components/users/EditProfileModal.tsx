@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Modal from '../ui/Modal.tsx'
+import Modal from '../ui/modals/Modal.tsx'
 import Button from '../ui/Button.tsx'
 import type {IEditProfileModalProps} from "../../types/ui.types.ts";
 import {useNotification} from "../../hooks/UseNotification.ts";
@@ -167,11 +167,9 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
 
     const isBirthDateLocked = !!user?.birthDate
 
-    // --- RENDEROWANIE TREŚCI MODALA ---
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-xl">
 
-            {/* KROK 1: Formularz danych */}
             {step === 'form' && (
                 <>
                     <div className="text-center mb-8">
@@ -257,7 +255,6 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                 </>
             )}
 
-            {/* KROK 2: Hasło */}
             {step === 'password' && (
                 <div className="animate-fade-in text-center px-4">
                     <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-500 animate-pulse">
@@ -295,7 +292,6 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                 </div>
             )}
 
-            {/* KROK 3: 2FA (tylko jeśli włączone) */}
             {step === '2fa' && (
                 <div className="animate-fade-in text-center px-4">
                     <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-500">

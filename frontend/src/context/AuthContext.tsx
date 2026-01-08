@@ -1,21 +1,10 @@
-import {type ReactNode, useEffect, useState} from 'react'
-import type {IUser} from "../types/user.types.ts";
-import {AuthContext} from "../hooks/useAuth.ts";
+import { type ReactNode, useEffect, useState, useCallback } from 'react'
+import type { IUser } from "../types/user.types"
+import { AuthContext } from "../hooks/useAuth"
+import { extractRolesFromToken, getStoredAuthData, STORAGE_KEYS } from "../utils/authHelpers"
 
 const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/auth/login`
 
-function parseJwt(token: string) {
-    try {
-        const base64Url = token.split('.')[1]
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-        }).join(''))
-        return JSON.parse(jsonPayload)
-    } catch (e ) {
-        return null
-    }
-}
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<IUser | null>(null)
     const [token, setToken] = useState<string | null>(null)
@@ -23,117 +12,85 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
-        const storedToken = localStorage.getItem('auth_token')
-        const storedUser = localStorage.getItem('auth_user')
-
-        if (storedToken && storedUser) {
-            try {
-                setToken(storedToken)
-                setUser(JSON.parse(storedUser))
-
-                const decodedToken = parseJwt(storedToken)
-                let finalRoles: string[] = []
-                if (decodedToken) {
-                    const tokenRoles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-                    if (Array.isArray(tokenRoles))
-                        finalRoles = tokenRoles
-                     else if (typeof tokenRoles === 'string')
-                        finalRoles = [tokenRoles]
-
-                }
-                setRoles(finalRoles)
-            } catch (e) {
-                console.error("Błąd przywracania sesji", e)
-                localStorage.removeItem('auth_token')
-                localStorage.removeItem('auth_user')
-            }
-        }
-        setIsLoading(false)
-    }, [])
-    useEffect(() => {
-        const handleStorageChange = (e:StorageEvent) => {
-            if (e.key === 'auth_token' || e.key === 'auth_user')
-                window.location.reload()
-        }
-        window.addEventListener('storage', handleStorageChange)
-        return () => {
-            window.removeEventListener('storage', handleStorageChange)
-        }
-    }, [])
-    const setAuthSession = (newToken: string, newUser: IUser) => {
+    const handleAuthSuccess = useCallback((newToken: string, newUser: IUser) => {
         setToken(newToken)
         setUser(newUser)
+        setRoles(extractRolesFromToken(newToken))
 
-        localStorage.setItem('auth_token', newToken)
-        localStorage.setItem('auth_user', JSON.stringify(newUser))
-
-        let finalRoles: string[] = []
-        const decodedToken = parseJwt(newToken)
-        if (decodedToken) {
-            const tokenRoles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
-            if (Array.isArray(tokenRoles)) finalRoles = tokenRoles
-            else if (typeof tokenRoles === 'string') finalRoles = [tokenRoles]
-        }
-        setRoles(finalRoles)
+        localStorage.setItem(STORAGE_KEYS.TOKEN, newToken)
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser))
         setIsLoading(false)
-    }
+    }, [])
+
+    const clearAuthSession = useCallback(() => {
+        setUser(null)
+        setToken(null)
+        setRoles([])
+        localStorage.removeItem(STORAGE_KEYS.TOKEN)
+        localStorage.removeItem(STORAGE_KEYS.USER)
+    }, [])
+
+    useEffect(() => {
+        const storedData = getStoredAuthData();
+        if (storedData) {
+            setToken(storedData.token);
+            setUser(storedData.user);
+            setRoles(extractRolesFromToken(storedData.token));
+        } else {
+            clearAuthSession();
+        }
+        setIsLoading(false);
+    }, [clearAuthSession]);
+
+    useEffect(() => {
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === STORAGE_KEYS.TOKEN || e.key === STORAGE_KEYS.USER) {
+                window.location.reload();
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
+    const setAuthSession = (newToken: string, newUser: IUser) => {
+        handleAuthSuccess(newToken, newUser);
+    };
+
     const login = async (email: string, password: string): Promise<string[] | null> => {
-        setIsLoading(true)
-        setError(null)
+        setIsLoading(true);
+        setError(null);
 
         try {
             const response = await fetch(LOGIN_API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
-            })
+            });
 
-            const data = await response.json()
-            if (!response.ok) throw new Error(data.message || 'Błąd logowania')
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Błąd logowania');
 
-            setUser(data.user)
-            setToken(data.token)
-
-            localStorage.setItem('auth_token', data.token);
-            localStorage.setItem('auth_user', JSON.stringify(data.user));
-
-            let finalRoles: string[] = []
-            const decodedToken = parseJwt(data.token)
-            if (decodedToken) {
-                const tokenRoles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
-                if (Array.isArray(tokenRoles)) finalRoles = tokenRoles
-                else if (typeof tokenRoles === 'string') finalRoles = [tokenRoles]
-            }
-            setRoles(finalRoles)
-
-            return finalRoles
+            handleAuthSuccess(data.token, data.user);
+            return extractRolesFromToken(data.token);
 
         } catch (err) {
-            console.error(err)
-            setError(err instanceof Error ? err.message : String(err))
-            return null
+            console.error(err);
+            setError(err instanceof Error ? err.message : String(err));
+            return null;
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     const logout = () => {
-        setUser(null);
-        setToken(null);
-        setRoles([]);
-
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
+        clearAuthSession();
     };
 
     const updateUser = (userData: IUser) => {
         setUser(prev => {
             if (!prev) return null;
             const newUser = { ...prev, ...userData };
-
-            localStorage.setItem('auth_user', JSON.stringify(newUser));
-
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
             return newUser;
         })
     }
@@ -151,9 +108,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return (
-        <AuthContext value={value}>
+        <AuthContext.Provider value={value}>
             {!isLoading && children}
-        </AuthContext>
+        </AuthContext.Provider>
     )
 }
-

@@ -164,5 +164,5 @@ export default function BroadcastPanel() {
                 </div>
             </div>
         </div>
-    );
+    )
 }

@@ -135,19 +135,19 @@ export const usePackagePurchase = () => {
                 throw new Error(errData.Message || "Błąd zakupu")
             }
             const data = await response.json();
+
             if (data.user || data.User) {
                 updateUser(data.user || data.User);
             } else {
-                if (addressData.pesel) {
+                if (user && addressData.pesel) {
                     updateUser({
-                        ...user!,
+                        ...user,
                         pesel: addressData.pesel,
-                        phoneNumber: user!.phoneNumber ?? null,
-                        birthDate: user!.birthDate ?? null,
-                        roles: user!.roles ?? []
-                    });
+                        phoneNumber: user.phoneNumber ?? null,
+                        birthDate: user.birthDate ?? null,
+                        roles: user.roles ?? []
+                    })
                 }
-
             }
             notify.success("Pakiet zakupiony pomyślnie!")
             closeModal()

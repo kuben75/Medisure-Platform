@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 
-export default function HelpSection() {
+export default function HelpGuideSection() {
     return (
         <section className="bg-white py-12">
             <div className="max-w-5xl mx-auto px-4 text-center">

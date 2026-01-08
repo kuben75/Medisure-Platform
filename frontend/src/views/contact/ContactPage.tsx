@@ -1,4 +1,4 @@
-import HeroSection from "./HeroSectionContact.tsx";
+import HeroSection from "../../components/sections/HeroSectionContact.tsx";
 import FormSection from "./FormSection.tsx";
 import CallUsComponent from "./CallUsComponent.tsx";
 

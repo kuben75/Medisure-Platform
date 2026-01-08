@@ -4,49 +4,64 @@ namespace backend.Services;
 
 public class UserConnectionManager
 {
-    private static readonly ConcurrentDictionary<string, List<string>> UserConnections = new();
+    private readonly ConcurrentDictionary<string, List<string>> _userConnections = new();
+    private readonly ConcurrentDictionary<string, string> _connectionToUserMap = new();
     
-    private static readonly ConcurrentDictionary<string, string> ConnectionToUserMap = new();
+    private readonly object _lock = new();
+
     public void KeepUserConnection(string userId, string connectionId)
     {
-        userId = userId.ToLower();
+        var normalizedUserId = userId.ToLower();
 
-        if (!UserConnections.ContainsKey(userId))
-            UserConnections[userId] = new List<string>();
-        
-        
-        if (!UserConnections[userId].Contains(connectionId))
-            UserConnections[userId].Add(connectionId);
-        
+        var connections = _userConnections.GetOrAdd(normalizedUserId, _ => new List<string>());
 
-        ConnectionToUserMap[connectionId] = userId;
+        lock (_lock)
+        {
+            if (!connections.Contains(connectionId)) connections.Add(connectionId);
+            
+        }
+
+        _connectionToUserMap[connectionId] = normalizedUserId;
     }
 
     public string? RemoveUserConnection(string connectionId)
     {
-        if (ConnectionToUserMap.TryRemove(connectionId, out var userId))
+        if (_connectionToUserMap.TryRemove(connectionId, out var userId))
         {
-            if (UserConnections.ContainsKey(userId))
+            if (_userConnections.TryGetValue(userId, out var connections))
             {
-                UserConnections[userId].Remove(connectionId);
-                if (UserConnections[userId].Count == 0)
+                lock (_lock)
                 {
-                    UserConnections.TryRemove(userId, out _);
-                    return userId; 
+                    connections.Remove(connectionId);
+                    
+                    if (connections.Count == 0)
+                    {
+                        _userConnections.TryRemove(userId, out _);
+                        return userId;
+                    }
                 }
             }
         }
-        return null; 
+        return null;
     }
 
     public List<string> GetUserConnections(string userId)
     {
-        userId = userId.ToLower();
-        return UserConnections.ContainsKey(userId) ? UserConnections[userId] : new List<string>();
+        var normalizedUserId = userId.ToLower();
+        
+        if (_userConnections.TryGetValue(normalizedUserId, out var connections))
+        {
+            lock (_lock)
+            {
+                return new List<string>(connections);
+            }
+        }
+
+        return new List<string>();
     }
 
     public List<string> GetOnlineUsers()
     {
-        return UserConnections.Keys.ToList();
+        return _userConnections.Keys.ToList();
     }
 }

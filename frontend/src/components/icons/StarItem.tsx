@@ -1,6 +1,6 @@
-import type {IconProps} from "../../types/ui.types.ts";
+import type {IIconProps} from "../../types/ui.types.ts";
 
-export default function StarItem({className}: IconProps) {
+export default function StarItem({className}: IIconProps) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

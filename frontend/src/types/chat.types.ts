@@ -1,24 +1,21 @@
-import * as signalR from "@microsoft/signalr";
+import * as signalR from "@microsoft/signalr"
 
 export interface IChatMessage {
-    id?: number;
-    user: string;
-    message: string;
-    type: "UserToAdmin" | "AdminToUser";
-    targetUserEmail?: string;
-    timestamp: Date;
-    isRead?: boolean;
+    id?: number
+    user: string
+    message: string
+    type: "UserToAdmin" | "AdminToUser"
+    targetUserEmail?: string
+    timestamp: Date
+    isRead?: boolean
 }
-
-export interface IChatContext {
-    connection: signalR.HubConnection | null;
-    messages: IChatMessage[];
-    sendMessageToAdmin: (message: string) => Promise<void>;
-    sendMessageToUser: (targetEmail: string, message: string) => Promise<void>;
-    unreadCount: number;
-    onlineUsers?: string[];
-    userDetails?: any;
-    markAsRead?: (selectedUserEmail: string) => Promise<void>;
+export interface RawMessageDto {
+    id: number
+    sender: string
+    message: string
+    receiver: string
+    timestamp: string
+    isRead: boolean
 }
 export interface IUserDetail {
     email: string
@@ -26,9 +23,22 @@ export interface IUserDetail {
     lastName: string
 }
 
-export interface IExtendedChatContext extends IChatContext {
+export interface IChatContext {
+    connection: signalR.HubConnection | null
+    messages: IChatMessage[]
+    sendMessageToAdmin: (message: string) => Promise<void>
+    sendMessageToUser: (targetEmail: string, message: string) => Promise<void>
+    unreadCount: number
     onlineUsers: string[]
     userDetails: Record<string, IUserDetail>
-    markAsRead: (selectedUserEmail: string) => Promise<void>
+    markAsRead: (targetEmail?: string) => Promise<void>
     currentChatId: string
+}
+
+export interface IChatBubbleProps {
+    message: string;
+    isMe: boolean;
+    timestamp: Date;
+    senderName?: string;
+    isRead?: boolean;
 }

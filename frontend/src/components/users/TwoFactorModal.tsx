@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import Modal from '../ui/Modal.tsx';
+import Modal from '../ui/modals/Modal.tsx';
 import Button from '../ui/Button.tsx';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { useNotification } from '../../hooks/UseNotification.ts';
@@ -140,10 +140,8 @@ export default function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps)
                     </div>
                 )}
 
-                {/* --- KONFIGURACJA (QR) --- */}
                 {step === 'setup' && (
                     <div className="animate-slide-in-right">
-                        {/* ... (TREŚĆ SETUP BEZ ZMIAN) ... */}
                         <div className="flex justify-center mb-6 p-4 bg-white border-2 border-gray-100 rounded-xl shadow-sm w-fit mx-auto">
                             {qrUri && <QRCodeSVG value={qrUri} size={150} />}
                         </div>
@@ -162,7 +160,6 @@ export default function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps)
                     </div>
                 )}
 
-                {/* --- SUKCES --- */}
                 {step === 'success' && (
                     <div className="animate-fade-in py-8">
                         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 text-3xl">✓</div>
@@ -172,7 +169,6 @@ export default function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps)
                     </div>
                 )}
 
-                {/* --- ZARZĄDZANIE (STATUS AKTYWNY) --- */}
                 {step === 'disabled' && (
                     <div className="animate-fade-in">
                         <div className="bg-green-50 border border-green-200 p-4 rounded-xl mb-6 text-green-800 text-sm font-medium flex items-center gap-3">
@@ -195,7 +191,6 @@ export default function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps)
                     </div>
                 )}
 
-                {/* --- AUTORYZACJA WYŁĄCZENIA (NOWY WIDOK) --- */}
                 {step === 'disable-auth' && (
                     <div className="animate-slide-in-right text-left">
                         <p className="text-sm text-gray-600 mb-6 text-center">

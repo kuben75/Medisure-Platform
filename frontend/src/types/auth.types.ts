@@ -1,5 +1,4 @@
 import type {IUser} from "./user.types.ts";
-import type {IPricingPlan} from "./pricing.types.ts";
 
 
 export interface IAuthContext {
@@ -23,16 +22,7 @@ export interface IAuthContext {
     setAuthSession: (token: string, user: IUser) => void
 }
 
-export interface IComparisonContext {
-    selectedPackages: IPricingPlan[]
-    addToComparison: (pkg: IPricingPlan) => void
-    removeFromComparison: (packageId: number) => void
-    isInComparison: (packageId: number) => boolean
-    clearComparison: () => void
-    limit: number
-}
-
-export interface ChangePasswordModalProps {
+export interface IChangePasswordModalProps {
     isOpen: boolean
     onClose: () => void
 }

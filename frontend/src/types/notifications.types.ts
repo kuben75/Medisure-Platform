@@ -24,7 +24,7 @@ export interface INotificationsContext {
     refreshNotifications: () => void;
     deleteNotification: (id: number) => Promise<void>;
 }
-export interface ConfirmOptions {
+export interface IConfirmOptions {
     title?: string
     description?: string
     confirmText?: string
@@ -32,6 +32,6 @@ export interface ConfirmOptions {
     variant?: 'danger' | 'info'
 }
 
-export interface ConfirmationContextType {
-    confirm: (options: ConfirmOptions) => Promise<boolean>
+export interface IConfirmationContextType {
+    confirm: (options: IConfirmOptions) => Promise<boolean>
 }
