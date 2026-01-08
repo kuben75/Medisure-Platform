@@ -1,13 +1,13 @@
-import Modal from "../ui/Modal.tsx";
-import Button from "../ui/Button.tsx";
-import CheckIcon from "../icons/CheckIcon.tsx";
-import FavoriteButton from "../ui/FavouriteButton.tsx";
-import ReviewsList from "../ui/ReviewList.tsx";
-import { useAuth } from "../../hooks/useAuth.ts";
+import Modal from "./Modal.tsx";
+import Button from "../Button.tsx";
+import CheckIcon from "../../icons/CheckIcon.tsx";
+import FavoriteButton from "../FavouriteButton.tsx";
+import ReviewsList from "../ReviewList.tsx";
+import { useAuth } from "../../../hooks/useAuth.ts";
 import { useEffect } from "react";
-import type { ExtendedPackageDetailsModalProps } from "../../types/ui.types.ts";
+import type { IPackageDetailsModalProps } from "../../../types/ui.types.ts";
 
-export default function PackageDetailsModal({isOpen, onClose, plan, userAge, selectedDuration, onDurationChange, billingPeriod, setBillingPeriod, onProceedToCheckout, options, priceDetails, isBuying}: ExtendedPackageDetailsModalProps) {
+export default function PackageDetailsModal({isOpen, onClose, plan, userAge, selectedDuration, onDurationChange, billingPeriod, setBillingPeriod, onProceedToCheckout, options, priceDetails, isBuying}: IPackageDetailsModalProps) {
     useEffect(() => {
         if (isOpen) document.body.style.overflow = 'hidden'
          else document.body.style.overflow = 'unset'
@@ -142,7 +142,7 @@ export default function PackageDetailsModal({isOpen, onClose, plan, userAge, sel
 
                 {!isTestPeriod && (
                     <div className="mb-6 bg-gray-50/80 p-4 sm:p-5 rounded-xl border border-gray-200">
-                        <h4 className="font-bold text-gray-800 text-xs sm:text-sm mb-3 uppercase tracking-wide text-gray-500">
+                        <h4 className="font-bold text-xs sm:text-sm mb-3 uppercase tracking-wide text-gray-500">
                             2. Wybierz sposób rozliczenia
                         </h4>
 

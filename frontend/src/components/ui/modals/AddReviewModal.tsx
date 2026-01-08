@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import Modal from '../ui/Modal.tsx';
-import Button from '../ui/Button.tsx';
-import type {AddReviewModalProps} from "../../types/review.types.ts";
-import StarIcon from "../icons/StarIcon.tsx";
-import {useNotification} from "../../hooks/UseNotification.ts";
-import {useAuth} from "../../hooks/useAuth.ts";
+import Modal from './Modal.tsx';
+import Button from '../Button.tsx';
+import type {IAddReviewModalProps} from "../../../types/review.types.ts";
+import StarIcon from "../../icons/StarIcon.tsx";
+import {useNotification} from "../../../hooks/UseNotification.ts";
+import {useAuth} from "../../../hooks/useAuth.ts";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/reviews`
 
-export default function AddReviewModal({ isOpen, onClose, packageId, packageName }: AddReviewModalProps) {
+export default function AddReviewModal({ isOpen, onClose, packageId, packageName }: IAddReviewModalProps) {
     const { token } = useAuth()
     const { notify } = useNotification()
     const [rating, setRating] = useState(0)

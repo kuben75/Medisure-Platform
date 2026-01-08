@@ -1,6 +1,6 @@
-import type {IconProps} from "../../types/ui.types.ts";
+import type {IIconProps} from "../../types/ui.types.ts";
 
-export default function WhatsAppIcon({className}: IconProps) {
+export default function WhatsAppIcon({className}: IIconProps) {
     return (
         <svg fill="#25D366" viewBox="-3.2 -3.2 38.40 38.40" version="1.1" xmlns="http://www.w3.org/2000/svg" className={className}>
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>

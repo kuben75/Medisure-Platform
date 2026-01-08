@@ -1,6 +1,6 @@
 import Button from "../../components/ui/Button.tsx"
 import {useEffect, useState} from "react"
-import Modal from "../../components/ui/Modal.tsx"
+import Modal from "../../components/ui/modals/Modal.tsx"
 import Rating from "../../components/ui/Rating.tsx"
 import { useNavigate } from 'react-router-dom'
 import type {IPricingPlan} from "../../types/pricing.types.ts"

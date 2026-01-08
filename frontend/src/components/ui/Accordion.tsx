@@ -1,7 +1,7 @@
 import ChevronDownIcon from "../icons/ChevronDownIcon.tsx";
-import type {AccordionProps} from "../../types/ui.types.ts";
+import type {IAccordionProps} from "../../types/ui.types.ts";
 
-export default function Accordion({question, answer, isOpen, onToggle}: AccordionProps) {
+export default function Accordion({question, answer, isOpen, onToggle}: IAccordionProps) {
     return (
         <div className="border-b border-gray-100 last:border-none">
             <button

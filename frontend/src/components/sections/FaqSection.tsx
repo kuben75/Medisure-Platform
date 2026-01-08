@@ -1,8 +1,8 @@
 import {useState} from "react";
-import Accordion from "../../components/ui/Accordion.tsx";
+import Accordion from "../ui/Accordion.tsx";
 import {FAQ_DATA} from "../../constants/faq.ts";
 import {Link} from "react-router-dom";
-import Button from "../../components/ui/Button.tsx";
+import Button from "../ui/Button.tsx";
 
 export default function FaqSection() {
     const [openIndexes, setOpenIndexes] = useState<number[]>([])

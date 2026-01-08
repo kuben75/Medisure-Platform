@@ -1,6 +1,6 @@
-import type {IconProps} from "../../types/ui.types.ts";
+import type {IIconProps} from "../../types/ui.types.ts";
 
-export default function CalendarIcon({className}: IconProps) {
+export default function CalendarIcon({className}: IIconProps) {
     return (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

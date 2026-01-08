@@ -1,6 +1,6 @@
-import type {IComparisonModalProps} from "../../types/ui.types.ts"
+import type {IComparisonModalProps} from "../../../types/ui.types.ts"
 import Modal from "./Modal.tsx"
-import Button from "./Button.tsx"
+import Button from "../Button.tsx"
 const CheckIcon = () => <span className="text-green-500 font-bold text-xl">✓</span>;
 const CrossIcon = () => <span className="text-red-300 font-bold text-xl">-</span>
 export default function ComparisonModal({isOpen, onClose, packages}: IComparisonModalProps) {

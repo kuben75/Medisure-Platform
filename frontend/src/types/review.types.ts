@@ -5,13 +5,7 @@ export interface IReview {
     comment: string
     createdAt: string
 }
-
-export interface ICreateReviewDto {
-    packageId: number
-    rating: number
-    comment: string
-}
-export interface AddReviewModalProps {
+export interface IAddReviewModalProps {
     isOpen: boolean
     onClose: () => void
     packageId: number
@@ -27,9 +21,10 @@ export interface IPendingReview {
     createdAt: string
 }
 export interface IReviewDisplay {
-    id: number;
-    userName: string;
-    avatarText: string;
-    rating: number;
-    comment: string;
+    id: number
+    userName: string
+    avatarText: string
+    rating: number
+    comment: string
+    packageName?: string
 }

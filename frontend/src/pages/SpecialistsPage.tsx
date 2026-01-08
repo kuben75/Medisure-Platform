@@ -1,7 +1,7 @@
 import {useState, useMemo, useEffect} from 'react';
 import { SPECIALISTS_LIST } from '../constants/specialists.tsx';
 import type { ISpecialist } from "../types/specialists.types.ts";
-import Modal from '../components/ui/Modal.tsx';
+import Modal from '../components/ui/modals/Modal.tsx';
 import Button from '../components/ui/Button.tsx';
 import CheckIcon from '../components/icons/CheckIcon.tsx';
 import BriefcaseIcon from "../components/icons/BriefcaseIcon.tsx";

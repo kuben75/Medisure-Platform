@@ -1,7 +1,7 @@
 import StarItem from "../icons/StarItem.tsx";
-import type { TRatingProps } from "../../types/ui.types.ts";
+import type { IRatingProps } from "../../types/ui.types.ts";
 
-export default function Rating({ rating, reviews, className }: TRatingProps) {
+export default function Rating({ rating, reviews, className }: IRatingProps) {
     const containerClass = className || "mt-auto mb-2 flex items-center justify-center gap-3";
 
     const getStarFillPercent = (index: number) => {

@@ -329,18 +329,13 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
     `
 
     return (
-        // ZMIANA: lg:flex-row (tablet pionowy ma układ jeden pod drugim), overflow-y-auto na mobile dla całej strony
         <div className="fixed inset-0 z-50 flex flex-col lg:flex-row bg-white animate-fade-in font-sans overflow-y-auto lg:overflow-hidden">
 
-            {/* LEWY PANEL (Ciemny - Podsumowanie) */}
-            {/* ZMIANA: h-auto na mobile (żeby nie zajmował całego ekranu na start), kolejność order-first */}
             <div className="w-full lg:w-5/12 xl:w-4/12 bg-[#0F172A] text-white flex flex-col relative flex-shrink-0 lg:h-full lg:overflow-hidden order-first shadow-2xl z-20">
 
-                {/* Tło ambient (bez zmian) */}
                 <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-indigo-500/10 rounded-full blur-[80px] md:blur-[100px] pointer-events-none -mr-20 -mt-20"></div>
                 <div className="absolute bottom-0 left-0 w-[250px] md:w-[400px] h-[250px] md:h-[400px] bg-blue-500/10 rounded-full blur-[80px] md:blur-[120px] pointer-events-none -ml-20 -mb-20"></div>
 
-                {/* Header Lewego Panelu */}
                 <div className="relative z-10 pt-6 px-5 md:pt-10 md:px-10 pb-2 flex-shrink-0">
                     <button onClick={onClose} className="group flex items-center gap-3 text-slate-400 hover:text-white transition-colors">
                         <span className="text-xl leading-none group-hover:-translate-x-1 transition-transform">←</span>
@@ -348,7 +343,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                     </button>
                 </div>
 
-                {/* Scrollowalna treść lewego panelu (na desktop) */}
                 <div className="relative z-10 flex-grow lg:overflow-y-auto custom-scrollbar px-5 py-4 md:px-10">
 
                     <div className="mb-6">
@@ -363,7 +357,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                             )}
                         </div>
 
-                        {/* ZMIANA: text-2xl na mobile */}
                         <h2 className="text-2xl md:text-3xl font-bold mb-2 tracking-tight text-white">{plan.name}</h2>
                         <p className="text-slate-400 text-sm leading-relaxed max-w-sm mb-6">{plan.description}</p>
 
@@ -387,7 +380,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                             </div>
                         )}
 
-                        {/* ZMIANA: Flex col na małych ekranach wewnątrz boxa z datami, jeśli teksty są długie */}
                         <div className="mb-6 bg-white/5 border border-white/10 rounded-xl p-4 flex flex-row items-center justify-between text-sm">
                             <div className="flex items-center gap-3">
                                 <div className="bg-indigo-500/20 p-2 rounded-lg hidden xs:block">
@@ -425,7 +417,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                         </div>
                     </div>
 
-                    {/* Box cenowy */}
                     <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-4 md:p-5 border border-white/10 shadow-lg mb-6">
                         <div className="space-y-2 mb-5 pb-5 border-b border-white/10">
                             <div className="flex justify-between text-sm">
@@ -480,7 +471,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                     </div>
                 </div>
 
-                {/* Stopka Security - widoczna zawsze na dole panelu lewego (na desktopie) */}
                 <div className="relative z-10 p-4 bg-[#0F172A] border-t border-white/5 flex justify-center flex-shrink-0">
                     <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium opacity-60">
                         <LockIcon className="w-3 h-3"/> Płatność szyfrowana SSL 256-bit
@@ -488,11 +478,8 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                 </div>
             </div>
 
-            {/* PRAWY PANEL (Biały - Formularz) */}
-            {/* ZMIANA: lg:w-7/12 lub xl:w-8/12, overflow-y-visible na mobile (scrolluje całość), auto na desktop */}
             <div className="w-full lg:w-7/12 xl:w-8/12 bg-white flex flex-col relative order-last lg:h-full lg:overflow-y-auto custom-scrollbar">
 
-                {/* Sticky Header Formularza */}
                 <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-100 px-5 py-4 md:px-10 md:py-6 z-30 flex items-center justify-between">
                     <span className="font-bold text-slate-900 text-base md:text-lg tracking-tight">Finalizacja zakupu</span>
                     <div className="flex items-center gap-4 md:gap-6">
@@ -508,12 +495,9 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                     </div>
                 </div>
 
-                {/* Kontener treści formularza */}
-                {/* ZMIANA: padding p-5 na mobile, p-10 na tablet, p-16 na duży ekran */}
                 <div className="p-5 md:p-10 lg:p-16 max-w-2xl mx-auto w-full flex-grow flex flex-col justify-start pt-6 md:pt-12">
                     {isSuccess ? (
                         <div className="text-center py-12 animate-fade-in-up flex flex-col items-center justify-center h-full">
-                            {/* Sukces screen - bez zmian strukturalnych, tylko responsywność tekstu */}
                             <div className="relative">
                                 <div className="absolute inset-0 bg-green-500/20 blur-xl rounded-full"></div>
                                 <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-8 shadow-xl relative z-10 animate-bounce-short">
@@ -545,8 +529,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                             <div className="bg-blue-50 p-2 rounded-lg"><UserIcon className="w-5 h-5"/></div>
                                             <h3 className="text-lg font-bold text-slate-800">Dane Odbiorcy</h3>
                                         </div>
-
-                                        {/* ZMIANA: grid-cols-1 na mobile (każdy input w nowej linii) dla lepszego UX */}
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                                             <div className="group">
                                                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Imię</label>
@@ -651,7 +633,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                             <h3 className="text-lg font-bold text-slate-800">Dane do umowy</h3>
                                         </div>
 
-                                        {/* Adres: Ulica i Numer Domu */}
                                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                                             <div className="sm:col-span-2 group relative">
                                                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Ulica</label>
@@ -671,7 +652,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                             </div>
                                         </div>
 
-                                        {/* Adres: Kod i Miasto */}
                                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                                             <div className="group relative">
                                                 <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Kod pocztowy</label>
@@ -714,7 +694,6 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                         <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">
                                             Wybierz metodę płatności
                                         </label>
-                                        {/* ZMIANA: Grid 2 kolumny na mobile, 4 na desktopie, zmniejszona wysokość na mobile */}
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                                             {[
                                                 {id: 'card', label: 'Karta', icon: <CreditCardIcon/>},
@@ -776,7 +755,7 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
                                                 {!selectedBank ? (
                                                     <>
                                                         <h4 className="text-sm font-bold text-gray-700 mb-4 text-center">Wybierz swój bank lub BLIK</h4>
-                                                        {/* ZMIANA: Grid 2 kolumny na małym mobile, 3 na większym, 4 na desktopie */}
+
                                                         <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3">
                                                             <button onClick={() => setSelectedBank('blik')}
                                                                     className="col-span-1 h-20 border border-gray-200 rounded-xl flex items-center justify-center hover:border-black hover:shadow-md transition-all bg-white">

@@ -1,15 +1,15 @@
 import {type ReactNode, useRef, useState} from 'react'
 import Button from '../components/ui/Button.tsx'
-import type {ConfirmOptions} from "../types/notifications.types.ts"
+import type {IConfirmOptions} from "../types/notifications.types.ts"
 import {ConfirmationContext as ConfirmationContext1} from "../hooks/UseConfrim.ts";
 
 export const ConfirmationProvider = ({ children }: { children: ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false)
-    const [options, setOptions] = useState<ConfirmOptions>({})
+    const [options, setOptions] = useState<IConfirmOptions>({})
 
     const resolver = useRef<((value: boolean) => void) | null>(null)
 
-    const confirm = (opts: ConfirmOptions): Promise<boolean> => {
+    const confirm = (opts: IConfirmOptions): Promise<boolean> => {
         setOptions({
             title: opts.title || "Potwierdzenie",
             description: opts.description || "Czy na pewno chcesz wykonać tę operację?",

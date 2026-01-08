@@ -1,4 +1,4 @@
-import Modal from '../ui/Modal';
+import Modal from '../ui/modals/Modal.tsx';
 import Button from '../ui/Button';
 import CalendarIcon from '../icons/CalendarIcon';
 import LockIcon from '../icons/LockIcon';

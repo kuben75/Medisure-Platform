@@ -115,14 +115,13 @@ export default function Navbar() {
         <>
             <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md py-3' : 'bg-white py-5'}`}>
                 <nav className="container mx-auto px-4 flex justify-between items-center">
-                    {/* LOGO */}
+
                     <Link to="/" className="flex items-center gap-2 group">
                         <div className="w-10 h-10 bg-[#4E61F6] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">M</div>
                         <span className="text-xl font-bold text-gray-800 tracking-tight">Medisure<span className="text-[#4E61F6]">.pl</span>
                         </span>
                     </Link>
 
-                    {/* MENU DESKTOP */}
                     <ul className="hidden lg:flex items-center gap-2">
                         {navLinks.map((link, index) => (
                             <li key={link.label} className={index === 0 ? "mr-8 xl:mr-12 relative" : ""}>
@@ -143,7 +142,6 @@ export default function Navbar() {
                         ))}
                     </ul>
 
-                    {/* PRAWA STRONA (IKONY) */}
                     <div className="hidden lg:flex items-center gap-4">
                         {user ? (
                             <div className="flex items-center gap-3">
@@ -230,13 +228,11 @@ export default function Navbar() {
                 </nav>
             </header>
 
-            {/* OVERLAY */}
             <div
                 className={`fixed inset-0 bg-black/50 z-[60] transition-opacity duration-300 ${isNotificationsOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
                 onClick={() => setIsNotificationsOpen(false)}
             />
 
-            {/* PANEL BOCZNY POWIADOMIEŃ */}
             <div className={`fixed top-0 right-0 h-screen w-[85vw] md:w-96 bg-white z-[70] transform transition-transform duration-300 ease-in-out shadow-2xl flex flex-col ${isNotificationsOpen ? "translate-x-0" : "translate-x-full"}`}>
                 <div className="p-5 flex justify-between items-center border-b border-gray-100 bg-gray-50">
                     <div className="flex items-center gap-2">
@@ -245,7 +241,6 @@ export default function Navbar() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        {/* Przycisk czyszczenia - widoczny tylko gdy jest co czyścić */}
                         {canClear && (
                             <button
                                 onClick={handleClearRead}

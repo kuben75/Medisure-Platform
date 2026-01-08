@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react"
-import UserIcon from "../../components/icons/UserIcon"
-import Button from "../../components/ui/Button"
-import BuildingIcon from "../../components/icons/BuildingIcon"
-import UserGroupIcon from "../../components/icons/UserGroupIcon"
-import CheckCircleIcon from "../../components/icons/CheckCircleIcon"
+import UserIcon from "../icons/UserIcon.tsx"
+import Button from "../ui/Button.tsx"
+import BuildingIcon from "../icons/BuildingIcon.tsx"
+import UserGroupIcon from "../icons/UserGroupIcon.tsx"
+import CheckCircleIcon from "../icons/CheckCircleIcon.tsx"
 import {Link} from "react-router-dom"
 import {useNotification} from "../../hooks/UseNotification.ts";
 import type {IHeroCalcProps} from "../../types/ui.types.ts";

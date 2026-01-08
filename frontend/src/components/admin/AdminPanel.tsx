@@ -10,11 +10,9 @@ import AdminChatPanel from "./AdminChatPanel.tsx"
 import BroadcastPanel from "./BroadcastPanel.tsx"
 import NotificationsPanel from "../users/NotificationsPanel.tsx"
 import {TABS} from "../../constants/panelOptions.ts";
-
-const MenuIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>;
-const CloseIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>;
-const LogoutIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>;
-
+import LogoutIcon from "../icons/LogoutIcon.tsx";
+import MenuIcon from "../icons/MenuIcon.tsx";
+import CloseIcon from "../icons/CloseIcon.tsx";
 
 export default function AdminPanel() {
     const { user, logout } = useAuth()
@@ -51,7 +49,7 @@ export default function AdminPanel() {
                         onClick={() => setIsSidebarOpen(true)}
                         className="p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                     >
-                        <MenuIcon />
+                        <MenuIcon className="w-6 h-6"/>
                     </button>
                     <span className="font-bold text-gray-800 text-lg">Admin Panel</span>
                 </div>
@@ -100,7 +98,7 @@ export default function AdminPanel() {
                                 Wróć na stronę
                             </Button>
                             <Button variant="primary" className="w-full justify-center !py-2.5 text-sm flex items-center gap-2" onClick={handleLogout}>
-                                <LogoutIcon /> Wyloguj się
+                                <LogoutIcon className="w-5 h-5" /> Wyloguj się
                             </Button>
                         </div>
                     </div>
@@ -121,7 +119,7 @@ export default function AdminPanel() {
                                 Podgląd strony
                             </Button>
                             <Button variant="primary" className="!py-2.5 !px-5 flex items-center gap-2 shadow-md shadow-blue-500/20" onClick={handleLogout}>
-                                <LogoutIcon /> Wyloguj
+                                <LogoutIcon className="w-5 h-5"/> Wyloguj
                             </Button>
                         </div>
                     </div>
