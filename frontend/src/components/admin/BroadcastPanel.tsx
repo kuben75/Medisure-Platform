@@ -1,65 +1,19 @@
-import React, { useState } from 'react';
 import Button from '../ui/Button.tsx';
-import { useAuth } from '../../hooks/useAuth.ts';
-import { useNotification } from '../../hooks/UseNotification.ts';
 import MegaphoneIcon from "../icons/MegaphoneIcon.tsx";
-import {useConfirm} from "../../hooks/UseConfrim.ts";
-import type {TNotificationType} from "../../types/notifications.types.ts";
 import AlertIcon from "../icons/AlertIcon.tsx";
 import CheckCircleIcon from "../icons/CheckCircleIcon.tsx";
 import InfoIcon from "../icons/InfoIcon.tsx";
+import type { TNotificationType } from "../../types/notifications.types.ts";
+import {useBroadcastPanel} from "../../hooks/useBroadcast.ts";
 
 export default function BroadcastPanel() {
-    const { token } = useAuth()
-    const { notify } = useNotification()
-    const confirm = useConfirm()
-
-    const [title, setTitle] = useState('')
-    const [message, setMessage] = useState('')
-    const [type, setType] = useState('Info')
-    const [loading, setLoading] = useState(false)
-
-    const handleSend = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!title || !message) return;
-
-        const shouldSend = await confirm({
-            title: "Potwierdzenie wysłania ogłoszenia",
-            description: "Czy na pewno chcesz wysłać to ogłoszenie do wszystkich użytkowników?",
-            confirmText: "Wyślij",
-            cancelText: "Anuluj",
-            variant: "info"
-        });
-
-        if (!shouldSend) return;
-
-        setLoading(true)
-        try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/notifications/broadcast`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ title, message, type })
-            })
-
-            if (res.ok) {
-                notify.success("Ogłoszenie zostało wysłane.");
-                setTitle('');
-                setMessage('');
-                setType('Info');
-            } else {
-                const errData = await res.json();
-                notify.error(errData.message || "Wystąpił błąd podczas wysyłania.");
-            }
-        } catch (err) {
-            console.error(err);
-            notify.error("Błąd sieci.");
-        } finally {
-            setLoading(false);
-        }
-    }
+    const {
+        title, setTitle,
+        message, setMessage,
+        type, setType,
+        loading,
+        handleSend
+    } = useBroadcastPanel();
 
     const getTypeStyles = (t: string) => {
         switch (t) {
@@ -68,7 +22,7 @@ export default function BroadcastPanel() {
             case 'Warning': return { bg: 'bg-yellow-50', border: 'border-yellow-200', iconColor: 'text-yellow-600', icon: <AlertIcon /> };
             default: return { bg: 'bg-blue-50', border: 'border-blue-200', iconColor: 'text-blue-500', icon: <InfoIcon /> };
         }
-    };
+    }
 
     const previewStyle = getTypeStyles(type);
 

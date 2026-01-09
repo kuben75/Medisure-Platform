@@ -36,9 +36,31 @@ export interface IChatContext {
 }
 
 export interface IChatBubbleProps {
-    message: string;
-    isMe: boolean;
-    timestamp: Date;
-    senderName?: string;
-    isRead?: boolean;
+    message: string
+    isMe: boolean
+    timestamp: Date
+    senderName?: string
+    isRead?: boolean
+}
+
+export interface IUseAdminConversationsProps {
+    messages: IChatMessage[]
+    onlineUsers: string[]
+    userDetails: any
+}
+
+export interface IProps {
+    conversations: any[];
+    selectedEmail: string | null;
+    onSelect: (email: string) => void;
+    searchTerm: string;
+    setSearchTerm: (v: string) => void;
+    filter: 'all' | 'unread' | 'online';
+    setFilter: (v: any) => void;
+}
+
+export interface IAdminChatWindowProps {
+    conversation: any | null;
+    onSend: (msg: string) => Promise<void>;
+    onBack: () => void;
 }
