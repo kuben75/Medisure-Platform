@@ -4,8 +4,7 @@ import { LevelBadge, LogDetails } from "./LogUiComponents.tsx";
 import type { ISystemLog } from "../../../types/dashboard.types.ts";
 
 export const LogCardMobile = ({ log }: { log: ISystemLog }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-
+    const [isExpanded, setIsExpanded] = useState(false)
     return (
         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-3">
             <div className="flex justify-between items-start mb-3" onClick={() => setIsExpanded(!isExpanded)}>
