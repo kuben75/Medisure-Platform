@@ -131,7 +131,8 @@ public static class DbInitializer
                         },
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 3,
-                        FacilitiesCount = 200, IsFeatured = false
+                        FacilitiesCount = 200, IsFeatured = false,
+                        IncludedSpecializations = "Internista;Pediatria;Alergologia"
                     },
                     new Package
                     {
@@ -149,7 +150,8 @@ public static class DbInitializer
                         },
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 9,
-                        FacilitiesCount = 250, IsFeatured = false
+                        FacilitiesCount = 250, IsFeatured = false,
+                        IncludedSpecializations = "Internista;Pediatria;Alergologia;Ginekologia;Dermatologia;Okulistyka;Endokrynologia;Rehabilitacja;Laryngologia"
                     },
                     new Package
                     {
@@ -167,7 +169,8 @@ public static class DbInitializer
                         },
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = true,
                         SpecialistsCount = 24,
-                        FacilitiesCount = 800, IsFeatured = true
+                        FacilitiesCount = 800, IsFeatured = true,
+                        IncludedSpecializations = "Internista;Pediatria;Kardiologia;Ginekologia;Ortopedia;Dermatologia;Okulistyka;Endokrynologia;Stomatologia;Rehabilitacja;Neurologia;Urologia;Gastrologia;Pulmonologia;Alergologia;Diabetologia;Nefrologia;Choroby zakaźne;Diagnostyka;Medycyna sportowa;Laryngologia;Dietetyka;Psychologia;Reumatologia"
                     },
                     new Package
                     {
@@ -185,7 +188,8 @@ public static class DbInitializer
                         },
                         HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
                         SpecialistsCount = 32,
-                        FacilitiesCount = 1500, IsFeatured = true
+                        FacilitiesCount = 1500, IsFeatured = true,
+                        IncludedSpecializations = "Internista;Pediatria;Kardiologia;Ginekologia;Ortopedia;Dermatologia;Okulistyka;Endokrynologia;Stomatologia;Rehabilitacja;Neurologia;Psychiatria;Chirurgia;Urologia;Gastrologia;Pulmonologia;Reumatologia;Alergologia;Onkologia;Diabetologia;Hematologia;Nefrologia;Geriatria;Choroby zakaźne;Diagnostyka;Anestezjologia;Medycyna sportowa;Laryngologia;Neurochirurgia;Dietetyka;Psychologia;Logopedia"
                     },
                     new Package
                     {
@@ -201,7 +205,9 @@ public static class DbInitializer
                         },
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 9,
-                        FacilitiesCount = 400, IsFeatured = false
+                        FacilitiesCount = 400, IsFeatured = false,
+                        IncludedSpecializations = "Internista;Pediatria;Ginekologia;Dermatologia;Okulistyka;Endokrynologia;Alergologia;Laryngologia;Logopedia"
+                        
                     },
                     new Package
                     {
@@ -217,8 +223,10 @@ public static class DbInitializer
                             "Opieka stomatologiczna w nagłych bólach."
                         },
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = false,
-                        SpecialistsCount = 26,
-                        FacilitiesCount = 600, IsFeatured = true
+                        SpecialistsCount = 22,
+                        FacilitiesCount = 600, IsFeatured = true,
+                        IncludedSpecializations = "Internista;Pediatria;Kardiologia;Ginekologia;Ortopedia;Dermatologia;Okulistyka;Endokrynologia;Stomatologia;Rehabilitacja;Neurologia;Urologia;Gastrologia;Pulmonologia;Alergologia;Diabetologia;Nefrologia;Diagnostyka;Medycyna sportowa;Laryngologia;Dietetyka;Logopedia"
+                        
                     },
                     new Package
                     {
@@ -235,8 +243,10 @@ public static class DbInitializer
                             "Dostęp do psychiatry i lekarza chorób zakaźnych."
                         },
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = true,
-                        SpecialistsCount = 31,
-                        FacilitiesCount = 700, IsFeatured = true
+                        SpecialistsCount = 28,
+                        FacilitiesCount = 700, IsFeatured = true,
+                        IncludedSpecializations = "Internista;Pediatria;Kardiologia;Ginekologia;Ortopedia;Dermatologia;Okulistyka;Endokrynologia;Stomatologia;Rehabilitacja;Neurologia;Psychiatria;Chirurgia;Urologia;Gastrologia;Pulmonologia;Alergologia;Diabetologia;Hematologia;Nefrologia;Choroby zakaźne;Diagnostyka;Anestezjologia;Medycyna sportowa;Laryngologia;Dietetyka;Psychologia;Logopedia"
+                        
                     },
                     new Package
                     {
@@ -252,7 +262,8 @@ public static class DbInitializer
                         },
                         HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
                         SpecialistsCount = 32,
-                        FacilitiesCount = 1200, IsFeatured = true
+                        FacilitiesCount = 1200, IsFeatured = true,
+                        IncludedSpecializations = "Internista;Pediatria;Kardiologia;Ginekologia;Ortopedia;Dermatologia;Okulistyka;Endokrynologia;Stomatologia;Rehabilitacja;Neurologia;Psychiatria;Chirurgia;Urologia;Gastrologia;Pulmonologia;Alergologia;Diabetologia;Hematologia;Nefrologia;Diagnostyka;Anestezjologia;Medycyna sportowa;Laryngologia;Dietetyka;Psychologia;Logopedia;Choroby zakaźne; Geriatria; Onkologia; Neurochirurgia;Reumatologia"
                     },
                     new Package
                     {
@@ -270,7 +281,8 @@ public static class DbInitializer
                         },
                         HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
                         SpecialistsCount = 20,
-                        FacilitiesCount = 600, IsFeatured = false
+                        FacilitiesCount = 600, IsFeatured = false,
+                        IncludedSpecializations = "Internista;Kardiologia;Ginekologia;Ortopedia;Dermatologia;Okulistyka;Endokrynologia;Rehabilitacja;Neurologia;Chirurgia;Urologia;Gastrologia;Pulmonologia;Reumatologia;Diabetologia;Nefrologia;Geriatria;Diagnostyka;Laryngologia;Dietetyka"
                     },
                     new Package
                     {
@@ -288,7 +300,8 @@ public static class DbInitializer
                         },
                         HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
                         SpecialistsCount = 23,
-                        FacilitiesCount = 700, IsFeatured = false
+                        FacilitiesCount = 700, IsFeatured = false,
+                        IncludedSpecializations = "Internista;Kardiologia;Ginekologia;Ortopedia;Dermatologia;Okulistyka;Endokrynologia;Rehabilitacja;Neurologia;Chirurgia;Urologia;Gastrologia;Pulmonologia;Reumatologia;Onkologia;Diabetologia;Nefrologia;Geriatria;Diagnostyka;Laryngologia;Dietetyka;Psychologia"
                     },
                     new Package
                     {
@@ -306,7 +319,8 @@ public static class DbInitializer
                         },
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 23,
-                        FacilitiesCount = 1500, IsFeatured = false
+                        FacilitiesCount = 1500, IsFeatured = false,
+                        IncludedSpecializations = "Internista;Kardiologia;Ginekologia;Ortopedia;Dermatologia;Okulistyka;Endokrynologia;Rehabilitacja;Neurologia;Psychiatria;Chirurgia;Urologia;Gastrologia;Pulmonologia;Onkologia;Diabetologia;Nefrologia;Choroby zakaźne;Diagnostyka;Laryngologia;Neurochirurgia;Dietetyka;Psychologia"
                     }
         };
     }

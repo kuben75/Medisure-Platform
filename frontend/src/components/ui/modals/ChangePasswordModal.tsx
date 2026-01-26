@@ -1,7 +1,7 @@
-import Modal from '../ui/modals/Modal.tsx';
-import Button from '../ui/Button.tsx';
-import type { IChangePasswordModalProps } from "../../types/auth.types.ts";
-import { useChangePassword } from "../../hooks/useChangePassword.ts";
+import Modal from './Modal.tsx';
+import Button from '../Button.tsx';
+import type { IChangePasswordModalProps } from "../../../types/auth.types.ts";
+import { useChangePassword } from "../../../hooks/useChangePassword.ts";
 
 const ShieldIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-12 h-12">

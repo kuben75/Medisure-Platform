@@ -7,7 +7,7 @@ const MailSvg = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBo
 
 export default function Footer() {
     return (
-        <footer className="bg-white border-t border-gray-100 font-sans">
+        <footer className="bg-white border-t border-gray-200 font-sans">
 
             <div className="bg-[#F8FAFC] border-b border-gray-200">
                 <div className="container mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -66,7 +66,7 @@ export default function Footer() {
                         <ul className="space-y-3">
                             <FooterLink to="/kalkulator?category=Indywidualny">Pakiet Indywidualny</FooterLink>
                             <FooterLink to="/kalkulator?category=Rodzinny">Pakiet Rodzinny</FooterLink>
-                            <FooterLink to="/kalkulator?category=Senior">Pakiet Senior</FooterLink>
+                            <FooterLink to="/kalkulator?category=Senior">Pakiet Seniorski</FooterLink>
                             <FooterLink to="/kalkulator?category=Biznesowy">Dla Firm i Korporacji</FooterLink>
                             <li className="pt-2">
                                 <Link to="/kalkulator" className="text-[#4E61F6] font-bold text-sm hover:underline transition-colors flex items-center gap-1 group">

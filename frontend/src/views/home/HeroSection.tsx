@@ -74,7 +74,7 @@ export default function HeroSection() {
     }
 
     return (
-        <section className="relative w-full text-center text-white py-16 md:py-32 px-4 bg-gradient-to-br from-[#2563EB] via-[#4F46E5] to-[#4338ca] overflow-hidden">
+        <section className="relative w-full text-center text-white py-24 md:py-32 px-4 bg-gradient-to-br from-[#2563EB] via-[#4F46E5] to-[#4338ca] overflow-hidden">
 
             <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-white/10 rounded-full blur-3xl opacity-20 pointer-events-none animate-pulse"></div>
             <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-3xl opacity-30 pointer-events-none"></div>

@@ -4,6 +4,7 @@ export interface ISpecialistsListModalProps {
     isOpen: boolean
     onClose: () => void
     packageName: string
+    includedSpecializations?: string
 }
 
 export interface ISpecialist {
@@ -17,4 +18,10 @@ export interface ISpecialist {
     gender: 'male' | 'female'
     availableInPackages: string[]
     icon?: ReactNode
+}
+
+export interface IPackageSimple {
+    id: number
+    name: string
+    includedSpecializations: string
 }

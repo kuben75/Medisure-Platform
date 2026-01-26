@@ -25,6 +25,8 @@ namespace backend.Models
         
         public List<string> Features { get; set; }
         
+        public string IncludedSpecializations { get; set; }
+        
         public double AverageRating { get; set; } 
         public int Reviews { get; set; } 
         

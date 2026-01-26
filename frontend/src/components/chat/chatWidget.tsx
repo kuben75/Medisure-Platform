@@ -1,52 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {useAuth} from "../../hooks/useAuth.ts";
 import XIcon from "../icons/XIcon.tsx";
 import {ChatBubble, QuickReplies} from "../ui/ChatUiComponents.tsx";
-import {useChat} from "../../hooks/useChat.ts";
 import ChatBubbleIcon from "../icons/ChatBubbleIcon.tsx";
 import SendIcon from "../icons/SendIcon.tsx";
+import {useChatWidget} from "../../hooks/useChatWidget.ts";
 export default function ChatWidget() {
-    const {roles } = useAuth();
-    const { messages, sendMessageToAdmin, unreadCount, currentChatId, markAsRead } = useChat()
-
-    const [isOpen, setIsOpen] = useState(false)
-    const [input, setInput] = useState('')
-    const bottomRef = useRef<HTMLDivElement>(null)
-
-    const myEmail = currentChatId
-
-    const myMessages = messages.filter(m => {
-        const msgSender = (m.user || "").toLowerCase()
-        const msgTarget = (m.targetUserEmail || "").toLowerCase()
-        const myId = currentChatId.toLowerCase()
-
-        if (msgSender === myId && m.type === "UserToAdmin") return true
-
-        if (m.type === "AdminToUser" && msgTarget === myId) return true
-
-        if (m.type === "AdminToUser" && msgSender === "system" && msgTarget === myId) return true
-
-        return false
-    })
-
-    useEffect(() => {
-        if (isOpen) {
-            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, [myMessages, isOpen]);
-
-    useEffect(() => {
-        if (isOpen && unreadCount > 0)
-            markAsRead('')
-
-    }, [isOpen, unreadCount, markAsRead])
-
-    const handleSend = async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (!input.trim()) return
-        await sendMessageToAdmin(input)
-        setInput('')
-    }
+    const {isOpen, setIsOpen, input, setInput, bottomRef, myMessages, myEmail,
+        handleSend, roles, unreadCount, messages} = useChatWidget()
 
     if (roles?.includes("Admin")) return null
 
@@ -127,9 +86,9 @@ export default function ChatWidget() {
             )}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative w-16 h-16 bg-[#4E61F6] text-white rounded-full shadow-[0_4px_20px_rgba(78,97,246,0.4)] flex items-center justify-center hover:scale-110 transition-transform duration-300 hover:bg-blue-700 group z-50"
+                className="relative w-12 h-12 md:w-16 md:h-16 bg-[#4E61F6] text-white rounded-full shadow-[0_4px_20px_rgba(78,97,246,0.4)] flex items-center justify-center hover:scale-110 transition-transform duration-300 hover:bg-blue-700 group z-50"
             >
-                {isOpen ? <XIcon className="w-8 h-8"/> : <ChatBubbleIcon />}
+                {isOpen ? <XIcon className="w-8 h-8"/> : <ChatBubbleIcon className="w-6 h-6 md:w-8 md:h-8" />}
                 {!isOpen && unreadCount > 0 && (
                     <span className="absolute top-0 right-0 w-5 h-5 bg-red-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] font-bold animate-bounce">
                         {unreadCount}

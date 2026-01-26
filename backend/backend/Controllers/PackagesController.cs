@@ -97,12 +97,18 @@ public class PackagesController : ControllerBase
     private void UpdatePackageDetails(Package target, Package source)
     {
         target.Name = source.Name;
-        target.Price = source.Price;
         target.Description = source.Description;
-        target.Features = source.Features;
-        target.AverageRating = source.AverageRating;
-        target.Reviews = source.Reviews;
+        target.Category = source.Category; 
+        target.PriceValue = source.PriceValue; 
+        target.Price = source.Price; 
+        target.IncludedSpecializations = source.IncludedSpecializations;
+        target.SpecialistsCount = source.SpecialistsCount;
+        target.FacilitiesCount = source.FacilitiesCount;
+        target.HasDentalCare = source.HasDentalCare;
+        target.HasHospitalization = source.HasHospitalization;
+        target.HasRehabilitation = source.HasRehabilitation;
         target.IsFeatured = source.IsFeatured;
+        target.Features = source.Features; 
     }
 
     private async Task LogActionAsync(string action, string description, string level = "info")

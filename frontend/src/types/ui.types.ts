@@ -119,6 +119,7 @@ export interface IPackageFormData {
     features: string
     averageRating: number
     reviews: number
+    includedSpecializations: string
     specialistsCount: number
     facilitiesCount: number
     hasDentalCare: boolean

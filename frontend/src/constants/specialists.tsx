@@ -1,7 +1,13 @@
-import type { ISpecialist } from "../types/specialists.types.ts";
+import type {ISpecialist} from "../types/specialists.types.ts";
+import StethoscopeIcon from "../components/icons/StethoscopeIcon.tsx";
+import PillIcon from "../components/icons/PillIcon.tsx";
+import FilePlusIcon from "../components/icons/FilePlusIcon.tsx";
+import UsersIcon from "../components/icons/UsersIcon.tsx";
+import ClockIcon from "../components/icons/ClockIcon.tsx";
+import ShieldIcon from "../components/icons/ShieldIcon.tsx";
 
 const getDocImg = (gender: 'male' | 'female', id: number) =>
-    `https://randomuser.me/api/portraits/${gender === 'male' ? 'men' : 'women'}/${id}.jpg`;
+    `https://randomuser.me/api/portraits/${gender === 'male' ? 'men' : 'women'}/${id}.jpg`
 
 const PKG = {
     BASIC: "Pakiet Podstawowy",
@@ -18,50 +24,50 @@ const PKG = {
 
     SENIOR: "Senior",
     SENIOR_PLUS: "Pakiet Senior Plus"
-};
+}
 
 
-const ALL_PACKAGES = Object.values(PKG);
+const ALL_PACKAGES = Object.values(PKG)
 
 const PLUS_AND_UP = [
     PKG.BASIC_PLUS, PKG.COMFORT, PKG.PRESTIGE,
     PKG.FAMILY_2_1, PKG.FAMILY_2_2, PKG.FAMILY_PREMIUM, PKG.FAMILY_2_3,
     PKG.BUSINESS, PKG.SENIOR, PKG.SENIOR_PLUS
-];
+]
 
 const STANDARD_AND_UP = [
     PKG.COMFORT, PKG.PRESTIGE,
     PKG.FAMILY_2_2, PKG.FAMILY_PREMIUM, PKG.FAMILY_2_3,
     PKG.BUSINESS, PKG.SENIOR, PKG.SENIOR_PLUS
-];
+]
 
 const PREMIUM_ONLY = [
     PKG.PRESTIGE, PKG.FAMILY_PREMIUM, PKG.FAMILY_2_3
-];
+]
 
 const DENTAL_PACKAGES = [
     PKG.COMFORT, PKG.PRESTIGE,
     PKG.FAMILY_2_2, PKG.FAMILY_PREMIUM, PKG.FAMILY_2_3
-];
+]
 
 const SENIOR_ONLY = [
     PKG.SENIOR, PKG.SENIOR_PLUS, PKG.PRESTIGE
-];
+]
 
 const FAMILY_FOCUS = [
     PKG.BASIC, PKG.BASIC_PLUS, PKG.COMFORT, PKG.PRESTIGE,
     PKG.FAMILY_2_1, PKG.FAMILY_2_2, PKG.FAMILY_PREMIUM, PKG.FAMILY_2_3
-];
+]
 
 const CHILD_DEVELOPMENT = [
     PKG.FAMILY_2_1, PKG.FAMILY_2_2, PKG.FAMILY_PREMIUM, PKG.FAMILY_2_3,
     PKG.PRESTIGE
-];
+]
 
 const MENTAL_HEALTH = [
     PKG.COMFORT, PKG.PRESTIGE, PKG.BUSINESS,
     PKG.FAMILY_PREMIUM, PKG.FAMILY_2_3, PKG.SENIOR_PLUS
-];
+]
 
 
 export const SPECIALISTS_LIST: ISpecialist[] = [
@@ -418,3 +424,61 @@ export const SPECIALISTS_LIST: ISpecialist[] = [
         availableInPackages: CHILD_DEVELOPMENT
     },
 ]
+
+export const PROMO_SPECIALISTS = [
+    {label: 'Kardiolog', searchTerm: 'Kardiologia'},
+    {label: 'Dermatolog', searchTerm: 'Dermatologia'},
+    {label: 'Pediatra', searchTerm: 'Pediatria'},
+    {label: 'Ortopeda', searchTerm: 'Ortopedia'}
+]
+export const whyUsItems = [
+    {
+        icon: <StethoscopeIcon/>,
+        title: "Pewność i ochrona zdrowia",
+        desc: "Agregujemy oferty wyłącznie od sprawdzonych dostawców usług medycznych."
+    },
+    {
+        icon: <PillIcon/>,
+        title: "Nowoczesne leczenie",
+        desc: "Możliwość wyboru pakietów obejmujących telemedycynę i szybki kontakt z lekarzem bez wychodzenia z domu."
+    },
+    {
+        icon: <FilePlusIcon/>,
+        title: "Elastyczna oferta",
+        desc: "Elastyczne subskrypcje bez długoterminowych zobowiązań. Możesz zrezygnować w dowolnym momencie."
+    },
+    {
+        icon: <UsersIcon/>,
+        title: "Zaufanie klientów",
+        desc: "Podejmuj decyzje w oparciu o opinie i oceny innych użytkowników naszej platformy."
+    },
+    {
+        icon: <ClockIcon/>,
+        title: "Całodobowe wsparcie",
+        desc: "Infolinia medyczna dostępna 24/7. Pomoc zawsze wtedy, gdy jej potrzebujesz."
+    },
+    {
+        icon: <ShieldIcon className="w-6 h-6"/>,
+        title: "Bezpieczeństwo danych",
+        desc: "Twoje konto jest chronione nowoczesnymi metodami autoryzacji (2FA) i szyfrowaniem danych."
+    }
+]
+export const CATEGORY_GROUPS: Record<string, string[]> = {
+    "Podstawowa i Rodzinna": ["Podstawowa", "Pediatria", "Geriatria", "Medycyna rodzinna"],
+    "Specjaliści do chorób wewnętrznych": [
+        "Kardiologia", "Endokrynologia", "Diabetologia", "Gastrologia", "Nefrologia",
+        "Pulmonologia", "Reumatologia", "Neurologia", "Alergologia", "Hematologia",
+        "Onkologia", "Choroby zakaźne", "Choroby wewnętrzne"
+    ],
+    "Chirurgia i Zabiegi": [
+        "Chirurgia", "Ortopedia", "Urologia", "Neurochirurgia", "Laryngologia",
+        "Okulistyka", "Ginekologia", "Anestezjologia"
+    ],
+    "Zdrowie Psychiczne": ["Psychologia", "Psychiatria"],
+    "Rozwój Dziecka": ["Pediatria", "Logopedia"],
+    "Inne": [
+        "Stomatologia", "Dermatologia", "Dietetyka", "Rehabilitacja",
+        "Diagnostyka", "Medycyna sportowa"
+    ]
+}
+export const CATEGORY_BUTTONS = ["Wszystkie", ...Object.keys(CATEGORY_GROUPS)]

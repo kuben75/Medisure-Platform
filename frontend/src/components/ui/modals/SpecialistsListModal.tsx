@@ -1,83 +1,111 @@
+import { useMemo, useState } from "react";
 import Modal from './Modal.tsx'
 import Button from '../Button.tsx'
 import { SPECIALISTS_LIST } from '../../../constants/specialists.tsx'
 import CheckIcon from "../../icons/CheckIcon.tsx";
-import { useMemo } from "react";
-import type {ISpecialistsListModalProps} from "../../../types/specialists.types.ts";
+import type { ISpecialistsListModalProps } from "../../../types/specialists.types.ts";
 
-const LockIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>;
+const LockIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-gray-400"><path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clipRule="evenodd" /></svg>;
+const FilterIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M18.75 12.75h1.5a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5zM12 6a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 0112 6zM12 18a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 0112 18zM3.75 6.75h1.5a.75.75 0 100-1.5h-1.5a.75.75 0 000 1.5zM5.25 18.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 010 1.5zM3 12a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 013 12zM9 3.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5zM12.75 12a2.25 2.25 0 114.5 0 2.25 2.25 0 01-4.5 0zM9 15.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /></svg>;
 
-export default function SpecialistsListModal({ isOpen, onClose, packageName }: ISpecialistsListModalProps) {
-    if (!isOpen) return null;
+export default function SpecialistsListModal({ isOpen, onClose, packageName, includedSpecializations }: ISpecialistsListModalProps) {
+    const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const sortedSpecialists = useMemo(() => {
-        const list = [...SPECIALISTS_LIST];
+    const allowedCategories = useMemo(() => {
+        if (!includedSpecializations) return []
+        return includedSpecializations.split(';').map(c => c.trim())
+    }, [includedSpecializations])
+
+    const filteredAndSortedList = useMemo(() => {
+        let list = [...SPECIALISTS_LIST];
+
+        const isAvailable = (specCategory: string) => allowedCategories.includes(specCategory);
+
+        if (showOnlyAvailable) {
+            list = list.filter(s => isAvailable(s.category));
+        }
 
         return list.sort((a, b) => {
-            const aAvailable = a.availableInPackages.includes(packageName);
-            const bAvailable = b.availableInPackages.includes(packageName);
+            const aAv = isAvailable(a.category);
+            const bAv = isAvailable(b.category);
 
-            if (aAvailable && !bAvailable) return -1;
-            if (!aAvailable && bAvailable) return 1;
-            return 0;
-        });
-    }, [packageName]);
+            if (aAv && !bAv) return -1;
+            if (!aAv && bAv) return 1;
+            return a.category.localeCompare(b.category);
+        })
+    }, [allowedCategories, showOnlyAvailable]);
+
+    if (!isOpen) return null;
 
     const total = SPECIALISTS_LIST.length;
-    const availableCount = SPECIALISTS_LIST.filter(s => s.availableInPackages.includes(packageName)).length;
-    const percentage = Math.round((availableCount / total) * 100);
-
-    let progressColor = "bg-blue-500";
-    if (percentage < 30) progressColor = "bg-yellow-400";
-    else if (percentage > 80) progressColor = "bg-green-500";
+    const availableCount = SPECIALISTS_LIST.filter(s => allowedCategories.includes(s.category)).length;
+    const percentage = total > 0 ? Math.round((availableCount / total) * 100) : 0;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} className="max-w-6xl">
-            <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900">
-                    Zakres specjalistów
-                </h2>
-                <p className="text-lg text-[#4E61F6] font-semibold mt-1">{packageName}</p>
-            </div>
-
-            <div className="mb-8 bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <div className="flex justify-between text-sm mb-3 font-medium">
-                    <span className="text-gray-600">Dostępność specjalizacji w tym pakiecie</span>
-                    <span className={`font-bold ${percentage > 80 ? 'text-green-600' : 'text-[#4E61F6]'}`}>
-                        {percentage}% ({availableCount}/{total})
-                    </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden border border-gray-300/50">
-                    <div
-                        className={`h-4 rounded-full transition-all duration-1000 ease-out ${progressColor} relative`}
-                        style={{ width: `${percentage}%` }}
-                    >
-                        <div className="absolute top-0 left-0 w-full h-full bg-white/20"></div>
+        <Modal isOpen={isOpen} onClose={onClose} className="max-w-5xl">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-100 pb-6 mb-6 gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+                        Katalog Specjalistów
+                    </h2>
+                    <div className="flex items-center gap-2 mt-1">
+                        <span className="text-sm text-gray-500">Pakiet:</span>
+                        <span className="text-sm font-bold text-[#4E61F6] bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                            {packageName}
+                        </span>
                     </div>
                 </div>
-                <p className="text-xs text-gray-400 mt-3 text-center">
-                    Lista zawiera wszystkich specjalistów współpracujących z Medisure. Kolorowe karty oznaczają dostępność w wybranym pakiecie.
-                </p>
+
+                <div className="flex gap-4 mt-6">
+                    <div className="text-right">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Pokrycie</p>
+                        <p className={`text-2xl font-bold leading-none ${percentage > 80 ? 'text-green-600' : 'text-[#4E61F6]'}`}>
+                            {percentage}%
+                        </p>
+                    </div>
+                    <div className="w-px h-8 bg-gray-200 self-center"></div>
+                    <div className="text-right">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Dostępni</p>
+                        <p className="text-2xl font-bold text-gray-800 leading-none">
+                            {availableCount}<span className="text-sm text-gray-400 font-normal">/{total}</span>
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-h-[60vh] overflow-y-auto p-2 custom-scrollbar">
-                {sortedSpecialists.map((spec) => {
-                    const isAvailable = spec.availableInPackages.includes(packageName);
+            <div className="flex justify-between items-center mb-6">
+                <button
+                    onClick={() => setShowOnlyAvailable(!showOnlyAvailable)}
+                    className={`
+                        flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border
+                        ${showOnlyAvailable
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }
+                    `}
+                >
+                    <FilterIcon />
+                    {!showOnlyAvailable ? 'Pokaż wszystkich' : 'Pokaż tylko dostępnych'}
+                </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto p-1 custom-scrollbar">
+                {filteredAndSortedList.map((spec) => {
+                    const isAvailable = allowedCategories.includes(spec.category)
 
                     return (
                         <div
                             key={spec.id}
                             className={`
-                                relative p-4 rounded-xl border flex flex-col items-center text-center transition-all duration-300 group
+                                flex items-start gap-4 p-4 rounded-xl border transition-all duration-200 group relative overflow-hidden
                                 ${isAvailable
-                                ? 'bg-white border-blue-100 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-blue-300'
-                                : 'bg-gray-50/50 border-gray-100 opacity-50 grayscale hover:grayscale-0 hover:opacity-100'
+                                ? 'bg-white border-gray-200 hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-500/5'
+                                : 'bg-slate-50 border-gray-100 opacity-70 hover:opacity-100'
                             }
                             `}
                         >
-                            <div className="relative mb-3">
-                                <div className={`w-20 h-20 rounded-full overflow-hidden border-2 ${isAvailable ? 'border-blue-100 group-hover:border-blue-400' : 'border-gray-200'}`}>
+                            <div className="relative flex-shrink-0">
+                                <div className={`w-14 h-14 rounded-full overflow-hidden border ${isAvailable ? 'border-gray-100' : 'border-gray-200 grayscale'}`}>
                                     <img
                                         src={spec.imageUrl}
                                         alt={spec.name}
@@ -86,42 +114,50 @@ export default function SpecialistsListModal({ isOpen, onClose, packageName }: I
                                     />
                                 </div>
                                 {isAvailable && (
-                                    <div className="absolute bottom-0 right-0 bg-green-500 text-white p-1 rounded-full border-2 border-white">
+                                    <div className="absolute -bottom-1 -right-1 bg-green-500 text-white p-0.5 rounded-full border-2 border-white">
                                         <CheckIcon className="w-3 h-3" />
                                     </div>
                                 )}
                             </div>
 
-                            <span className={`text-[10px] uppercase font-bold tracking-wider mb-1 ${isAvailable ? 'text-blue-600' : 'text-gray-400'}`}>
-                                {spec.category}
-                            </span>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex justify-between items-start">
+                                    <p className={`text-[10px] font-bold uppercase tracking-wide truncate mb-0.5 ${isAvailable ? 'text-indigo-600' : 'text-gray-400'}`}>
+                                        {spec.category}
+                                    </p>
+                                    {!isAvailable && <LockIcon />}
+                                </div>
 
-                            <span className={`text-xs font-bold leading-tight mb-1 ${isAvailable ? 'text-gray-900' : 'text-gray-500'}`}>
-                                {spec.title} {spec.name}
-                            </span>
+                                <h3 className={`text-sm font-bold truncate leading-tight ${isAvailable ? 'text-gray-900' : 'text-gray-500'}`}>
+                                    {spec.title} {spec.name}
+                                </h3>
 
-                            <div className="mt-auto pt-3 border-t border-gray-100/50 w-full flex justify-center">
-                                {isAvailable ? (
-                                    <div className="flex items-center gap-1 text-[10px] text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded-full">
-                                        Dostępny
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-1 text-[10px] text-gray-400 font-medium bg-gray-100 px-2 py-0.5 rounded-full">
-                                        <LockIcon /> Brak w pakiecie
-                                    </div>
-                                )}
+                                <p className="text-[11px] text-gray-500 mt-1 line-clamp-2 leading-relaxed">
+                                    {spec.description}
+                                </p>
+
+                                <div className="mt-3 flex items-center gap-2">
+                                    {isAvailable ? (
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-green-50 text-green-700 border border-green-100">
+                                            W cenie pakietu
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500 border border-gray-200">
+                                            Niedostępny
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     );
                 })}
             </div>
 
-            <div className="mt-8 text-center pt-6 border-t border-gray-100">
-                <Button variant="primary" onClick={onClose} className="!px-10 shadow-sm border-gray-300 ">
-                    Zamknij listę
+            <div className="mt-6 flex justify-end pt-4 border-t border-gray-100">
+                <Button variant="secondary" onClick={onClose} className="px-6 border-gray-300 hover:bg-gray-50 text-gray-700">
+                    Zamknij
                 </Button>
             </div>
-
         </Modal>
     )
 }

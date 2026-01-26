@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import Modal from '../ui/modals/Modal.tsx';
-import Button from '../ui/Button.tsx';
-import BirthDatePicker from '../ui/BirthDatePicker.tsx';
-import {useAuth} from "../../hooks/useAuth.ts";
-import {useNotification} from "../../hooks/UseNotification.ts";
+import Modal from './Modal.tsx';
+import Button from '../Button.tsx';
+import BirthDatePicker from '../BirthDatePicker.tsx';
+import {useAuth} from "../../../hooks/useAuth.ts";
+import {useNotification} from "../../../hooks/UseNotification.ts";
 
 export default function OnboardingModal() {
     const { user, token, updateUser } = useAuth()

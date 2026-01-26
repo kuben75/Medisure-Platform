@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import Modal from '../ui/modals/Modal.tsx';
-import Button from '../ui/Button.tsx';
-import { useAuth } from '../../hooks/useAuth.ts';
-import { useNotification } from '../../hooks/UseNotification.ts';
-import ShieldCheckIcon from "../icons/ShieldCheckIcon.tsx";
-import LockIcon from "../icons/LockIcon.tsx";
+import Modal from './Modal.tsx';
+import Button from '../Button.tsx';
+import { useAuth } from '../../../hooks/useAuth.ts';
+import { useNotification } from '../../../hooks/UseNotification.ts';
+import ShieldCheckIcon from "../../icons/ShieldCheckIcon.tsx";
+import LockIcon from "../../icons/LockIcon.tsx";
 
 interface TwoFactorModalProps {
     isOpen: boolean;

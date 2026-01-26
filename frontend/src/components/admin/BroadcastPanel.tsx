@@ -24,7 +24,7 @@ export default function BroadcastPanel() {
         }
     }
 
-    const previewStyle = getTypeStyles(type);
+    const previewStyle = getTypeStyles(type)
 
     return (
         <div className="mt-4 md:mt-8 bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200 flex flex-col lg:flex-row gap-10">

@@ -1,75 +1,16 @@
-import {useState, useMemo, useEffect} from 'react';
-import { SPECIALISTS_LIST } from '../constants/specialists.tsx';
-import type { ISpecialist } from "../types/specialists.types.ts";
-import Modal from '../components/ui/modals/Modal.tsx';
-import Button from '../components/ui/Button.tsx';
-import CheckIcon from '../components/icons/CheckIcon.tsx';
-import BriefcaseIcon from "../components/icons/BriefcaseIcon.tsx";
-import {useLocation, useNavigate} from 'react-router-dom';
-
-const CATEGORY_GROUPS: Record<string, string[]> = {
-    "Podstawowa i Rodzinna": ["Podstawowa", "Pediatria", "Geriatria", "Medycyna rodzinna"],
-    "Specjaliści do chorób wewnętrznych": [
-        "Kardiologia", "Endokrynologia", "Diabetologia", "Gastrologia", "Nefrologia",
-        "Pulmonologia", "Reumatologia", "Neurologia", "Alergologia", "Hematologia",
-        "Onkologia", "Choroby zakaźne", "Choroby wewnętrzne"
-    ],
-    "Chirurgia i Zabiegi": [
-        "Chirurgia", "Ortopedia", "Urologia", "Neurochirurgia", "Laryngologia",
-        "Okulistyka", "Ginekologia", "Anestezjologia"
-    ],
-    "Zdrowie Psychiczne": ["Psychologia", "Psychiatria"],
-    "Rozwój Dziecka": ["Pediatria", "Logopedia"],
-    "Inne": [
-        "Stomatologia", "Dermatologia", "Dietetyka", "Rehabilitacja",
-        "Diagnostyka", "Medycyna sportowa"
-    ]
-}
-
-const CATEGORY_BUTTONS = ["Wszystkie", ...Object.keys(CATEGORY_GROUPS)]
-
-const VerifiedBadge = () => (
-    <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center text-white text-[10px] border-2 border-white absolute bottom-0 right-0 shadow-sm" title="Zweryfikowany specjalista Medisure">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        </svg>
-    </div>
-)
-
+import {CATEGORY_BUTTONS} from '../constants/specialists.tsx'
+import Modal from '../components/ui/modals/Modal.tsx'
+import Button from '../components/ui/Button.tsx'
+import CheckIcon from '../components/icons/CheckIcon.tsx'
+import BriefcaseIcon from "../components/icons/BriefcaseIcon.tsx"
+import VerifiedBadge from "../components/icons/VerifiedBadge.tsx"
+import {useSpecialistsLogic} from "../hooks/useSpecialistsLogic.ts";
+import SearchIcon from "../components/icons/SearchIcon.tsx";
 export default function SpecialistsPage() {
-    const navigate = useNavigate()
-    const location = useLocation();
-    const packageFilterName = location.state?.filterByPackage || null;
-    const initialSearch = location.state?.filterByName || "";
-    const [searchTerm, setSearchTerm] = useState(initialSearch)
-    const [selectedCategory, setSelectedCategory] = useState("Wszystkie");
-    const [selectedSpecialist, setSelectedSpecialist] = useState<ISpecialist | null>(null)
-
-    useEffect(() => {
-        if (!packageFilterName && !initialSearch) window.scrollTo(0, 0)
-        if (initialSearch) setSearchTerm(initialSearch);
-    }, [packageFilterName, initialSearch])
-
-    const filtered = useMemo(() => {
-        return SPECIALISTS_LIST.filter(s => {
-            const matchesSearch =
-                s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                s.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                s.title.toLowerCase().includes(searchTerm.toLowerCase())
-
-            let matchesCategory = false
-
-            if (selectedCategory === "Wszystkie") {
-                matchesCategory = true
-            } else {
-                const allowedCategories = CATEGORY_GROUPS[selectedCategory]
-                if (allowedCategories && allowedCategories.includes(s.category))
-                    matchesCategory = true
-            }
-            return matchesSearch && matchesCategory
-        })
-    }, [searchTerm, selectedCategory])
-
+    const {
+        searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, filtered,
+        selectedSpecialist, setSelectedSpecialist, getRealPackagesForSpecialist, navigate
+    } = useSpecialistsLogic()
     return (
         <div className="min-h-screen bg-slate-50 py-12 md:py-24 px-4">
             <div className="max-w-7xl mx-auto">
@@ -155,7 +96,7 @@ export default function SpecialistsPage() {
 
                 {filtered.length === 0 && (
                     <div className="text-center py-20 animate-fade-in-up">
-                        <div className="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400 text-4xl shadow-inner">🤷‍♂️</div>
+                        <div className="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400 text-4xl shadow-inner"><SearchIcon className="w-6 h-6 text-[#4E61F6]" /></div>
                         <h3 className="text-xl font-bold text-gray-800 mb-2">Nie znaleziono specjalisty</h3>
                         <p className="text-gray-500 mb-6">W tej kategorii nie ma lekarzy pasujących do Twojego wyszukiwania.</p>
                         <button
@@ -204,19 +145,25 @@ export default function SpecialistsPage() {
                                 </h4>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">
-                                    {selectedSpecialist.availableInPackages.map((pkg, idx) => (
-                                        <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-gray-50 hover:bg-blue-50 hover:border-blue-200 transition-colors group">
-                                            <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-800">{pkg}</span>
-                                            <button
-                                                onClick={() => {
-                                                    navigate('/kalkulator');
-                                                }}
-                                                className="text-xs font-bold text-[#4E61F6] opacity-0 group-hover:opacity-100 transition-opacity"
-                                            >
-                                                Sprawdź →
-                                            </button>
+                                    {getRealPackagesForSpecialist(selectedSpecialist.category).length > 0 ? (
+                                        getRealPackagesForSpecialist(selectedSpecialist.category).map((pkgName, idx) => (
+                                            <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-gray-50 hover:bg-blue-50 hover:border-blue-200 transition-colors group">
+                                                <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-800">{pkgName}</span>
+                                                <button
+                                                    onClick={() => {
+                                                        navigate('/kalkulator');
+                                                    }}
+                                                    className="text-xs font-bold text-[#4E61F6] opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    Sprawdź →
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="col-span-2 text-center text-gray-400 text-sm py-4">
+                                            Ten specjalista nie jest obecnie przypisany do żadnego pakietu.
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
 
