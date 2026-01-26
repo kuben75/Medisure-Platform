@@ -11,7 +11,7 @@ import AdminPanel from './components/admin/AdminPanel.tsx'
 import RegisterPage from "./pages/RegisterPage.tsx"
 import UserProfile from "./components/users/UserProfile.tsx"
 import UserRoute from "./components/auth/UserRoute.tsx"
-import OnboardingModal from "./components/users/OnboardingModal.tsx"
+import OnboardingModal from "./components/ui/modals/OnboardingModal.tsx"
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx"
 import FaqPage from "./pages/FaqPage.tsx"
 import ScrollToTop from "./utils/ScrollToTop.tsx"

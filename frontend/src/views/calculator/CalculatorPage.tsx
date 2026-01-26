@@ -1,6 +1,6 @@
 import HeroSectionCalculator from "../../components/sections/HeroSectionCalculator.tsx";
 import CalculationResults from "./CalculationResults.tsx";
-import PackageCatalog from "./PackageCalculator.tsx";
+import PackageCatalog from "./PackageCatalog.tsx";
 import CheckoutOverlay from "../../components/ui/CheckoutOverlay.tsx";
 import PackageDetailsModal from "../../components/ui/modals/PackageDetailsModal.tsx";
 import PriceFactorsSection from "../../components/sections/PriceFactorsSection.tsx";

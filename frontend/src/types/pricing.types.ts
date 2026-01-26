@@ -26,6 +26,7 @@ export interface IPricingPlan {
     specialistsCount: number
     facilitiesCount: number
     features: string[]
+    includedSpecializations?: string
     averageRating: number
     reviews: number
     isFeatured?: boolean

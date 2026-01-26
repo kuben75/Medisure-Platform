@@ -22,7 +22,7 @@ export default function Modal({isOpen, onClose, children, className}: IModalProp
                         onClick={onClose}>
                     <XIcon className="w-7 h-7"/>
                 </button>
-                <div>
+                <div className={"mt-3"}>
                     {children}
                 </div>
             </div>

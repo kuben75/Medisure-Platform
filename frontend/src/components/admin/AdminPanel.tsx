@@ -25,10 +25,10 @@ export default function AdminPanel() {
         const params = new URLSearchParams(location.search);
         const tabParam = params.get('tab');
 
-        if (tabParam && TABS.some(t => t.id === tabParam)) {
-            setActiveTab(tabParam);
-        }
-    }, [location]);
+        if (tabParam && TABS.some(t => t.id === tabParam))
+            setActiveTab(tabParam)
+
+    }, [location])
     const handleLogout = () => {
         logout()
         navigate('/login')

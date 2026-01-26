@@ -7,10 +7,9 @@ import UserIcon from "../icons/UserIcon.tsx";
 import LogoutIcon from "../icons/LogoutIcon.tsx";
 import MenuIcon from "../icons/MenuIcon.tsx";
 import XIcon from "../icons/XIcon.tsx";
-
+import { NAV_LINKS } from "../../constants/ui.ts"
 import {useUserNotifications} from "../../hooks/useUserNotifications.ts";
 
-// Ikona Miotły / Kosza
 const BroomIcon = ({ className }: { className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" />
@@ -28,7 +27,6 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false)
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-    // ZMIANA: Zamiast tablicy ID, trzymamy datę ostatniego czyszczenia (timestamp)
     const [lastClearedTime, setLastClearedTime] = useState<number>(0);
 
     const location = useLocation()
@@ -38,46 +36,36 @@ export default function Navbar() {
     const { user, logout, roles } = useAuth()
     const isAdmin = roles?.includes('Admin')
 
-    // --- LOGIKA LOCAL STORAGE (TIMESTAMP) ---
     useEffect(() => {
         if (user?.email) {
-            // Używamy maila zamiast ID
             const storageKey = `cleared_date_${user.email}`;
             const stored = localStorage.getItem(storageKey);
 
-            if (stored) {
-                setLastClearedTime(parseInt(stored, 10));
-            } else {
-                setLastClearedTime(0);
-            }
+            if (stored)
+                setLastClearedTime(parseInt(stored, 10))
+             else
+                setLastClearedTime(0)
+
         }
-    }, [user]);
+    }, [user])
 
     const handleClearRead = () => {
-        if (!user?.email) return;
+        if (!user?.email) return
 
-        const now = Date.now();
-        setLastClearedTime(now);
+        const now = Date.now()
+        setLastClearedTime(now)
 
-        const storageKey = `cleared_date_${user.email}`;
-        localStorage.setItem(storageKey, now.toString());
+        const storageKey = `cleared_date_${user.email}`
+        localStorage.setItem(storageKey, now.toString())
     }
-    // ----------------------------
 
-    // FILTROWANIE:
-    // Pokazujemy powiadomienie JEŚLI:
-    // 1. Jest nieprzeczytane (!isRead)
-    // LUB
-    // 2. Zostało stworzone PO dacie ostatniego czyszczenia
     const visibleNotifications = notifications.filter(notif => {
-        if (!notif.isRead) return true; // Nieprzeczytane zawsze pokazujemy
+        if (!notif.isRead) return true
 
-        const notifDate = new Date(notif.createdAt).getTime();
-        return notifDate > lastClearedTime;
-    });
+        const notifDate = new Date(notif.createdAt).getTime()
+        return notifDate > lastClearedTime
+    })
 
-    // Czy przycisk "Wyczyść" powinien być aktywny?
-    // Tylko jeśli są jakieś przeczytane wiadomości, które są starsze niż moment ostatniego czyszczenia (czyli są widoczne)
     const canClear = visibleNotifications.some(n => n.isRead);
 
 
@@ -87,7 +75,6 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    // ... (reszta useEffectów bez zmian) ...
     useEffect(() => {
         document.body.style.overflow = (isMenuOpen || isNotificationsOpen) ? 'hidden' : 'auto'
     }, [isMenuOpen, isNotificationsOpen])
@@ -103,14 +90,6 @@ export default function Navbar() {
         navigate('/login')
     }
 
-    const navLinks = [
-        { to: "/", label: "Strona główna" },
-        { to: "/przewodnik-pacjenta", label: "Przewodnik" },
-        { to: "/kalkulator", label: "Kalkulator" },
-        { to: "/specjalisci", label: "Specjaliści" },
-        { to: "/kontakt", label: "Kontakt" },
-    ]
-
     return (
         <>
             <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md py-3' : 'bg-white py-5'}`}>
@@ -123,7 +102,7 @@ export default function Navbar() {
                     </Link>
 
                     <ul className="hidden lg:flex items-center gap-2">
-                        {navLinks.map((link, index) => (
+                        {NAV_LINKS.map((link, index) => (
                             <li key={link.label} className={index === 0 ? "mr-8 xl:mr-12 relative" : ""}>
                                 <Link
                                     to={link.to}
@@ -347,7 +326,7 @@ export default function Navbar() {
                     </button>
                 </div>
                 <ul className="flex-grow overflow-y-auto py-4 px-2">
-                    {navLinks.map((link) => (
+                    {NAV_LINKS.map((link) => (
                         <li key={link.label}>
                             <Link to={link.to} onClick={() => setIsMenuOpen(false)} className={`block px-4 py-3.5 rounded-xl mb-1 font-medium transition-all ${
                                 location.pathname === link.to

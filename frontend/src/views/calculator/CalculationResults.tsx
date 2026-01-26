@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../../components/ui/Button'
 import type { ICalculationResultsProps } from "../../types/pricing.types.ts"
@@ -8,10 +8,9 @@ import ShieldIcon from "../../components/icons/ShieldIcon.tsx"
 import CheckIcon from "../../components/icons/CheckIcon.tsx"
 import ChevronRightIcon from "../../components/icons/ChevronRightIcon.tsx"
 import { useAuth } from "../../hooks/useAuth.ts"
-
-const SparklesIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813a3.75 3.75 0 002.576-2.576l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z" clipRule="evenodd" /></svg>
-)
+import { SPECIALISTS_LIST } from "../../constants/specialists.tsx"
+import SpecialistsListModal from "../../components/ui/modals/SpecialistsListModal.tsx"
+import SparklesIcon from "../../components/icons/SparklesIcon.tsx"
 
 export default function CalculationResults({ estimatedPrice, packageType, age, recommendedPlan, onShowDetails, budgetExceeded }: ICalculationResultsProps & { budgetExceeded?: boolean }) {
     const isCompany = packageType === 'Biznesowy'
@@ -19,24 +18,31 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
     const isContactRequired = isCompany || isFamilyCustom
     const { user } = useAuth()
 
+    const [isSpecsModalOpen, setIsSpecsModalOpen] = useState(false)
+
     const policyLabel = isCompany ? 'Biznesowy' :
         isFamilyCustom ? 'Rodzinna (Duża)' :
-            packageType === 'Rodzinny' ? 'Rodzinna' : 'Indywidualna';
+            packageType === 'Rodzinny' ? 'Rodzinna' : 'Indywidualna'
 
-    const grossAmount = Math.round(estimatedPrice * 100) / 100;
-    const netAmount = (grossAmount / 1.23).toFixed(2);
-    const vatAmount = (grossAmount - parseFloat(netAmount)).toFixed(2);
+    const grossAmount = Math.round(estimatedPrice * 100) / 100
+    const netAmount = (grossAmount / 1.23).toFixed(2)
+    const vatAmount = (grossAmount - parseFloat(netAmount)).toFixed(2)
 
     const priceRange = useMemo(() => {
-        if (!recommendedPlan || isContactRequired) return null;
-        const base = recommendedPlan.priceValue;
-        if (recommendedPlan.category === 'Senior' || recommendedPlan.category === 'Biznesowy') return null;
-        const min = Math.round(base);
-        const max = Math.round(base * 1.9);
-        return { min, max };
-    }, [recommendedPlan, isContactRequired]);
+        if (!recommendedPlan || isContactRequired) return null
+        const base = recommendedPlan.priceValue
+        if (recommendedPlan.category === 'Senior' || recommendedPlan.category === 'Biznesowy') return null
+        const min = Math.round(base)
+        const max = Math.round(base * 1.9)
+        return { min, max }
+    }, [recommendedPlan, isContactRequired])
 
-    const isPersonalized = estimatedPrice > (recommendedPlan?.priceValue || 0) && !isContactRequired;
+    const specialistsCount = useMemo(() => {
+        if (!recommendedPlan) return 0
+        return SPECIALISTS_LIST.filter(s => s.availableInPackages.includes(recommendedPlan.name)).length
+    }, [recommendedPlan])
+
+    const isPersonalized = estimatedPrice > (recommendedPlan?.priceValue || 0) && !isContactRequired
 
     return (
         <section className="py-20 px-4 bg-gradient-to-b from-slate-50 to-white border-b border-gray-200" id="results">
@@ -61,7 +67,6 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
 
                     <div className="lg:col-span-5 bg-white p-8 rounded-3xl shadow-xl border border-indigo-100 flex flex-col justify-between relative overflow-hidden group">
                         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-400 to-[#4E61F6]"></div>
-
                         <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
                         <div className="relative z-10 flex flex-col h-full">
@@ -121,7 +126,7 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
 
                                         {isPersonalized && !budgetExceeded && (
                                             <div className="mt-3 inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-purple-100">
-                                                <SparklesIcon />
+                                                <SparklesIcon/>
                                                 Oferta dopasowana do wieku ({age} lat)
                                             </div>
                                         )}
@@ -208,7 +213,7 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
 
                                 <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-[80px] -mr-20 -mt-20 pointer-events-none"></div>
 
-                                <div className="flex flex-col sm:flex-row justify-between items-start mb-8 relative z-10 gap-4">
+                                <div className="flex flex-row justify-between items-start mb-8 relative z-10 gap-4">
                                     <div>
                                         <span className="inline-flex items-center gap-1.5 bg-amber-400 text-amber-950 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg mb-3">
                                             {isContactRequired ? "★ Kontakt Wymagany" : "★ Rekomendacja"}
@@ -233,7 +238,24 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
                                             </p>
 
                                             <div className="bg-black/20 rounded-2xl p-6 border border-white/5 backdrop-blur-sm mb-8">
-                                                <p className="text-xs font-bold text-blue-200 uppercase mb-4 tracking-wide">Kluczowe korzyści</p>
+                                                <div className="flex flex-col gap-2 md:gap-0 md:flex-row justify-between items-center mb-4">
+                                                    <p className="text-xs font-bold text-blue-200 uppercase tracking-wide">Kluczowe korzyści</p>
+
+                                                    <button
+                                                        onClick={() => setIsSpecsModalOpen(true)}
+                                                        className="group/specs flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-all cursor-pointer border border-white/5"
+                                                    >
+                                                        <div className="bg-green-500/20 p-1 rounded-full">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-green-400">
+                                                                <path fillRule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clipRule="evenodd" />
+                                                            </svg>
+                                                        </div>
+                                                        <span className="text-xs font-medium text-white group-hover/specs:underline decoration-white/50 underline-offset-2">
+                                                            {specialistsCount} Specjalistów
+                                                        </span>
+                                                    </button>
+
+                                                </div>
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                     {recommendedPlan.features.slice(0, 6).map((feature, i) => (
                                                         <div key={i} className="flex items-start text-sm font-medium text-white group/item">
@@ -292,6 +314,13 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
 
                 </div>
             </div>
+            {recommendedPlan && (
+                <SpecialistsListModal
+                    isOpen={isSpecsModalOpen}
+                    onClose={() => setIsSpecsModalOpen(false)}
+                    packageName={recommendedPlan.name}
+                />
+            )}
         </section>
     )
 }
