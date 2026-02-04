@@ -33,28 +33,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const storedData = getStoredAuthData();
         if (storedData) {
-            setToken(storedData.token);
-            setUser(storedData.user);
-            setRoles(extractRolesFromToken(storedData.token));
+            setToken(storedData.token)
+            setUser(storedData.user)
+            setRoles(extractRolesFromToken(storedData.token))
         } else {
-            clearAuthSession();
+            clearAuthSession()
         }
-        setIsLoading(false);
-    }, [clearAuthSession]);
+        setIsLoading(false)
+    }, [clearAuthSession])
 
     useEffect(() => {
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === STORAGE_KEYS.TOKEN || e.key === STORAGE_KEYS.USER) {
-                window.location.reload();
+                window.location.reload()
             }
-        };
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, []);
+        }
+        window.addEventListener('storage', handleStorageChange)
+        return () => window.removeEventListener('storage', handleStorageChange)
+    }, [])
 
     const setAuthSession = (newToken: string, newUser: IUser) => {
-        handleAuthSuccess(newToken, newUser);
-    };
+        handleAuthSuccess(newToken, newUser)
+    }
 
     const login = async (email: string, password: string): Promise<string[] | null> => {
         setIsLoading(true);
@@ -65,33 +65,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
-            });
+            })
 
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Błąd logowania');
+            const data = await response.json()
+            if (!response.ok) throw new Error(data.message || 'Błąd logowania')
 
-            handleAuthSuccess(data.token, data.user);
-            return extractRolesFromToken(data.token);
+            handleAuthSuccess(data.token, data.user)
+            return extractRolesFromToken(data.token)
 
         } catch (err) {
-            console.error(err);
-            setError(err instanceof Error ? err.message : String(err));
-            return null;
+            console.error(err)
+            setError(err instanceof Error ? err.message : String(err))
+            return null
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
-    };
+    }
 
     const logout = () => {
-        clearAuthSession();
-    };
+        clearAuthSession()
+    }
 
     const updateUser = (userData: IUser) => {
         setUser(prev => {
-            if (!prev) return null;
-            const newUser = { ...prev, ...userData };
-            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
-            return newUser;
+            if (!prev) return null
+            const newUser = { ...prev, ...userData }
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser))
+            return newUser
         })
     }
 

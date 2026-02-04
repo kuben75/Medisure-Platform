@@ -3,7 +3,7 @@ import Button from '../ui/Button.tsx';
 import EditProfileModal from "../ui/modals/EditProfileModal.tsx";
 import AddReviewModal from "../ui/modals/AddReviewModal.tsx";
 import ChangePasswordModal from "../ui/modals/ChangePasswordModal.tsx";
-import SubscriptionDetailsModal from "./SubscriptionDetailsModal.tsx";
+import SubscriptionDetailsModal from "../ui/modals/SubscriptionDetailsModal.tsx";
 import NotificationsPanel from "./NotificationsPanel.tsx";
 import TwoFactorModal from "../ui/modals/TwoFactorModal.tsx";
 import ArrowLeftIcon from "../icons/ArrowLeftIcon.tsx";

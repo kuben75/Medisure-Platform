@@ -82,7 +82,7 @@ export default function ReviewsSection() {
                     <div key={currentData.id} className="flex flex-col md:flex-row items-center md:items-start gap-8 animate-fade-in mt-12 md:mt-3">
 
                         <div className="flex-shrink-0">
-                            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-3xl md:text-4xl font-black text-white bg-gradient-to-br from-[#4E61F6] to-indigo-600 shadow-xl shadow-indigo-200 ring-4 ring-white">
+                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-3xl md:text-4xl font-black text-white bg-gradient-to-br from-[#4E61F6] to-indigo-600 shadow-xl shadow-indigo-200 ring-4 ring-white">
                                 {currentData.avatarText}
                             </div>
                         </div>

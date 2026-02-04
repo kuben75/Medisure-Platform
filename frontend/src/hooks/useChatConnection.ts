@@ -40,7 +40,7 @@ export const useChatConnection = (hubUrl: string, token: string | null, guestId:
             newConnection.stop()
             connectionRef.current = null
             setConnection(null)
-        };
+        }
     }, [token, guestId, hubUrl])
 
     return connection

@@ -6,6 +6,7 @@ export interface IIconProps {
     className?: string | "w-6 h-6"
     props?: React.SVGProps<SVGSVGElement>
     isFilled?: string
+    hasUnread?: boolean
 }
 export interface IModalProps {
     isOpen: boolean
@@ -134,4 +135,29 @@ export interface IPackageFormModalProps {
     onPackageAdded: () => void;
     token: string | null;
     packageToEdit: IPricingPlan | null;
+}
+
+export type TNavbarHeaderProps = {
+    scrolled: boolean
+    user: any
+    isAdmin: boolean
+    unreadCount: number
+    setIsNotificationsOpen: (v: boolean) => void
+    setIsMenuOpen: (v: boolean) => void
+    handleLogout: () => void
+}
+
+export interface ITwoFactorModalProps {
+    isOpen: boolean
+    onClose: () => void
+}
+
+export interface BirthDatePickerProps {
+    value: string
+    onChange: (date: string) => void
+}
+
+export interface ISuccessScreenProps {
+    countdown: number;
+    onCountdownChange: (value: number) => void;
 }

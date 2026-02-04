@@ -8,47 +8,21 @@ import BestMatchIcon from "../../icons/BestMatchIcon.tsx";
 import type {IPackageCardProps} from "../../../types/ui.types.ts";
 import {useAuth} from "../../../hooks/useAuth.ts";
 import {useMemo} from "react";
+import DoctorIcon from "../../icons/DoctorIcon.tsx";
+import ToothIcon from "../../icons/ToothIcon.tsx";
+import ClinicIcon from "../../icons/ClinicIcon.tsx";
+import HospitalIcon from "../../icons/HospitalIcon.tsx";
 
-const DoctorIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-        <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.125a7.125 7.125 0 011.416 4.902.75.75 0 01-1.052.667 13.075 13.075 0 01-6.761-1.873c.091-.037.18-.076.268-.117a8.624 8.624 0 005.88-3.579z" />
-    </svg>
-)
-
-const ToothIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-        <path d="M19.7999 5.2C19.1999 3.3 17.3999 2 15.2999 2C13.7999 2 12.4999 2.7 11.7999 3.7C11.0999 2.7 9.79991 2 8.29991 2C6.19991 2 4.39991 3.3 3.79991 5.2C2.29991 9.7 2.99991 16.7 6.29991 20.7C6.59991 21.1 7.19991 21.2 7.69991 20.8L10.7999 18.5C11.3999 18 12.2999 18 12.8999 18.5L15.9999 20.8C16.4999 21.2 17.0999 21 17.3999 20.7C20.6999 16.7 21.3999 9.7 19.7999 5.2Z"/>
-    </svg>
-)
-const ClinicIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-        <path fillRule="evenodd" d="M3 2.25a.75.75 0 01.75.75v.54l1.838-.46a9.75 9.75 0 016.725.738l.108.054a8.25 8.25 0 005.58.652l3.109-.732a.75.75 0 01.917.81 47.784 47.784 0 00.005 10.337.75.75 0 01-.574.812l-3.114.733a9.75 9.75 0 01-6.594-.158l-.108-.054a8.25 8.25 0 00-5.69-.625l-2.202.55V21a.75.75 0 01-1.5 0V3A.75.75 0 013 2.25z" clipRule="evenodd" />
-    </svg>
-);
-const HospitalIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-        <path fillRule="evenodd" d="M4.5 2.25a.75.75 0 01.75.75v2.25h13.5V3a.75.75 0 011.5 0v2.25h1.5a.75.75 0 01.75.75v14.25a.75.75 0 01-.75.75H3a.75.75 0 01-.75-.75V6a.75.75 0 01.75-.75h1.5V3a.75.75 0 01.75-.75zm14.25 4.5H5.25v13.5h13.5V6.75zm-9 3.75a.75.75 0 01.75.75v2.25h2.25a.75.75 0 010 1.5h-2.25v2.25a.75.75 0 01-1.5 0v-2.25H7.5a.75.75 0 010-1.5h2.25v-2.25a.75.75 0 01.75-.75z" clipRule="evenodd" />
-    </svg>
-)
-export default function PackageCard({
-                                        pkg,
-                                        isHighlighted,
-                                        isBestMatch,
-                                        displayPrice,
-                                        isPriceIncreased,
-                                        showPersonalizedPricing,
-                                        showYearlyPrice,
-                                        isInComparison,
-                                        onToggleComparison,
-                                        onOpenSpecs,
-                                        onOpenDetails
-                                    }: IPackageCardProps) {
+export default function PackageCard({pkg, isHighlighted, isBestMatch, displayPrice, isPriceIncreased,
+                                        showPersonalizedPricing, showYearlyPrice, isInComparison, onToggleComparison, onOpenSpecs, onOpenDetails}: IPackageCardProps) {
     const { user } = useAuth()
+
     const realSpecialistsCount = useMemo(() => {
         if (!pkg.includedSpecializations) return 0
         const allowedCategories = pkg.includedSpecializations.split(';').map(c => c.trim())
         return SPECIALISTS_LIST.filter(s => allowedCategories.includes(s.category)).length
     }, [pkg.includedSpecializations])
+
     const isBusiness = pkg.category === 'Biznesowy'
 
     let cardClasses = "group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border flex flex-col md:flex-row overflow-hidden relative";

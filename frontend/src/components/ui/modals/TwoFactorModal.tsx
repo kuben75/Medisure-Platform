@@ -1,105 +1,28 @@
-import { useState, useEffect } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+import {QRCodeSVG} from 'qrcode.react';
 import Modal from './Modal.tsx';
 import Button from '../Button.tsx';
-import { useAuth } from '../../../hooks/useAuth.ts';
-import { useNotification } from '../../../hooks/UseNotification.ts';
 import ShieldCheckIcon from "../../icons/ShieldCheckIcon.tsx";
 import LockIcon from "../../icons/LockIcon.tsx";
+import type {ITwoFactorModalProps} from "../../../types/ui.types.ts";
+import {useTwoFactorModal} from "../../../hooks/useTwoFactorModal.ts";
+import PhoneIcon from "../../icons/PhoneIcon.tsx";
+import QrIcon from "../../icons/QrIcon.tsx";
+import KeyIcon from "../../icons/KeyIcon.tsx";
 
-interface TwoFactorModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
-
-const PhoneIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>;
-const QrIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" /><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" /></svg>;
-const KeyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>;
-
-export default function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
-    const { token } = useAuth()
-    const { notify } = useNotification()
-
-    const [step, setStep] = useState<'loading' | 'intro' | 'setup' | 'success' | 'disabled' | 'disable-auth'>('loading')
-    const [qrUri, setQrUri] = useState('')
-    const [setupKey, setSetupKey] = useState('')
-    const [code, setCode] = useState('')
-
-    const [disablePassword, setDisablePassword] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-
-    useEffect(() => {
-        if (isOpen) {
-            fetchSetupData()
-            setCode('')
-            setDisablePassword('')
-            setIsLoading(false)
-        }
-    }, [isOpen])
-
-    const fetchSetupData = async () => {
-        setStep('loading');
-        try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/account/2fa/setup`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-
-            setQrUri(data.authenticatorUri);
-            setSetupKey(data.key);
-            setStep(data.isEnabled ? 'disabled' : 'intro');
-        } catch (e) {
-            notify.error("Błąd pobierania danych 2FA.");
-            onClose();
-        }
-    };
-
-    const handleEnable = async () => {
-        try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/account/2fa/enable`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ code })
-            })
-
-            if (!res.ok) throw new Error("Nieprawidłowy kod")
-
-            setStep('success');
-            notify.success("Weryfikacja dwuetapowa włączona!")
-        } catch (e) {
-            notify.error("Błędny kod weryfikacyjny.")
-        }
-    }
-
-    const handleDisableSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if(!disablePassword) return;
-
-        setIsLoading(true);
-        try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/account/2fa/disable`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ password: disablePassword })
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.Message || "Błędne hasło.");
-            }
-
-            notify.info("Weryfikacja dwuetapowa została wyłączona.");
-            onClose();
-        } catch (e: any) {
-            notify.error(e.message || "Wystąpił błąd.");
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
+export default function TwoFactorModal({ isOpen, onClose }: ITwoFactorModalProps) {
+    const {
+        step,
+        qrUri,
+        setupKey,
+        code,
+        setCode,
+        disablePassword,
+        setDisablePassword,
+        isLoading,
+        handleEnable,
+        handleDisableSubmit,
+        setStep
+    } = useTwoFactorModal({isOpen, onClose })
     if (!isOpen) return null
 
     return (
@@ -124,7 +47,7 @@ export default function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps)
                         </p>
                         <div className="space-y-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
                             <div className="flex items-start gap-4">
-                                <div className="bg-white p-2 rounded-lg text-[#4E61F6] shadow-sm shrink-0"><PhoneIcon /></div>
+                                <div className="bg-white p-2 rounded-lg text-[#4E61F6] shadow-sm shrink-0"><PhoneIcon className={"w-6 h-6"}/></div>
                                 <div><h4 className="font-bold text-gray-800 text-sm">1. Pobierz aplikację</h4><p className="text-xs text-gray-500 mt-1">Google Authenticator lub Microsoft Authenticator.</p></div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -132,7 +55,7 @@ export default function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps)
                                 <div><h4 className="font-bold text-gray-800 text-sm">2. Zeskanuj kod</h4><p className="text-xs text-gray-500 mt-1">Zeskanuj kod QR widoczny w następnym kroku.</p></div>
                             </div>
                             <div className="flex items-start gap-4">
-                                <div className="bg-white p-2 rounded-lg text-[#4E61F6] shadow-sm shrink-0"><KeyIcon /></div>
+                                <div className="bg-white p-2 rounded-lg text-[#4E61F6] shadow-sm shrink-0"><KeyIcon className={"w-6 h-6"}/></div>
                                 <div><h4 className="font-bold text-gray-800 text-sm">3. Potwierdź kodem</h4><p className="text-xs text-gray-500 mt-1">Wpisz kod z aplikacji, aby aktywować.</p></div>
                             </div>
                         </div>
@@ -181,7 +104,7 @@ export default function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps)
                         <Button
                             variant="danger"
                             className="w-full py-3 border-red-200 text-red-600 hover:bg-red-50"
-                            onClick={() => setStep('disable-auth')} // Przejście do autoryzacji
+                            onClick={() => setStep('disable-auth')}
                         >
                             Wyłącz 2FA
                         </Button>
