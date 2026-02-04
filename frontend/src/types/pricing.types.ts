@@ -1,4 +1,4 @@
-import React from "react"
+import React, {type FormEvent} from "react"
 import type {IUserSubscription} from "./user.types.ts"
 
 export type TPaymentMethodType = 'card' | 'transfer' | 'paypal' | 'gpay'
@@ -113,10 +113,62 @@ export interface IComparisonContext {
     limit: number
 }
 
-export interface IUseCheckoutFormProps {
-    isOpen: boolean;
-    plan: IPricingPlan;
-    priceDetails: IPriceDetails;
+export interface IPaymentMethodsFormProps {
+    paymentMethod: TPaymentMethodType;
+    selectedBank: TBankOptionType | null;
+    cardData: { number: string; expiry: string; cvc: string; holder: string };
+    blikCode: string;
+    bankLogin: { login: string; password: string };
+    errors: Record<string, string>;
+    amountToPayNow: number;
+    isProcessing: boolean;
+    processingStatus: string;
+    onPaymentMethodChange: (method: TPaymentMethodType) => void;
+    onSelectedBankChange: (bank: TBankOptionType | null) => void;
+    onCardDataChange: (data: any) => void;
+    onBlikCodeChange: (code: string) => void;
+    onBankLoginChange: (login: any) => void;
+    onErrorsClear: (key: string) => void;
+    onBack: () => void;
+    onPayment: () => void;
+}
+
+export interface IOrderSummaryProps {
+    plan: IPricingPlan
     billingPeriod: TBillingType;
-    onFinalize: (method: string, txId: string, addressData: any) => Promise<void>
+    durationMonths: number;
+    effectiveStart: Date;
+    effectiveEnd: Date;
+    priceIncrease: number;
+    dynamicNetto: string;
+    dynamicVat: string;
+    dynamicTotalContractValue: number;
+    safeAmountToPay: number;
+    savingsAmount: number;
+    hasSavings: boolean;
+    onClose: () => void;
+}
+
+export interface IPersonalDataFormProps {
+    formData: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        phone: string;
+        birthDate: string;
+        pesel: string;
+        street: string;
+        houseNumber: string;
+        city: string;
+        zipCode: string;
+        startDate: string;
+    };
+    errors: Record<string, string>;
+    isPeselLocked: boolean;
+    isBirthDateLocked: boolean;
+    saveInfo: boolean;
+    onFormChange: (data: any) => void;
+    onSaveInfoChange: (value: boolean) => void;
+    onSubmit: (e: FormEvent) => void;
+    onErrorsClear: (key: string) => void;
 }

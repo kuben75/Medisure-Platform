@@ -1,84 +1,11 @@
-import { useEffect, useState } from "react"
 import Button from "../ui/Button.tsx"
-import type {IPendingReview} from "../../types/review.types.ts"
 import CheckIcon from "../icons/CheckIcon.tsx"
 import StarItem from "../icons/StarItem.tsx"
-import {useConfirm} from "../../hooks/UseConfrim.ts";
-import {useNotification} from "../../hooks/UseNotification.ts";
-import {useAuth} from "../../hooks/useAuth.ts";
 import XIcon from "../icons/XIcon.tsx";
-
-const API_URL = `${import.meta.env.VITE_API_URL}/reviews`
-
+import {useReviewManagement} from "../../hooks/useReviewManagement.ts";
 
 export default function ReviewManagement() {
-    const [reviews, setReviews] = useState<IPendingReview[]>([])
-    const [loading, setLoading] = useState(true)
-    const { token } = useAuth()
-    const { notify } = useNotification()
-    const confirm = useConfirm()
-
-    const fetchPendingReviews = async () => {
-        if (!token) return
-
-        try {
-            setLoading(true)
-            const response = await fetch(`${API_URL}/pending`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            if (response.ok) {
-                const data = await response.json()
-                setReviews(data)
-            }
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        fetchPendingReviews()
-    }, [token]);
-
-    const handleApprove = async (id: number) => {
-        try {
-            const response = await fetch(`${API_URL}/${id}/approve`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!response.ok) throw new Error("Błąd zatwierdzania")
-
-            notify.success("Opinia zatwierdzona i opublikowana!")
-            fetchPendingReviews();
-        } catch (err) {
-            notify.error("Nie udało się zatwierdzić opinii." + err)
-        }
-    };
-
-    const handleReject = async (id: number) => {
-        const isConfirmed = await confirm ({
-            title: "Potwierdzenie usunięcia",
-            description: "Czy na pewno chcesz trwale usunąć tę opinię?",
-            confirmText: "Usuń",
-            cancelText: "Anuluj",
-            variant: "danger"
-        })
-        if (!isConfirmed) return
-
-        try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!response.ok) throw new Error("Błąd usuwania")
-
-            notify.success("Opinia usunięta.")
-            fetchPendingReviews();
-        } catch (err) {
-            notify.error("Nie udało się usunąć opinii." + err);
-        }
-    }
+    const { reviews, loading, handleApprove, handleReject } = useReviewManagement()
 
     if (loading) return <div>Ładowanie opinii...</div>
 

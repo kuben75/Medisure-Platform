@@ -7,6 +7,7 @@ import { PackageFormModal } from "../ui/modals/PackageFormModal.tsx";
 import PackageTable from "./packages/PackageTable.tsx";
 import { useAdminPackages } from "../../hooks/useAdminPackages.ts";
 import {getCategoryBadgeStyle} from "../../utils/pricingHelpers.ts";
+import SearchPackageIcon from "../icons/SearchPackageIcon.tsx";
 
 export default function PackageManagement() {
     const { packages, loading, error, token, modals, actions } = useAdminPackages()
@@ -85,7 +86,7 @@ export default function PackageManagement() {
 
                 {filteredPackages.length === 0 && (
                     <div className="py-12 text-center text-gray-400 bg-white md:bg-transparent rounded-xl border border-dashed border-gray-300 md:border-none">
-                        <div className="text-4xl mb-2">📦</div>
+                        <div className="text-4xl mb-2"><SearchPackageIcon /></div>
                         <p>Nie znaleziono pakietów.</p>
                     </div>
                 )}

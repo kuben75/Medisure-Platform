@@ -6,14 +6,9 @@ import BriefcaseIcon from '../icons/BriefcaseIcon.tsx';
 import HeartIcon from '../icons/HeartIcon.tsx';
 import BellIcon from '../icons/BellIcon.tsx';
 import HealthPrevention from '../ui/HealthPrevention.tsx';
-
 import type {IProfileSidebarProps} from "../../types/ui.types.ts";
+import ChevronIcon from "../icons/ChevronIcon.tsx";
 
-const ChevronIcon = ({className}: {className?: string}) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={className}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-    </svg>
-);
 
 export default function ProfileSidebar({
                                            user, activeTab, setActiveTab, unreadCount, onEditProfile, onChangePassword, onOpen2FA
@@ -61,7 +56,7 @@ export default function ProfileSidebar({
                 <HealthPrevention birthDate={user?.birthDate ?? undefined}/>
             </div>
         </div>
-    );
+    )
 }
 
 const MenuButton = ({ icon, label, isActive, onClick, badge }: any) => (

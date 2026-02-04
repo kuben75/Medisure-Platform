@@ -32,7 +32,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
     const [onlineUsers, setOnlineUsers] = useState<string[]>([])
 
     useEffect(() => {
-        if (!connection) return;
+        if (!connection) return
 
         const handleReceiveMessage = (sender: string, message: string, type: string, targetEmail?: string) => {
             const msgType = (type === "AdminToUser" || type === "UserToAdmin")
@@ -68,7 +68,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
         return () => {
             connection.off('ReceiveMessage', handleReceiveMessage)
             connection.off('UserStatusChanged', handleUserStatus)
-        };
+        }
     }, [connection])
 
     useEffect(() => {
@@ -80,18 +80,18 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
             try {
                 const response = await fetch(`${BASE_URL}/chat/history`, {headers})
                 if (response.ok) {
-                    const data = await response.json();
+                    const data = await response.json()
 
-                    const rawMsgs = (data.messages || data) as RawMessageDto[];
+                    const rawMsgs = (data.messages || data) as RawMessageDto[]
 
-                    if (data.users) setUserDetails(data.users);
-                    if (data.onlineUsers) setOnlineUsers(data.onlineUsers);
+                    if (data.users) setUserDetails(data.users)
+                    if (data.onlineUsers) setOnlineUsers(data.onlineUsers)
 
                     const parsedMessages: IChatMessage[] = Array.isArray(rawMsgs) ? rawMsgs.map((msg) => {
                         const msgType: "AdminToUser" | "UserToAdmin" =
                             (msg.sender === "Admin" || msg.sender === "System")
                                 ? "AdminToUser"
-                                : "UserToAdmin";
+                                : "UserToAdmin"
 
                         return {
                             id: msg.id,
@@ -130,30 +130,30 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
     const sendMessageToUser = async (targetEmail: string, msg: string) => {
         if (connection?.state === signalR.HubConnectionState.Connected) {
             try {
-                await connection.invoke('SendMessageToUser', targetEmail, msg);
+                await connection.invoke('SendMessageToUser', targetEmail, msg)
             } catch (err) {
-                console.error(err);
-                notify.error("Błąd wysyłania.");
+                console.error(err)
+                notify.error("Błąd wysyłania.")
             }
         }
-    };
+    }
 
     const markAsRead = useCallback(async (targetEmail?: string) => {
         setMessages(prev => prev.map(m => {
             const isTarget = targetEmail
                 ? (m.type === "UserToAdmin" && m.user.toLowerCase() === targetEmail.toLowerCase())
-                : (m.type === "AdminToUser");
+                : (m.type === "AdminToUser")
 
-            return (isTarget && !m.isRead) ? {...m, isRead: true} : m;
-        }));
+            return (isTarget && !m.isRead) ? {...m, isRead: true} : m
+        }))
 
-        const headers: HeadersInit = {'Content-Type': 'application/json'};
-        if (token) headers['Authorization'] = `Bearer ${token}`;
-        else if (guestId) headers['X-Anon-ID'] = guestId;
+        const headers: HeadersInit = {'Content-Type': 'application/json'}
+        if (token) headers['Authorization'] = `Bearer ${token}`
+        else if (guestId) headers['X-Anon-ID'] = guestId
 
         try {
-            const endpoint = targetEmail ? `${BASE_URL}/chat/mark-read` : `${BASE_URL}/chat/mark-my-read`;
-            const body = targetEmail ? JSON.stringify({userEmail: targetEmail}) : undefined;
+            const endpoint = targetEmail ? `${BASE_URL}/chat/mark-read` : `${BASE_URL}/chat/mark-my-read`
+            const body = targetEmail ? JSON.stringify({userEmail: targetEmail}) : undefined
 
             await fetch(endpoint, {
                 method: 'POST',
@@ -161,13 +161,13 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
                 body
             });
         } catch (e) {
-            console.error("Błąd oznaczania:", e);
+            console.error("Błąd oznaczania:", e)
         }
-    }, [token, guestId, BASE_URL]);
+    }, [token, guestId, BASE_URL])
 
     const unreadCount = useMemo(() => {
-        return messages.filter(m => !m.isRead && m.type === "AdminToUser").length;
-    }, [messages]);
+        return messages.filter(m => !m.isRead && m.type === "AdminToUser").length
+    }, [messages])
 
     return (
         <ChatContext1 value={{
@@ -183,6 +183,6 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
         }}>
             {children}
         </ChatContext1>
-    );
-};
+    )
+}
 

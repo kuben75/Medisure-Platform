@@ -6,6 +6,7 @@ import ReviewsList from "../ReviewList.tsx";
 import { useAuth } from "../../../hooks/useAuth.ts";
 import { useEffect } from "react";
 import type { IPackageDetailsModalProps } from "../../../types/ui.types.ts";
+import ShieldCheckIcon from "../../icons/ShieldCheckIcon.tsx";
 
 export default function PackageDetailsModal({isOpen, onClose, plan, userAge, selectedDuration, onDurationChange, billingPeriod, setBillingPeriod, onProceedToCheckout, options, priceDetails, isBuying}: IPackageDetailsModalProps) {
     useEffect(() => {
@@ -211,7 +212,7 @@ export default function PackageDetailsModal({isOpen, onClose, plan, userAge, sel
                 )}
 
                 <div className="flex items-start gap-3 bg-green-50 p-3 sm:p-4 rounded-xl mb-8 text-sm text-green-800 border border-green-100">
-                    <div className="min-w-[20px] pt-0.5 text-xl">🛡️</div>
+                    <div className="min-w-[20px] pt-0.5 text-xl"><ShieldCheckIcon className={"w-5 h-5"}/></div>
                     <div>
                         <strong className="block mb-1 text-green-900 text-sm">Pełna transparentność i bezpieczeństwo</strong>
                         {billingPeriod === 'monthly' && !isTestPeriod ? (
@@ -264,8 +265,7 @@ export default function PackageDetailsModal({isOpen, onClose, plan, userAge, sel
                 </Button>
 
                 <p className="text-center text-xs text-gray-400 mt-4 mb-8">
-                    Klikając przycisk, przejdziesz do wyboru metody płatności. <br />
-                    Bezpieczna transakcja SSL.
+                    Klikając przycisk, przejdziesz do wyboru metody płatności.
                 </p>
 
                 <div className="pt-6 border-t border-gray-100">

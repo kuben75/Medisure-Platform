@@ -1,45 +1,30 @@
-import Modal from '../ui/modals/Modal.tsx';
-import Button from '../ui/Button';
-import CalendarIcon from '../icons/CalendarIcon';
-import LockIcon from '../icons/LockIcon';
-import type {ISubscriptionDetailsModalProps} from "../../types/pricing.types.ts";
-import BriefcaseIcon from "../icons/BriefcaseIcon.tsx";
-import CheckCircleIcon from "../icons/CheckCircleIcon.tsx";
-import type {IUserSubscription} from "../../types/user.types.ts";
-import ClockIcon from "../icons/ClockIcon.tsx";
-import {useState} from "react";
-import {useNotification} from "../../hooks/UseNotification.ts";
-import { useAuth } from "../../hooks/useAuth.ts";
-import { generatePolicyPDF } from "../../utils/pdfGenerator.ts";
-import { useConfirm } from "../../hooks/UseConfrim.ts";
-import AlertIcon from "../icons/AlertIcon.tsx";
-
+import Modal from './Modal.tsx';
+import Button from '../Button.tsx';
+import CalendarIcon from '../../icons/CalendarIcon.tsx';
+import LockIcon from '../../icons/LockIcon.tsx';
+import type {ISubscriptionDetailsModalProps} from "../../../types/pricing.types.ts";
+import BriefcaseIcon from "../../icons/BriefcaseIcon.tsx";
+import CheckCircleIcon from "../../icons/CheckCircleIcon.tsx";
+import type {IUserSubscription} from "../../../types/user.types.ts";
+import ClockIcon from "../../icons/ClockIcon.tsx";
+import AlertIcon from "../../icons/AlertIcon.tsx";
+import {useSubscriptionDetails} from "../../../hooks/useSubscriptionDetails.ts";
+import {formatDate} from "../../../utils/dateHelpers.ts";
 
 export default function SubscriptionDetailsModal({ isOpen, onClose, subscription, onRefresh }: ISubscriptionDetailsModalProps) {
-    const { notify } = useNotification()
-    const { user, token } = useAuth()
-    const confirm = useConfirm()
-    const [isDownloading, setIsDownloading] = useState(false)
-    const [isCancelling, setIsCancelling] = useState(false)
+const {
+    isDownloading,
+    isCancelling,
+    isMonthly,
+    handleDownload,
+    handleCancelSubscription,
+    isExpired,
+    isPending,
+    isCancelled,
+    endDate
+} = useSubscriptionDetails({subscription, onRefresh, onClose})
 
     if (!subscription) return null
-
-    const formatDate = (dateString: string | Date) => new Date(dateString).toLocaleDateString('pl-PL', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        timeZone: 'UTC'
-    })
-
-    const startDate = new Date(subscription.startDate)
-    const endDate = new Date(subscription.endDate)
-    const now = new Date()
-
-    const isExpired = endDate < now
-    const isPending = startDate > now
-    const isCancelled = subscription.status === 'Cancelled'
-
-    const isMonthly = subscription.price?.includes('/ mies') || (subscription as any).billingPeriod === 'monthly'
 
     let dateLabel = "Koniec ochrony"
     let dateColorClass = "text-gray-800"
@@ -82,62 +67,7 @@ export default function SubscriptionDetailsModal({ isOpen, onClose, subscription
             <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
                 <CheckCircleIcon className="w-5 h-5"/> Aktywna Polisa
             </span>
-        );
-    }
-
-    const handleDownload = async () => {
-        setIsDownloading(true);
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            await generatePolicyPDF(
-                subscription,
-                `${user?.firstName} ${user?.lastName}`,
-                user?.pesel ?? ''
-            )
-            notify.success("Potwierdzenie zostało pobrane.")
-        } catch (error) {
-            console.error(error)
-            notify.error("Błąd podczas generowania PDF.")
-        } finally {
-            setIsDownloading(false)
-        }
-    }
-
-    const handleCancelSubscription = async () => {
-        const confirmed = await confirm({
-            title: "Anulowanie subskrypcji",
-            description: `Czy na pewno chcesz anulować? Pakiet pozostanie aktywny do ${formatDate(subscription.endDate)}, po czym wygaśnie.`,
-            confirmText: "Tak, anuluj",
-            cancelText: "Wróć",
-            variant: "danger"
-        });
-
-        if (!confirmed) return;
-
-        setIsCancelling(true);
-        try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/subscriptions/${subscription.id}/cancel`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            if (!res.ok) {
-                const err = await res.json()
-                throw new Error(err.message || "Nie udało się anulować subskrypcji.")
-            }
-
-            notify.success("Subskrypcja została anulowana.")
-            if(onRefresh) onRefresh()
-            onClose()
-
-        } catch (error) {
-            notify.error(error instanceof Error ? error.message : "Błąd podczas anulowania subskrypcji.")
-        } finally {
-            setIsCancelling(false)
-        }
+        )
     }
 
     return (

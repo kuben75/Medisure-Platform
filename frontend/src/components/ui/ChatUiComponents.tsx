@@ -9,8 +9,6 @@ import type {IAvatarProps} from "../../types/user.types.ts";
 export const Avatar = ({ name, size = "md", className = "" }: IAvatarProps) => {
     const safeName = (name || "").trim() || "?"
     const isSystem = safeName.toLowerCase() === "system"
-
-
     const colorClass = useMemo(() => {
         if (isSystem) return "bg-indigo-600 border-indigo-100";
 

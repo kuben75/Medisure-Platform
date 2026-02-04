@@ -9,3 +9,9 @@ export const calculateAge = (dateString?: string | null): number => {
 
     return age
 }
+export const formatDate = (dateString: string | Date) => new Date(dateString).toLocaleDateString('pl-PL', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC'
+})
