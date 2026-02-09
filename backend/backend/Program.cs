@@ -2,11 +2,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using backend.Identity;
 using backend.Data;
+using backend.Hubs;
 using Microsoft.EntityFrameworkCore;
 using backend.Models;
 using backend.Workers;
 using backend.Services;
+using backend.Services.Interfaces;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -31,7 +34,7 @@ try
         "http://localhost:3000",
         "http://localhost:8080"
     };
-
+    
     builder.Services.AddControllers();
     builder.Services.AddSignalR();
     builder.Services.AddMemoryCache();
@@ -42,6 +45,7 @@ try
     builder.Services.AddScoped<IContactService, ContactService>();
     builder.Services.AddScoped<IFavoritesService, FavoritesService>();
     builder.Services.AddScoped<IReviewsService, ReviewsService>();
+    builder.Services.AddScoped<IPackageService, PackageService>();
     builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
     builder.Services.AddSingleton<UserConnectionManager>();
     builder.Services.AddEndpointsApiExplorer();
@@ -110,7 +114,7 @@ try
         })
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders()
-        .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("CustomPasswordResetTokenProvider");
+        .AddTokenProvider<PasswordResetTokenProvider<ApplicationUser>>("CustomPasswordResetTokenProvider");
 
     builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
         opt.TokenLifespan = TimeSpan.FromHours(24));
@@ -158,7 +162,9 @@ try
     builder.Services.AddAuthorization();
 
     var app = builder.Build();
-
+    
+    app.UseMiddleware<backend.Middleware.ExceptionMiddleware>();
+    
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();

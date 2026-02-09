@@ -87,7 +87,7 @@ export default function PersonalDataForm({
                             <label className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
                                 Data urodzenia {isBirthDateLocked && <span className="text-green-600 ml-1">(Zweryfikowano)</span>}
                             </label>
-                            <input type="date" value={formData.birthDate} max={new Date().toISOString().split('T')[0]} readOnly={isBirthDateLocked}
+                            <input type="date" name="birthDate" value={formData.birthDate} max={new Date().toISOString().split('T')[0]} readOnly={isBirthDateLocked}
                                    onChange={e => {
                                        if (!isBirthDateLocked) {
                                            onFormChange({...formData, birthDate: e.target.value});
@@ -103,7 +103,7 @@ export default function PersonalDataForm({
                             <label className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
                                 PESEL {isPeselLocked && <span className="text-green-600 ml-1">(Zweryfikowano)</span>}
                             </label>
-                            <input type="text" maxLength={11} value={formData.pesel} readOnly={isPeselLocked}
+                            <input type="text" name="pesel" maxLength={11} value={formData.pesel} readOnly={isPeselLocked}
                                    onChange={e => {
                                        if (!isPeselLocked) {
                                            onFormChange({...formData, pesel: e.target.value.replace(/\D/g, '')});

@@ -3,13 +3,9 @@ using System.Security.Claims;
 using System.Text;
 using backend.Models;
 using Microsoft.IdentityModel.Tokens;
+using backend.Services.Interfaces;
 
 namespace backend.Services;
-
-public interface ITokenService
-{
-    string GenerateJwtToken(ApplicationUser user, IList<string> roles);
-}
 
 public class TokenService : ITokenService
 {

@@ -1,12 +1,9 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using backend.Services.Interfaces;
 
 namespace backend.Services;
 
-public interface IEmailService
-{
-    Task SendEmailAsync(string to, string subject, string body, byte[]? attachmentData = null, string? attachmentName = null);
-}
 
 public class EmailService : IEmailService
 {
@@ -24,31 +21,43 @@ public class EmailService : IEmailService
         try
         {
             var smtpServer = _configuration["EmailSettings:SmtpServer"];
-            var port = int.Parse(_configuration["EmailSettings:SmtpPort"]);
+            var portString = _configuration["EmailSettings:SmtpPort"];
             var senderEmail = _configuration["EmailSettings:SenderEmail"];
             var senderName = _configuration["EmailSettings:SenderName"];
             var password = _configuration["EmailSettings:Password"];
 
-            var client = new SmtpClient(smtpServer)
+            if (string.IsNullOrEmpty(smtpServer) || string.IsNullOrEmpty(password))
+            {
+                _logger.LogError("Brak konfiguracji SMTP");
+                return;
+            }
+
+            var port = int.Parse(portString!);
+
+            using var client = new SmtpClient(smtpServer)
             {
                 Port = port,
                 Credentials = new NetworkCredential(senderEmail, password),
                 EnableSsl = true,
             };
 
-            var mailMessage = new MailMessage
+            using var mailMessage = new MailMessage
             {
-                From = new MailAddress(senderEmail, senderName),
+                From = new MailAddress(senderEmail!, senderName),
                 Subject = subject,
                 Body = body,
                 IsBodyHtml = true,
             };
 
             mailMessage.To.Add(to);
+
             if (attachmentData != null && !string.IsNullOrEmpty(attachmentName))
             {
+             
+                
                 var stream = new MemoryStream(attachmentData);
                 var attachment = new Attachment(stream, attachmentName, "application/pdf");
+                
                 mailMessage.Attachments.Add(attachment);
             }
             
@@ -58,7 +67,7 @@ public class EmailService : IEmailService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Błąd wysyłania maila: {ex.Message}");
+            _logger.LogError($"Błąd wysyłania maila do {to}: {ex.Message}");
         }
     }
 }

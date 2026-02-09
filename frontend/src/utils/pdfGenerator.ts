@@ -187,8 +187,16 @@ export const generatePolicyPDF = async (
 
     currentY = drawSectionHeader("Zakres świadczeń", currentY)
 
-    if (sub.features && sub.features.length > 0) {
-        sub.features.forEach((feature) => {
+    const featuresList = typeof sub.features === 'string'
+        ? sub.features.split(';').map(f => f.trim()).filter(Boolean)
+        : (Array.isArray(sub.features) ? sub.features : [])
+
+    if (featuresList.length > 0) {
+        featuresList.forEach((feature) => {
+            if (currentY > 280) {
+                doc.addPage()
+                currentY = 20
+            }
             doc.setFillColor(primaryColor)
             doc.circle(18, currentY - 1, 1, 'F')
 

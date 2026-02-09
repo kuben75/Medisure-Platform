@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react"
 import type {IPricingPlan} from "../types/pricing.types.ts"
-import type {IPackageFormData} from "../types/ui.types.ts";
 import {INITIAL_STATE} from "../constants/ui.ts";
 import {SPECIALISTS_LIST} from "../constants/specialists.tsx";
+import type {IPackageFormData} from "../types/packages.types.ts";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/packages`
 
@@ -25,8 +25,12 @@ export const usePackageForm = (
             if (packageToEdit) {
                 setFormData({
                     ...packageToEdit,
-                    features: packageToEdit.features ? packageToEdit.features.join('; ') : '',
-                    includedSpecializations: packageToEdit.includedSpecializations || '',
+                    features: Array.isArray(packageToEdit.features)
+                        ? packageToEdit.features.join('; ')
+                        : (packageToEdit.features || ''),
+                    includedSpecializations: Array.isArray(packageToEdit.includedSpecializations)
+                        ? packageToEdit.includedSpecializations.join('; ')
+                        : (packageToEdit.includedSpecializations || ''),
                     priceValue: packageToEdit.priceValue || 0,
                     specialistsCount: packageToEdit.specialistsCount || 0,
                     facilitiesCount: packageToEdit.facilitiesCount || 0,
@@ -81,9 +85,7 @@ export const usePackageForm = (
 
 
         const uniqueSpecs = [...new Set(currentSpecs)]
-
         const newSpecString = uniqueSpecs.join(';')
-
         const realCount = SPECIALISTS_LIST.filter(s => uniqueSpecs.includes(s.category)).length;
 
         setFormData(prev => ({
@@ -108,8 +110,11 @@ export const usePackageForm = (
             ...formData,
             price: `${formData.priceValue} zł`,
             features: typeof formData.features === 'string'
-                ? formData.features.split(';').map(f => f.trim()).filter(f => f)
-                : formData.features,
+                ? formData.features.split(';').map(f => f.trim()).filter(Boolean)
+                : [],
+            includedSpecializations: typeof formData.includedSpecializations === 'string'
+                ? formData.includedSpecializations.split(';').map(s => s.trim()).filter(Boolean)
+                : [],
             id: packageToEdit ? packageToEdit.id : undefined
         }
 

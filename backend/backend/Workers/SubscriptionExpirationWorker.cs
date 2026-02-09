@@ -1,6 +1,7 @@
 ﻿using backend.Data;
 using backend.Helpers; 
 using backend.Services;
+using backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Workers; 

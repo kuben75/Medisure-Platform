@@ -25,6 +25,9 @@ const {
 } = useSubscriptionDetails({subscription, onRefresh, onClose})
 
     if (!subscription) return null
+    const featuresList = typeof subscription.features === 'string'
+        ? subscription.features.split(';').map(f => f.trim()).filter(Boolean)
+        : (Array.isArray(subscription.features) ? subscription.features : []);
 
     let dateLabel = "Koniec ochrony"
     let dateColorClass = "text-gray-800"
@@ -142,9 +145,9 @@ const {
                     <LockIcon className="w-6 h-6"/> Zakres ochrony
                 </h4>
 
-                {subscription.features && subscription.features.length > 0 ? (
+                {featuresList.length > 0 ? (
                     <div className="grid grid-cols-1 gap-2">
-                        {subscription.features.map((feature, idx) => (
+                        {featuresList.map((feature, idx) => (
                             <div key={idx} className={`flex items-center gap-3 text-sm p-2 rounded border transition-colors ${isExpired ? 'bg-gray-100 text-gray-400 border-gray-200' : 'bg-green-50/50 text-gray-700 border-green-100'}`}>
                                 <div className={`w-4 h-4 ${isExpired ? 'text-gray-400' : 'text-green-500'}`}>
                                     <CheckCircleIcon className="w-4 h-4"/>

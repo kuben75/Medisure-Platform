@@ -2,15 +2,20 @@ import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar.tsx';
 import Button from '../components/ui/Button.tsx';
-import {useAuth} from "../hooks/useAuth.ts";
+import { useAuth } from "../hooks/useAuth.ts";
 
 export default function ConfirmChangeEmailPage() {
     const [searchParams] = useSearchParams()
+    const { logout } = useAuth()
+
     const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying')
-    const {logout} = useAuth()
+    const [errorMessage, setErrorMessage] = useState<string>('')
+
     const effectRan = useRef(false)
 
     useEffect(() => {
+        if (effectRan.current) return
+
         const verify = async () => {
             const userId = searchParams.get('userId')
             const newEmail = searchParams.get('newEmail')
@@ -18,61 +23,81 @@ export default function ConfirmChangeEmailPage() {
 
             if (!userId || !token || !newEmail) {
                 setStatus('error')
+                setErrorMessage("Nieprawidłowy link weryfikacyjny.")
                 return
             }
 
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/confirm-new-email?userId=${userId}&newEmail=${newEmail}&token=${encodeURIComponent(token)}`)
+                const url = new URL(`${import.meta.env.VITE_API_URL}/auth/confirm-new-email`);
+                url.searchParams.append('userId', userId);
+                url.searchParams.append('newEmail', newEmail);
+                url.searchParams.append('token', token);
+
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                })
 
                 if (response.ok) {
                     setStatus('success')
                     logout()
                 } else {
                     const data = await response.json().catch(() => ({}));
-                    console.error("Błąd weryfikacji:", data);
+                    setErrorMessage(data.message || "Link wygasł lub jest nieprawidłowy.");
                     setStatus('error')
                 }
             } catch (e) {
-                console.error("Błąd sieci:", e);
+                setErrorMessage("Wystąpił błąd połączenia z serwerem.");
                 setStatus('error')
             }
         }
+        verify()
 
-        if (!effectRan.current) {
-            verify();
-            return () => {
-                effectRan.current = true;
-            };
+        return () => {
+            effectRan.current = true
         }
-    }, [searchParams])
+    }, [])
 
     return (
         <>
             <Navbar />
             <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-                <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-xl border border-gray-200 text-center">
+                <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-xl border border-gray-200 text-center animate-fade-in">
+
                     {status === 'verifying' && (
                         <>
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4E61F6] mx-auto mb-6"></div>
-                            <p className="text-gray-500">Weryfikacja zmiany adresu email...</p>
+                            <h2 className="text-xl font-bold text-gray-700 mb-2">Weryfikacja...</h2>
+                            <p className="text-gray-500 text-sm">Trwa potwierdzanie zmiany adresu email.</p>
                         </>
                     )}
 
                     {status === 'success' && (
-                        <>
+                        <div className="animate-scale-in">
                             <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">✓</div>
-                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Adres e-mail zmieniony!</h2>
-                            <p className="text-gray-600 mb-6">Twój adres e-mail został zaktualizowany. Użyj go przy następnym logowaniu.</p>
-                            <Link to="/login"><Button className="w-full">Zaloguj się ponownie</Button></Link>
-                        </>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Sukces!</h2>
+                            <p className="text-gray-600 mb-8">
+                                Twój adres e-mail został zaktualizowany.<br/>
+                                Ze względów bezpieczeństwa wylogowaliśmy Cię. Zaloguj się używając nowego adresu.
+                            </p>
+                            <Link to="/login">
+                                <Button className="w-full shadow-lg">Zaloguj się ponownie</Button>
+                            </Link>
+                        </div>
                     )}
 
                     {status === 'error' && (
-                        <>
-                            <h2 className="text-2xl font-bold text-red-600 mb-4">Błąd zmiany</h2>
-                            <p className="text-gray-600 mb-6">Link wygasł lub został już wykorzystany. Spróbuj zalogować się nowym mailem, aby sprawdzić czy zmiana zaszła.</p>
-                            <Link to="/profile"><Button variant="secondary" className="w-full">Wróć</Button></Link>
-                        </>
+                        <div className="animate-shake">
+                            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">✕</div>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">Nie udało się</h2>
+                            <p className="text-gray-600 mb-2">Wystąpił problem podczas weryfikacji:</p>
+                            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm font-medium mb-8 border border-red-100">
+                                {errorMessage}
+                            </div>
+                            <Link to="/login">
+                                <Button variant="secondary" className="w-full">Wróć do logowania</Button>
+                            </Link>
+                        </div>
                     )}
                 </div>
             </div>

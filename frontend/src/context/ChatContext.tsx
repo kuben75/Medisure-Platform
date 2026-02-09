@@ -3,9 +3,9 @@ import * as signalR from '@microsoft/signalr';
 import {useAuth} from "../hooks/useAuth";
 import {useNotification} from "../hooks/UseNotification";
 import {useChatConnection} from "../hooks/useChatConnection";
-import type {IChatMessage, IUserDetail, RawMessageDto} from "../types/chat.types";
-import {ChatContext as ChatContext1} from "../hooks/useChat.ts";
-
+import type {IChatMessage, IUserDetail} from "../types/chat.types";
+import {ChatContext} from "../hooks/useChat.ts";
+import {handleApiError} from "../utils/apiErrorHandler.ts";
 
 const getGuestId = () => {
     let id = localStorage.getItem('guest_chat_id')
@@ -47,11 +47,18 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
                 targetUserEmail: targetEmail,
                 timestamp: new Date(),
                 isRead: false
-            };
+            }
 
             setMessages(prev => {
-                if (prev.some(m => m.id === newMsg.id)) return prev
-                return [...prev, newMsg]
+                const isDuplicate = prev.some(m =>
+                    m.user === newMsg.user &&
+                    m.message === newMsg.message &&
+                    (newMsg.timestamp.getTime() - new Date(m.timestamp).getTime() < 2000)
+                )
+
+                if (isDuplicate) return prev
+
+                return [...prev, newMsg];
             })
         }
 
@@ -73,41 +80,60 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
 
     useEffect(() => {
         const fetchHistory = async () => {
-            const headers: HeadersInit = {}
-            if (token) headers['Authorization'] = `Bearer ${token}`
-            else if (guestId) headers['X-Anon-ID'] = guestId
+            const headersObj: Record<string, string> = {
+                'Content-Type': 'application/json'
+            };
+
+            const safeToken = token ? token.replace(/^"|"$/g, '') : null;
+
+            if (safeToken) {
+                headersObj['Authorization'] = `Bearer ${safeToken}`
+            } else if (guestId) {
+                headersObj['X-Anon-ID'] = guestId
+            }
+
+            console.log("Fetching history headers:", headersObj);
+
+            const endpoint = `${BASE_URL.replace(/\/$/, '')}/chat/history`;
 
             try {
-                const response = await fetch(`${BASE_URL}/chat/history`, {headers})
-                if (response.ok) {
-                    const data = await response.json()
+                const response = await fetch(endpoint, {
+                    method: 'GET',
+                    headers: headersObj
+                })
 
-                    const rawMsgs = (data.messages || data) as RawMessageDto[]
+                if (!response.ok)
+                    throw await response.json()
 
-                    if (data.users) setUserDetails(data.users)
-                    if (data.onlineUsers) setOnlineUsers(data.onlineUsers)
+                const data = await response.json()
+                const rawMsgs = Array.isArray(data) ? data : (data.messages || []);
 
-                    const parsedMessages: IChatMessage[] = Array.isArray(rawMsgs) ? rawMsgs.map((msg) => {
-                        const msgType: "AdminToUser" | "UserToAdmin" =
-                            (msg.sender === "Admin" || msg.sender === "System")
-                                ? "AdminToUser"
-                                : "UserToAdmin"
+                if (data.users) setUserDetails(data.users)
+                if (data.onlineUsers) setOnlineUsers(data.onlineUsers)
 
-                        return {
-                            id: msg.id,
-                            user: msg.sender,
-                            message: msg.message,
-                            type: msgType,
-                            targetUserEmail: msg.receiver,
-                            timestamp: new Date(msg.timestamp),
-                            isRead: msg.isRead
-                        }
-                    }) : []
+                const parsedMessages: IChatMessage[] = Array.isArray(rawMsgs) ? rawMsgs.map((msg: any) => {
+                    const msgType: "AdminToUser" | "UserToAdmin" =
+                        (msg.sender === "Admin" || msg.sender === "System")
+                            ? "AdminToUser"
+                            : "UserToAdmin"
 
-                    setMessages(parsedMessages)
-                }
-            } catch (err) {
+                    return {
+                        id: msg.id,
+                        user: msg.sender,
+                        message: msg.message,
+                        type: msgType,
+                        targetUserEmail: msg.receiver,
+                        timestamp: new Date(msg.timestamp),
+                        isRead: msg.isRead
+                    }
+                }) : []
+
+                setMessages(parsedMessages)
+            } catch (err: any) {
                 console.error("Błąd pobierania historii:", err)
+                if (err?.errorCode !== 3001) {
+                    handleApiError(err, notify)
+                }
             }
         }
 
@@ -119,8 +145,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
             try {
                 await connection.invoke('SendMessageToAdmin', msg)
             } catch (err) {
-                console.error(err)
-                notify.error("Błąd wysyłania.")
+                handleApiError(err, notify)
             }
         } else {
             notify.error("Brak połączenia.")
@@ -132,8 +157,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
             try {
                 await connection.invoke('SendMessageToUser', targetEmail, msg)
             } catch (err) {
-                console.error(err)
-                notify.error("Błąd wysyłania.")
+                handleApiError(err, notify)
             }
         }
     }
@@ -159,9 +183,9 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
                 method: 'POST',
                 headers,
                 body
-            });
+            })
         } catch (e) {
-            console.error("Błąd oznaczania:", e)
+            console.error("Błąd:", e)
         }
     }, [token, guestId, BASE_URL])
 
@@ -170,7 +194,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
     }, [messages])
 
     return (
-        <ChatContext1 value={{
+        <ChatContext value={{
             connection,
             messages,
             sendMessageToAdmin,
@@ -182,7 +206,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
             currentChatId
         }}>
             {children}
-        </ChatContext1>
+        </ChatContext>
     )
 }
 

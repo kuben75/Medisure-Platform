@@ -1,6 +1,6 @@
 ﻿using backend.Data;
 using backend.Models;
-using backend.Services;
+using backend.Services.Interfaces;
 using backend.Helpers; 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -153,29 +153,35 @@ public class ChatHub : Hub
     {
         try
         {
+            string? dbUserId = ownerId;
+            if (ownerId.StartsWith("guest_"))
+            {
+                dbUserId = null; 
+            }
+
             var chatMsg = new ChatMessage
             {
                 Sender = sender,
                 Receiver = receiver,
-                UserId = ownerId,
+                UserId = dbUserId, 
                 Message = text,
-                Timestamp = DateTime.UtcNow,
+                Timestamp = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
                 IsRead = false
             };
+            
+            
             _context.ChatMessages.Add(chatMsg);
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "[ChatHub] Database save failed");
-            throw; 
+            _logger.LogError(ex, $"[ChatHub] Database save failed for user {ownerId}. Chat continues without history.");
         }
     }
 
     private async Task TrySendEmailNotification(string targetUserEmail, string message)
     {
-        bool isGuest = targetUserEmail.StartsWith("guest_");
-        if (isGuest) return;
+        if (targetUserEmail.StartsWith("guest_")) return;
 
         string cacheKey = $"email_cooldown_{targetUserEmail}";
         if (_cache.TryGetValue(cacheKey, out _)) return;
@@ -201,12 +207,18 @@ public class ChatHub : Hub
 
     private async Task CheckAndSendWelcomeMessage(string userEmail)
     {
-        bool hasHistory = await _context.ChatMessages.AnyAsync(m => m.UserId == userEmail);
+
+        bool hasHistory = false;
+        
+        if (!userEmail.StartsWith("guest_"))
+        {
+            hasHistory = await _context.ChatMessages.AnyAsync(m => m.UserId == userEmail);
+        }
 
         if (!hasHistory)
         {
             var welcomeText = "Dzień dobry! Witamy w Medisure. W czym możemy Ci dzisiaj pomóc?";
-            
+
             await SaveMessageAsync("System", userEmail, userEmail, welcomeText);
             
             await Clients.Group(userEmail).SendAsync("ReceiveMessage", "System", welcomeText, "AdminToUser", userEmail);

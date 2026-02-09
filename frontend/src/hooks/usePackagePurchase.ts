@@ -4,6 +4,7 @@ import type {IAddressData, IPricingPlan, ISubscriptionOption, TBillingType} from
 import { useAuth } from "./useAuth.ts";
 import { useNotification } from "./UseNotification.ts";
 import { useConfirm } from "./UseConfrim.ts";
+import {handleApiError} from "../utils/apiErrorHandler.ts";
 
 const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL}/subscriptions`
 const OPTIONS_URL = `${import.meta.env.VITE_API_URL}/packages/options`
@@ -93,7 +94,9 @@ export const usePackagePurchase = () => {
     }, [selectedPlan, selectedDuration, options, billingPeriod])
 
     const handleProceedToCheckout = async () => {
-        if (!selectedPlan) return
+        if (!selectedPlan) {
+            return
+        }
 
         if (!token || !user) {
             const shouldLogin = await confirm({
@@ -111,7 +114,7 @@ export const usePackagePurchase = () => {
     }
 
     const finalizePurchase = async (method: string, txId: string, addressData: IAddressData) => {
-        setIsBuying(true);
+        setIsBuying(true)
         try {
             const payload = {
                 duration: selectedDuration,
@@ -131,20 +134,28 @@ export const usePackagePurchase = () => {
             })
 
             if (!response.ok) {
-                const errData = await response.json()
-                throw new Error(errData.Message || "Błąd zakupu")
+                throw await response.json()
             }
-            const data = await response.json();
 
-            if (data.user || data.User) {
-                updateUser(data.user || data.User);
-            } else {
-                if (user && addressData.pesel) {
+            const data = await response.json()
+
+            const returnedUser = data.data || data.Data
+            if (user) {
+                if (returnedUser) {
                     updateUser({
                         ...user,
-                        pesel: addressData.pesel,
-                        phoneNumber: user.phoneNumber ?? null,
-                        birthDate: user.birthDate ?? null,
+                        pesel: returnedUser.pesel || returnedUser.Pesel || user.pesel,
+                        birthDate: returnedUser.birthDate || returnedUser.BirthDate || user.birthDate,
+                        phoneNumber: returnedUser.phoneNumber || returnedUser.PhoneNumber || user.phoneNumber,
+                        firstName: returnedUser.firstName || returnedUser.FirstName || user.firstName,
+                        lastName: returnedUser.lastName || returnedUser.LastName || user.lastName
+                    })
+                } else {
+                    updateUser({
+                        ...user,
+                        pesel: addressData.pesel || user.pesel || null,
+                        phoneNumber: addressData.phone || user.phoneNumber || null,
+                        birthDate: addressData.birthDate || user.birthDate || null,
                         roles: user.roles ?? []
                     })
                 }
@@ -153,7 +164,7 @@ export const usePackagePurchase = () => {
             closeModal()
             navigate('/profile')
         } catch (err) {
-            notify.error(err instanceof Error ? err.message : String(err))
+            handleApiError(err, notify)
         } finally {
             setIsBuying(false)
         }
@@ -174,5 +185,5 @@ export const usePackagePurchase = () => {
         isBuying,
         billingPeriod,
         setBillingPeriod,
-    };
+    }
 }

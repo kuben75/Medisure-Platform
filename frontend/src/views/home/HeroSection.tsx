@@ -101,70 +101,76 @@ export default function HeroSection() {
 
                 {!loading && !error && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch">
-                        {plans.map((plan, index) => (
-                            <div
-                                key={plan.id}
-                                className={`
-                                relative flex flex-col bg-white text-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl transition-all duration-500
-                                transform hover:-translate-y-2 group
-                                ${index === 1
-                                    ? 'mt-4 mb-4 md:-mt-8 md:mb-8 border-4 border-yellow-400 z-10 shadow-blue-900/40 order-first md:order-none' // Na mobile wyróżniony pakiet pierwszy
-                                    : 'border border-transparent hover:shadow-xl opacity-95 hover:opacity-100'
-                                }`}
-                            >
-                                {index === 1 && (
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full shadow-md uppercase tracking-wider flex items-center gap-1 w-max">
-                                        <ShieldCheckIcon className="w-3 h-3 md:w-4 md:h-4"/> Najczęściej wybierany
-                                    </div>
-                                )}
+                        {plans.map((plan, index) => {
+                            const featuresList = typeof plan.features === 'string'
+                                ? plan.features.split(';')
+                                : (Array.isArray(plan.features) ? plan.features : []);
 
-                                {user && (
-                                    <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20">
-                                        <FavoriteButton packageId={plan.id} className="text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors p-2 rounded-full"/>
-                                    </div>
-                                )}
-
-                                <div className="mt-2 mb-2 md:mb-4 text-left">
-                                    <p className="text-[10px] md:text-xs font-bold text-[#4E61F6] uppercase tracking-wider mb-1">{plan.category}</p>
-                                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-[#4E61F6] transition-colors">{plan.name}</h3>
-                                </div>
-
-                                <div className="my-2 md:my-4 flex items-baseline gap-1 text-left">
-                                    <span className="text-base md:text-lg text-gray-400 font-medium">od</span>
-                                    <span className="text-4xl md:text-5xl font-extrabold text-gray-900"> {plan.price}</span>
-                                    <div className="flex flex-col ml-1">
-                                        <span className="text-xs md:text-sm font-bold text-gray-500">zł / mies</span>
-                                    </div>
-                                </div>
-
-                                <div className="text-left mb-4 md:mb-6">
-                                <span className="inline-block bg-green-50 text-green-700 text-[10px] font-bold px-2 py-1 rounded border border-green-100">
-                                    Możliwość płatności miesięcznej
-                                </span>
-                                </div>
-
-                                <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 text-left flex-grow">
-                                    {plan.features.slice(0, 4).map((feature, i) => (
-                                        <li key={i} className="flex items-start text-xs md:text-sm text-gray-600">
-                                            <div className="mt-0.5 min-w-[20px] text-green-500"><FlashIcon className="w-3 h-3 md:w-4 md:h-4 text-yellow-500 mr-2"/></div>
-                                            <span className="ml-1 md:ml-2 leading-tight">{feature}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <div className="mb-4 md:mb-6 flex justify-start">
-                                    <Rating rating={plan.averageRating} reviews={plan.reviews}/>
-                                </div>
-
-                                <Button
-                                    variant={index === 1 ? 'primary' : 'secondary'}
-                                    className={`w-full py-3 md:py-4 text-sm font-bold shadow-lg hover:shadow-xl transition-all ${index !== 1 ? 'bg-gray-50 border-gray-200 hover:bg-white hover:border-[#4E61F6] text-gray-600 hover:text-[#4E61F6]' : ''}`}
-                                    onClick={() => openModal(plan)}
+                            return (
+                                <div
+                                    key={plan.id}
+                                    className={`
+                        relative flex flex-col bg-white text-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl transition-all duration-500
+                        transform hover:-translate-y-2 group
+                        ${index === 1
+                                        ? 'mt-4 mb-4 md:-mt-8 md:mb-8 border-4 border-yellow-400 z-10 shadow-blue-900/40 order-first md:order-none'
+                                        : 'border border-transparent hover:shadow-xl opacity-95 hover:opacity-100'
+                                    }`}
                                 >
-                                    Zobacz szczegóły
-                                </Button>
-                            </div>
-                        ))}
+                                    {index === 1 && (
+                                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-[10px] md:text-xs font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full shadow-md uppercase tracking-wider flex items-center gap-1 w-max">
+                                            <ShieldCheckIcon className="w-3 h-3 md:w-4 md:h-4"/> Najczęściej wybierany
+                                        </div>
+                                    )}
+
+                                    {user && (
+                                        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20">
+                                            <FavoriteButton packageId={plan.id} className="text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors p-2 rounded-full"/>
+                                        </div>
+                                    )}
+
+                                    <div className="mt-2 mb-2 md:mb-4 text-left">
+                                        <p className="text-[10px] md:text-xs font-bold text-[#4E61F6] uppercase tracking-wider mb-1">{plan.category}</p>
+                                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-[#4E61F6] transition-colors">{plan.name}</h3>
+                                    </div>
+
+                                    <div className="my-2 md:my-4 flex items-baseline gap-1 text-left">
+                                        <span className="text-base md:text-lg text-gray-400 font-medium">od</span>
+                                        <span className="text-4xl md:text-5xl font-extrabold text-gray-900"> {plan.price}</span>
+                                        <div className="flex flex-col ml-1">
+                                            <span className="text-xs md:text-sm font-bold text-gray-500">zł / mies</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-left mb-4 md:mb-6">
+                        <span className="inline-block bg-green-50 text-green-700 text-[10px] font-bold px-2 py-1 rounded border border-green-100">
+                            Możliwość płatności miesięcznej
+                        </span>
+                                    </div>
+
+                                    <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 text-left flex-grow">
+                                        {featuresList.slice(0, 4).map((feature, i) => (
+                                            <li key={i} className="flex items-start text-xs md:text-sm text-gray-600">
+                                                <div className="mt-0.5 min-w-[20px] text-green-500"><FlashIcon className="w-3 h-3 md:w-4 md:h-4 text-yellow-500 mr-2"/></div>
+                                                <span className="ml-1 md:ml-2 leading-tight">{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <div className="mb-4 md:mb-6 flex justify-start">
+                                        <Rating rating={plan.averageRating} reviews={plan.reviews}/>
+                                    </div>
+
+                                    <Button
+                                        variant={index === 1 ? 'primary' : 'secondary'}
+                                        className={`w-full py-3 md:py-4 text-sm font-bold shadow-lg hover:shadow-xl transition-all ${index !== 1 ? 'bg-gray-50 border-gray-200 hover:bg-white hover:border-[#4E61F6] text-gray-600 hover:text-[#4E61F6]' : ''}`}
+                                        onClick={() => openModal(plan)}
+                                    >
+                                        Zobacz szczegóły
+                                    </Button>
+                                </div>
+                            )
+                        })}
                     </div>
                 )}
 

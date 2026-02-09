@@ -2,6 +2,7 @@ import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
 import React, {useEffect, useState} from "react";
 import type {ITwoFactorModalProps} from "../types/ui.types.ts";
+import {handleApiError} from "../utils/apiErrorHandler.ts";
 
 export const useTwoFactorModal = ({isOpen, onClose}: ITwoFactorModalProps) => {
     const { token } = useAuth()
@@ -30,13 +31,16 @@ export const useTwoFactorModal = ({isOpen, onClose}: ITwoFactorModalProps) => {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/account/2fa/setup`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
+            if(!res.ok)
+                throw await res.json()
+
             const data = await res.json()
 
             setQrUri(data.authenticatorUri)
             setSetupKey(data.key)
             setStep(data.isEnabled ? 'disabled' : 'intro')
         } catch (e) {
-            notify.error("Błąd pobierania danych 2FA.")
+            handleApiError(e, notify)
             onClose()
         }
     }
@@ -49,12 +53,14 @@ export const useTwoFactorModal = ({isOpen, onClose}: ITwoFactorModalProps) => {
                 body: JSON.stringify({ code })
             })
 
-            if (!res.ok) throw new Error("Nieprawidłowy kod")
+            if (!res.ok)
+                throw await res.json()
 
             setStep('success')
             notify.success("Weryfikacja dwuetapowa włączona!")
         } catch (e) {
-            notify.error("Błędny kod weryfikacyjny.")
+            handleApiError(e, notify)
+            setCode('')
         }
     }
 
@@ -73,15 +79,15 @@ export const useTwoFactorModal = ({isOpen, onClose}: ITwoFactorModalProps) => {
                 body: JSON.stringify({ password: disablePassword })
             })
 
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.Message || "Błędne hasło.")
-            }
+            if (!res.ok)
+                throw await res.json()
+
 
             notify.info("Weryfikacja dwuetapowa została wyłączona.")
             onClose()
-        } catch (e: any) {
-            notify.error(e.message || "Wystąpił błąd.")
+        } catch (e) {
+            handleApiError(e, notify)
+            setDisablePassword('')
         } finally {
             setIsLoading(false)
         }

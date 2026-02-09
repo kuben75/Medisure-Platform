@@ -1,10 +1,9 @@
-﻿using backend.Data;
-using backend.Services;
-using backend.Models;
+﻿using backend.Models; 
+using backend.DTOs;   
+using backend.Enums;
+using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace backend.Controllers;
 
@@ -12,28 +11,35 @@ namespace backend.Controllers;
 [Route("api/packages")]
 public class PackagesController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogService _logService;
+    private readonly IPackageService _packageService;
     private readonly IPricingService _pricingService;
 
-    public PackagesController(ApplicationDbContext context, ILogService logService, IPricingService pricingService)
+    public PackagesController(IPackageService packageService, IPricingService pricingService)
     {
-        _context = context;
-        _logService = logService;
+        _packageService = packageService;
         _pricingService = pricingService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Package>>> GetPackages()
     {
-        return Ok(await _context.Packages.ToListAsync());
+        var packages = await _packageService.GetAllPackagesAsync();
+        return Ok(packages);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Package>> GetPackage(int id)
     {
-        var package = await _context.Packages.FindAsync(id);
-        if (package == null) return NotFound();
+        var package = await _packageService.GetPackageByIdAsync(id);
+        if (package == null) 
+        {
+            return NotFound(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Nie znaleziono pakietu.", 
+                ErrorCode = (int)ErrorCode.NotFound 
+            });
+        }
 
         return Ok(package);
     }
@@ -46,76 +52,48 @@ public class PackagesController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Package>> CreatePackage([FromBody] Package package)
+    public async Task<ActionResult<Package>> CreatePackage([FromBody] CreatePackageDto dto)
     {
-        _context.Packages.Add(package);
-        await _context.SaveChangesAsync();
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ErrorResponse { Message = "Błąd walidacji danych.", ErrorCode = (int)ErrorCode.ValidationError });
+        }
 
-        await LogActionAsync("STWORZENIE_PAKIETU", $"Pakiet '{package.Name}' został utworzony.");
-
-        return CreatedAtAction(nameof(GetPackage), new { id = package.Id }, package);
+        var newPackage = await _packageService.CreatePackageAsync(dto, User.Identity?.Name);
+        
+        return CreatedAtAction(nameof(GetPackage), new { id = newPackage.Id }, newPackage);
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdatePackage(int id, [FromBody] Package packageToUpdate)
+    public async Task<IActionResult> UpdatePackage(int id, [FromBody] UpdatePackageDto dto)
     {
-        if (id != packageToUpdate.Id)
-            return BadRequest("ID w adresie URL nie zgadza się z ID w pakiecie.");
+        if (!ModelState.IsValid)
+            return BadRequest(new ErrorResponse { Message = "Błąd walidacji danych.", ErrorCode = (int)ErrorCode.ValidationError });
 
-        var packageFromDb = await _context.Packages.FindAsync(id);
-        if (packageFromDb == null)
-            return NotFound("Nie znaleziono pakietu do aktualizacji.");
-
-        UpdatePackageDetails(packageFromDb, packageToUpdate);
-
-        await _context.SaveChangesAsync();
-        await LogActionAsync("EDYCJA_PAKIETU", $"Pakiet '{packageFromDb.Name}' został zaktualizowany.");
-
-        return NoContent();
+        try
+        {
+            await _packageService.UpdatePackageAsync(id, dto, User.Identity?.Name);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new ErrorResponse { Message = "Nie znaleziono pakietu do edycji.", ErrorCode = (int)ErrorCode.NotFound });
+        }
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePackage(int id)
     {
-        var package = await _context.Packages.FindAsync(id);
-        if (package == null)
+        try
         {
-            await LogActionAsync("BLAD_PAKIETU", $"Próba usunięcia nieistniejącego pakietu o ID {id}.", "warning");
-            return NotFound("Nie znaleziono pakietu do usunięcia.");
+            await _packageService.DeletePackageAsync(id, User.Identity?.Name);
+            return NoContent();
         }
-
-        _context.Packages.Remove(package);
-        await _context.SaveChangesAsync();
-
-        await LogActionAsync("USUNIECIE_PAKIETU", $"Pakiet '{package.Name}' został usunięty.");
-
-        return NoContent();
-    }
-
-    private void UpdatePackageDetails(Package target, Package source)
-    {
-        target.Name = source.Name;
-        target.Description = source.Description;
-        target.Category = source.Category; 
-        target.PriceValue = source.PriceValue; 
-        target.Price = source.Price; 
-        target.IncludedSpecializations = source.IncludedSpecializations;
-        target.SpecialistsCount = source.SpecialistsCount;
-        target.FacilitiesCount = source.FacilitiesCount;
-        target.HasDentalCare = source.HasDentalCare;
-        target.HasHospitalization = source.HasHospitalization;
-        target.HasRehabilitation = source.HasRehabilitation;
-        target.IsFeatured = source.IsFeatured;
-        target.Features = source.Features; 
-    }
-
-    private async Task LogActionAsync(string action, string description, string level = "info")
-    {
-        var userName = User.Identity?.Name ?? "Admin";
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        await _logService.LogAsync(action, description, userName, userId, level);
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new ErrorResponse { Message = "Nie znaleziono pakietu do usunięcia.", ErrorCode = (int)ErrorCode.NotFound });
+        }
     }
 }

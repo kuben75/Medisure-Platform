@@ -18,26 +18,31 @@ export default function PackageDetailsModal({isOpen, onClose, plan, userAge, sel
         }
 
     }, [isOpen])
-    const { user } = useAuth();
+    const { user } = useAuth()
 
-    if (!plan) return null;
+    if (!plan) return null
 
+    const isTestPeriod = selectedDuration === '7d'
 
-    const isTestPeriod = selectedDuration === '7d';
+    const selectedOptionData = options.find(o => o.id === selectedDuration)
+    const currentDiscount = selectedOptionData?.discount || 0
+    const hasDiscount = currentDiscount > 0
+    const months = selectedOptionData?.months || 12
 
-    const selectedOptionData = options.find(o => o.id === selectedDuration);
-    const currentDiscount = selectedOptionData?.discount || 0;
-    const hasDiscount = currentDiscount > 0;
-    const months = selectedOptionData?.months || 12;
+    const baseMonthlyPrice = plan.priceValue
 
-    const baseMonthlyPrice = plan.priceValue;
+    const upfrontOriginalTotal = baseMonthlyPrice * months
 
-    const upfrontOriginalTotal = baseMonthlyPrice * months;
+    const upfrontDiscountedTotal = upfrontOriginalTotal * (1 - currentDiscount)
 
-    const upfrontDiscountedTotal = upfrontOriginalTotal * (1 - currentDiscount);
-
-    const displayMonthlyCardPrice = Math.round(baseMonthlyPrice);
+    const displayMonthlyCardPrice = Math.round(baseMonthlyPrice)
     const displayUpfrontCardPrice = isTestPeriod ? 1 : Math.round(upfrontDiscountedTotal)
+
+    const featuresList = typeof plan.features === 'string'
+        ? plan.features.split(';').map(f => f.trim()).filter(Boolean)
+        : (Array.isArray(plan.features) ? plan.features : [])
+
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-3xl w-full mx-2 sm:mx-4">
             <div className="text-gray-800 relative bg-white rounded-xl shadow-xl max-h-[90vh] overflow-y-auto custom-scrollbar p-4 sm:p-6 md:p-8 mt-4">
@@ -103,7 +108,7 @@ export default function PackageDetailsModal({isOpen, onClose, plan, userAge, sel
                         <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Co zawiera pakiet?
                     </h4>
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
-                        {plan.features.map((f, i) => (
+                        {featuresList.map((f, i) => (
                             <li key={i} className="flex items-start text-gray-700 text-sm">
                                 <CheckIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                                 <span className="flex-1 leading-relaxed">{f}</span>

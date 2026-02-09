@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from './useAuth.ts'
 import { useNotification } from './UseNotification.ts'
+import {handleApiError} from "../utils/apiErrorHandler.ts";
 
 export const useOnboardingModal = () => {
     const { user, token, updateUser } = useAuth()
@@ -77,7 +78,7 @@ export const useOnboardingModal = () => {
                 body: JSON.stringify(payload)
             })
 
-            if (!response.ok) throw new Error("Błąd zapisu")
+            if (!response.ok) throw await response.json()
 
             const updatedUser = await response.json()
 
@@ -86,19 +87,15 @@ export const useOnboardingModal = () => {
             setIsOpen(false)
 
         } catch (err) {
-            console.error(err)
-            notify.error("Nie udało się zapisać daty.")
+            handleApiError(err, notify)
         } finally {
             setLoading(false)
         }
     }
 
     return {
-        isOpen,
-        birthDateStr,
-        setBirthDateStr,
-        loading,
-        handleSkip,
-        handleSave
+        isOpen, birthDateStr,
+        setBirthDateStr, loading,
+        handleSkip, handleSave
     }
 }

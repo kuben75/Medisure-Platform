@@ -3,9 +3,8 @@ import CheckIcon from "../components/icons/CheckIcon.tsx";
 import ErrorIcon from "../components/icons/ErrorIcon.tsx";
 import InfoIcon from "../components/icons/InfoIcon.tsx";
 import XIcon from "../components/icons/XIcon.tsx";
-
 import type {INotification, TNotificationType} from "../types/notifications.types.ts";
-import {NotificationContext as NotificationContext1} from "../hooks/UseNotification.ts";
+import {NotificationContext} from "../hooks/UseNotification.ts";
 
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
@@ -50,7 +49,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return (
-        <NotificationContext1 value={{ notify }}>
+        <NotificationContext value={{ notify }}>
             {children}
 
             <div className="fixed top-22 right-5 z-[9999] flex flex-col gap-3">
@@ -97,7 +96,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
                     animation: slideIn 0.3s ease-out forwards;
                 }
             `}</style>
-        </NotificationContext1>
-    );
-};
+        </NotificationContext>
+    )
+}
 

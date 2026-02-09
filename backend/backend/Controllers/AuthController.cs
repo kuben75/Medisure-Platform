@@ -2,7 +2,9 @@
 using backend.DTOs;
 using backend.Data;
 using backend.Services;
-using backend.Helpers; // Pamiętaj o imporcie namespace'u helperów
+using backend.Services.Interfaces;
+using backend.Helpers; 
+using backend.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -50,7 +52,12 @@ public class AuthController : ControllerBase
         if (await _userManager.FindByEmailAsync(registerDto.Email) != null)
         {
             await SafeLogAsync("NIEUDANA_REJESTRACJA", $"Próba rejestracji na zajęty email: {registerDto.Email}", "System", null, "Warning");
-            return BadRequest(new { Message = "Użytkownik o tym adresie e-mail już istnieje." });
+            return BadRequest(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Użytkownik o tym adresie e-mail już istnieje.",
+                ErrorCode = (int)ErrorCode.ValidationError 
+            });
         }
 
         var newUser = new ApplicationUser
@@ -66,10 +73,24 @@ public class AuthController : ControllerBase
         if (!result.Succeeded)
         {
             await SafeLogAsync("NIEUDANA_REJESTRACJA", $"Błąd rejestracji: {registerDto.Email}", "System", null, "Warning");
-            return BadRequest(result.Errors);
+            var errorMsg = string.Join(", ", result.Errors.Select(e => e.Description));
+            
+            return BadRequest(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = errorMsg, 
+                ErrorCode = (int)ErrorCode.ValidationError 
+            });
         }
 
-        await _userManager.AddToRoleAsync(newUser, "User");
+        var roleResult = await _userManager.AddToRoleAsync(newUser, "User");
+        if (!roleResult.Succeeded)
+        {
+            await _userManager.DeleteAsync(newUser); 
+            await SafeLogAsync("BLAD_SYSTEMU", $"Nie udało się nadać roli User dla {registerDto.Email}", "System", null, "Error");
+            return StatusCode(500, new ErrorResponse { Message = "Błąd systemu podczas rejestracji.", ErrorCode = (int)ErrorCode.InternalServerError });
+        }
+        
         await SafeLogAsync("UDANA_REJESTRACJA", $"Zarejestrowano: {registerDto.Email}", newUser.UserName, newUser.Id, "Success");
 
         await _notificationService.CreateNotificationAsync(
@@ -91,18 +112,35 @@ public class AuthController : ControllerBase
         if (user == null)
         {
             await LogFailedLoginAttempt(loginDto.Email, "nieznany email");
-            return Unauthorized(new { Message = "Niepoprawny adres e-mail lub hasło." });
+            return Unauthorized(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Niepoprawny adres e-mail lub hasło.", 
+                ErrorCode = (int)ErrorCode.InvalidCredentials 
+            });
         }
 
         if (await _userManager.IsLockedOutAsync(user))
-            return Unauthorized(new { Message = "Twoje konto zostało zablokowane.", Code = "ACCOUNT_LOCKED" });
-        
+        {
+            return StatusCode(403, new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Twoje konto zostało zablokowane.", 
+                ErrorCode = (int)ErrorCode.AccountLocked 
+            });
+        }
+
 
         if (!await _userManager.CheckPasswordAsync(user, loginDto.Password))
         {
             await _userManager.AccessFailedAsync(user);
             await LogFailedLoginAttempt(loginDto.Email, "błędne hasło", user.Id, await _userManager.IsLockedOutAsync(user));
-            return Unauthorized(new { Message = "Niepoprawny adres e-mail lub hasło." });
+            return Unauthorized(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Niepoprawny adres e-mail lub hasło.", 
+                ErrorCode = (int)ErrorCode.InvalidCredentials 
+            });
         }
 
         await _userManager.ResetAccessFailedCountAsync(user);
@@ -110,12 +148,19 @@ public class AuthController : ControllerBase
         if (!user.EmailConfirmed)
         {
             await SafeLogAsync("LOGOWANIE_ZABLOKOWANE", $"Logowanie na nieaktywne konto: {loginDto.Email}", user.UserName, user.Id, "Warning");
-            return Unauthorized(new { Message = "Konto nie jest aktywne." });
+            return Unauthorized(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Konto nie jest aktywne. Potwierdź adres e-mail.",
+                ErrorCode = (int)ErrorCode.AccountNotActive 
+            });
         }
 
         if (await _userManager.GetTwoFactorEnabledAsync(user))
+        {
             return Ok(new { Message = "Wymagana weryfikacja dwuetapowa.", Code = "REQUIRES_2FA", Email = user.Email });
-        
+        }
+
 
         await CheckAndNotifyExpiringPackages(user);
 
@@ -138,7 +183,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { Message = "Błędny link weryfikacyjny." });
 
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return BadRequest(new { Message = "Użytkownik nie istnieje." });
+        if (user == null) return BadRequest(new ErrorResponse { Message = "Użytkownik nie istnieje.", ErrorCode = (int)ErrorCode.NotFound });
 
         var result = await _userManager.ConfirmEmailAsync(user, token);
         if (result.Succeeded)
@@ -147,7 +192,7 @@ public class AuthController : ControllerBase
             return Ok(new { Message = "Email został potwierdzony pomyślnie." });
         }
 
-        return BadRequest(new { Message = "Link wygasł lub jest nieprawidłowy." });
+        return BadRequest(new ErrorResponse { Message = "Link wygasł lub jest nieprawidłowy.", ErrorCode = (int)ErrorCode.ValidationError });
     }
 
     [HttpPost("forgot-password")]
@@ -159,10 +204,12 @@ public class AuthController : ControllerBase
 
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
-            return Ok(new { Message = "Jeśli konto istnieje, wysłaliśmy link resetujący." });
-
-        try
         {
+            await Task.Delay(new Random().Next(100, 300));
+            return Ok(new { Message = "Jeśli konto istnieje, wysłaliśmy link resetujący." });
+        }
+
+        
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var encodedToken = WebUtility.UrlEncode(token);
             var resetLink = $"{_configuration["FrontendUrl"]}/reset-hasla?token={encodedToken}&email={dto.Email}";
@@ -175,14 +222,8 @@ public class AuthController : ControllerBase
 
             await SafeLogAsync("RESET_HASLA", $"Żądanie resetu: {dto.Email}", "System", null, "Security");
             _cache.Set(cacheKey, true, TimeSpan.FromMinutes(5));
-        }
-        catch (Exception ex)
-        {
-            await SafeLogAsync("EMAIL_FAILED", $"Błąd wysyłki resetu: {ex.Message}", "System", null, "Error");
-            return StatusCode(500, new { Message = "Błąd wysyłki email." });
-        }
 
-        return Ok(new { Message = "Jeśli konto istnieje, wysłaliśmy link resetujący." });
+            return Ok(new { Message = "Jeśli konto istnieje, wysłaliśmy link resetujący." });
     }
 
     [HttpPost("reset-password")]
@@ -196,51 +237,94 @@ public class AuthController : ControllerBase
         var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
         if (result.Succeeded)
         {
+            await _userManager.ResetAccessFailedCountAsync(user);
+            await _userManager.UpdateSecurityStampAsync(user);
+
             await SafeLogAsync("RESET_HASLA", $"Hasło zmienione: {dto.Email}", "System", null, "Success");
             return Ok(new { Message = "Hasło zostało zmienione pomyślnie." });
         }
 
-        return BadRequest(new { Message = "Nie udało się zresetować hasła.", Errors = result.Errors });
+        return BadRequest(new ErrorResponse 
+        { 
+            Message = "Nie udało się zresetować hasła. Link może być nieaktywny.", 
+            ErrorCode = (int)ErrorCode.ValidationError 
+        });
     }
 
     [HttpGet("verify-reset-token")]
     public async Task<IActionResult> VerifyResetToken(string email, string token)
     {
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
-            return BadRequest(new { Message = "Brak danych." });
+            return BadRequest(new ErrorResponse { Message = "Brak danych.", ErrorCode = (int)ErrorCode.ValidationError });
 
         var user = await _userManager.FindByEmailAsync(email);
-        if (user == null) return BadRequest(new { Message = "Użytkownik nie istnieje." });
+        if (user == null) return BadRequest(new ErrorResponse { Message = "Link nieaktywny.", ErrorCode = (int)ErrorCode.NotFound });
 
         var isValid = await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", token);
-        return isValid ? Ok(new { Message = "Token aktywny." }) : BadRequest(new { Message = "Link nieaktywny." });
+        
+        return isValid 
+            ? Ok(new { Message = "Token aktywny." }) 
+            : BadRequest(new ErrorResponse { Message = "Link nieaktywny lub wygasł.", ErrorCode = (int)ErrorCode.ValidationError });
     }
 
     [HttpPost("login-2fa")]
     public async Task<IActionResult> Verify2FaCode([FromBody] TwoFactorLoginDto dto)
     {
+        
         var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user == null) return Unauthorized(new { Message = "Błąd autoryzacji." });
+        if (user == null) return Unauthorized(new ErrorResponse { Message = "Błąd autoryzacji.", ErrorCode = (int)ErrorCode.InvalidCredentials });
+        
+        if (!string.IsNullOrEmpty(dto.Password)) 
+        {
+            if (!await _userManager.CheckPasswordAsync(user, dto.Password))
+            {
+                await SafeLogAsync("LOGOWANIE_2FA_FAIL", "Błędne hasło przy 2FA", user.Email, user.Id, "Warning");
+                return Unauthorized(new ErrorResponse { Message = "Błędne hasło.", ErrorCode = (int)ErrorCode.InvalidCredentials });
+            }
+        }
+        else
+        {
+            return BadRequest(new ErrorResponse { Message = "Wymagane hasło.", ErrorCode = (int)ErrorCode.ValidationError });
+        }
+        
+        var isCodeValid = await _userManager.VerifyTwoFactorTokenAsync(
+            user, 
+            _userManager.Options.Tokens.AuthenticatorTokenProvider, 
+            dto.Code.Replace(" ", string.Empty).Replace("-", "")
+        );
 
-        var isCodeValid = await _userManager.VerifyTwoFactorTokenAsync(user, _userManager.Options.Tokens.AuthenticatorTokenProvider, dto.Code.Replace(" ", string.Empty));
         if (!isCodeValid)
         {
             await SafeLogAsync("LOGOWANIE_2FA", $"Niepoprawny kod 2FA: {dto.Email}", user.Email, user.Id, "Security");
-            return Unauthorized(new { Message = "Niepoprawny kod weryfikacyjny." });
+            return BadRequest(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Niepoprawny kod weryfikacyjny.", 
+                ErrorCode = (int)ErrorCode.InvalidTwoFactorCode 
+            });
         }
 
         var tokenString = _tokenService.GenerateJwtToken(user, await _userManager.GetRolesAsync(user));
         
         await SafeLogAsync("LOGOWANIE_2FA", $"Zalogowano z 2FA: {dto.Email}", user.UserName, user.Id, "Success");
 
-        return Ok(new { Message = "Zalogowano pomyślnie", Token = tokenString, User = new { user.Email, user.FirstName, user.LastName, user.BirthDate, user.Pesel, user.TwoFactorEnabled } });
+        return Ok(new { 
+            Message = "Zalogowano pomyślnie", 
+            Token = tokenString, 
+            User = new { user.Email, user.FirstName, user.LastName, user.BirthDate, user.Pesel, user.TwoFactorEnabled } 
+        });
     }
 
     [HttpGet("confirm-new-email")]
     public async Task<IActionResult> ConfirmNewEmail(string userId, string newEmail, string token)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return BadRequest(new { Message = "Użytkownik nie istnieje." });
+        if (user == null) return BadRequest(new ErrorResponse { Message = "Użytkownik nie istnieje.", ErrorCode = (int)ErrorCode.NotFound });
+
+        if (await _userManager.FindByNameAsync(newEmail) != null)
+        {
+            return BadRequest(new ErrorResponse { Message = "Ten email jest już zajęty przez inne konto.", ErrorCode = (int)ErrorCode.ValidationError });
+        }
 
         var result = await _userManager.ChangeEmailAsync(user, newEmail, token);
         if (result.Succeeded)
@@ -250,12 +334,14 @@ public class AuthController : ControllerBase
             await _logService.LogAsync("ZMIANA_EMAIL", $"Użytkownik zmienił email na {newEmail}", newEmail, user.Id, "Info");
             return Ok(new { Message = "Email zmieniony pomyślnie." });
         }
-        return BadRequest(new { Message = "Błąd zmiany emaila." });
+        return BadRequest(new ErrorResponse { Message = "Link wygasł lub jest nieprawidłowy.", ErrorCode = (int)ErrorCode.ValidationError });
     }
 
 
     private async Task CheckAndNotifyExpiringPackages(ApplicationUser user)
     {
+        if (user == null) return;
+        
         var expiringPackages = await _context.UserPackages
             .Include(p => p.Package)
             .Where(up => up.UserId == user.Id && up.Status == "Active")
@@ -307,7 +393,7 @@ public class AuthController : ControllerBase
     private string GetClientIpAddress()
     {
         if (Request.Headers.ContainsKey("X-Forwarded-For")) return Request.Headers["X-Forwarded-For"].ToString();
-        return HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Unknown";
+        return HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Nieznany IP";
     }
 
     private async Task SafeLogAsync(string action, string desc, string user, string userId = null, string level = "Info")

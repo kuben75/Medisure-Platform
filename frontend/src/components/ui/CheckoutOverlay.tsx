@@ -123,9 +123,15 @@ export default function CheckoutOverlay({isOpen, onClose, plan, priceDetails, on
 
             setFormData(initialData)
 
-            setIsBirthDateLocked(!!userBirthDate && userBirthDate.length > 0)
-            setIsPeselLocked(!!userPesel && userPesel.length > 0)
-
+            const hasExistingPesel = Boolean(user.pesel && user.pesel.trim().length >= 11)
+            const hasExistingBirthDate = Boolean(user.birthDate && user.birthDate.trim().length > 0)
+            setIsPeselLocked(hasExistingPesel)
+            setIsBirthDateLocked(hasExistingBirthDate)
+            setFormData(prev => ({
+                ...prev,
+                pesel: hasExistingPesel ? user.pesel! : prev.pesel,
+                birthDate: hasExistingBirthDate ? (user.birthDate!.split('T')[0]) : prev.birthDate
+            }))
             setStep(1)
             setIsSuccess(false)
             setCountdown(5)

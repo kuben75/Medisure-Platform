@@ -20,8 +20,3 @@ export interface ISpecialist {
     icon?: ReactNode
 }
 
-export interface IPackageSimple {
-    id: number
-    name: string
-    includedSpecializations: string
-}

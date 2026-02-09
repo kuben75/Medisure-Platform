@@ -111,23 +111,7 @@ export interface IPackageTableProps {
     onDelete: (id: number) => void
 }
 
-export interface IPackageFormData {
-    name: string
-    price: string
-    priceValue: number
-    category: string
-    description: string
-    features: string
-    averageRating: number
-    reviews: number
-    includedSpecializations: string
-    specialistsCount: number
-    facilitiesCount: number
-    hasDentalCare: boolean
-    hasHospitalization: boolean
-    hasRehabilitation: boolean
-    isFeatured: boolean
-}
+
 
 export interface IPackageFormModalProps {
     isOpen: boolean;

@@ -11,6 +11,7 @@ export interface IAddReviewModalProps {
     packageId: number
     packageName: string
 }
+export type IUseAddReviewParams = Pick<IAddReviewModalProps, 'onClose' | 'packageId'>;
 export interface IPendingReview {
     id: number
     userName: string

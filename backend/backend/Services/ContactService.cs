@@ -1,12 +1,9 @@
 ﻿using backend.DTOs;
 using backend.Helpers;
+using backend.Services.Interfaces;
+using System.Net;
 
 namespace backend.Services;
-
-public interface IContactService
-{
-    Task HandleContactFormAsync(ContactFormDto dto);
-}
 
 public class ContactService : IContactService
 {
@@ -21,14 +18,29 @@ public class ContactService : IContactService
 
     public async Task HandleContactFormAsync(ContactFormDto dto)
     {
+        var safeMessage = WebUtility.HtmlEncode(dto.Message);
+        var safeTopic = WebUtility.HtmlEncode(dto.Topic);
+        var safeName = WebUtility.HtmlEncode(dto.Name);
+
+      
+        var adminContent = $"Od: {safeName} {dto.Surname} ({dto.Email}).\nTemat: {safeTopic}\nWiadomość: {safeMessage}";
+
         await _notificationService.NotifyAllAdminsAsync(
             "Nowe zapytanie ofertowe",
-            $"Od: {dto.Name} {dto.Surname} ({dto.Email}).\nTemat: {dto.Topic}\nWiadomość: {dto.Message}",
+            adminContent,
             "Informacja"
         );
 
-        var emailBody = EmailTemplates.GetContactConfirmation(dto.Name, dto.Topic);
         
-        _ = _emailService.SendEmailAsync(dto.Email, "Potwierdzenie zgłoszenia - Medisure", emailBody);
+        var emailBody = EmailTemplates.GetContactConfirmation(safeName, safeTopic);
+        
+        try 
+        {
+            await _emailService.SendEmailAsync(dto.Email, "Potwierdzenie zgłoszenia - Medisure", emailBody);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ContactService] Błąd wysyłania potwierdzenia: {ex.Message}");
+        }
     }
 }

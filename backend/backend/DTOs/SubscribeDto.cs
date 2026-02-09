@@ -31,4 +31,5 @@ public class SubscribeDto
     [Required(ErrorMessage = "Numer PESEL jest wymagany do zawarcia umowy.")]
     [RegularExpression(@"^\d{11}$", ErrorMessage = "PESEL musi składać się z 11 cyfr.")]
     public string Pesel { get; set; }
+    public DateTime? BirthDate { get; set; }
 }

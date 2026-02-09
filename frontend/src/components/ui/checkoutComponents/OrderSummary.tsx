@@ -5,24 +5,18 @@ import InfoIcon from '../../icons/InfoIcon.tsx';
 import LockIcon from '../../icons/LockIcon.tsx';
 import type {IOrderSummaryProps} from "../../../types/pricing.types.ts";
 
-export default function OrderSummary({
-                                         plan,
-                                         billingPeriod,
-                                         durationMonths,
-                                         effectiveStart,
-                                         effectiveEnd,
-                                         priceIncrease,
-                                         dynamicNetto,
-                                         dynamicVat,
-                                         dynamicTotalContractValue,
-                                         safeAmountToPay,
-                                         savingsAmount,
-                                         hasSavings,
-                                         onClose
+export default function OrderSummary({plan, billingPeriod, durationMonths,
+                                         effectiveStart, effectiveEnd, priceIncrease,
+                                         dynamicNetto, dynamicVat, dynamicTotalContractValue,
+                                         safeAmountToPay, savingsAmount, hasSavings, onClose
                                      }: IOrderSummaryProps) {
+    const featuresList = typeof plan.features === 'string'
+        ? plan.features.split(';').map(f => f.trim()).filter(Boolean)
+        : (Array.isArray(plan.features) ? plan.features : [])
+
     const formatDate = (date: Date) => date.toLocaleDateString('pl-PL', {
         day: '2-digit', month: '2-digit', year: 'numeric'
-    });
+    })
 
     return (
         <div className="w-full lg:w-5/12 xl:w-4/12 bg-[#0F172A] text-white flex flex-col relative flex-shrink-0 lg:h-full lg:overflow-hidden order-first shadow-2xl z-20">
@@ -43,7 +37,7 @@ export default function OrderSummary({
                             Twoje zamówienie
                         </span>
                         {hasSavings && (
-                            <span className="inline-block px-3 py-1 bg-green-500/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider text-green-400 border border-green-500/30 animate-pulse">
+                            <span className="inline-block px-3 py-1 bg-green-500/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider text-green-400 border border-green-500/30">
                                 Oszczędzasz {savingsAmount} zł
                             </span>
                         )}
@@ -53,7 +47,7 @@ export default function OrderSummary({
                     <p className="text-slate-400 text-sm leading-relaxed max-w-sm mb-6">{plan.description}</p>
 
                     <div className="space-y-2 mb-6">
-                        {plan.features.slice(0, 4).map((f, i) => (
+                        {featuresList.map((f, i) => (
                             <div key={i} className="flex items-start gap-3 text-sm text-slate-300 group">
                                 <div className="mt-0.5 p-1 rounded-full bg-indigo-500/20 group-hover:bg-indigo-500/30 transition-colors flex-shrink-0">
                                     <CheckIcon className="w-3 h-3 text-indigo-400"/>

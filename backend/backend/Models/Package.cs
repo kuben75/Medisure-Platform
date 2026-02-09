@@ -23,7 +23,7 @@ namespace backend.Models
         public int FacilitiesCount { get; set; } 
         
         
-        public List<string> Features { get; set; }
+        public string Features { get; set; } = string.Empty;
         
         public string IncludedSpecializations { get; set; }
         
