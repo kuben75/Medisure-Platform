@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react"
-import { useAuth } from "./useAuth.ts"
-import { useNotification } from "./UseNotification.ts"
-import { useConfirm } from "./UseConfrim.ts"
-import type { IUserDto } from "../types/user.types.ts"
+import {useCallback, useEffect, useState} from "react"
+import {useAuth} from "./useAuth.ts"
+import {useNotification} from "./UseNotification.ts"
+import {useConfirm} from "./UseConfrim.ts"
+import type {IUserDto} from "../types/user.types.ts"
+import {handleApiError} from "../utils/apiErrorHandler.ts";
 
 const API_URL_USERS = `${import.meta.env.VITE_API_URL}/admin/users`
 
@@ -27,14 +28,19 @@ export const useUsers = () => {
         try {
             setLoading(true)
             const response = await fetch(API_URL_USERS, { headers: { 'Authorization': `Bearer ${token}` } })
-            if (!response.ok) throw new Error('Błąd pobierania danych')
+
+            if (!response.ok)
+                throw await response.json()
+
             setUsers(await response.json())
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Wystąpił błąd")
+            handleApiError(err, notify);
+
+            setError(err instanceof Error ? err.message : "Wystąpił błąd podczas pobierania danych.");
         } finally {
             setLoading(false)
         }
-    }, [token]);
+    }, [token])
 
     useEffect(() => {
         fetchUsers().then(() => console.log("Użytkownicy załadowani"))
@@ -58,11 +64,13 @@ export const useUsers = () => {
                 body: JSON.stringify({ newRole })
             })
 
-            if (!response.ok) throw new Error("Błąd zmiany roli.")
+            if (!response.ok)
+                throw await response.json()
+
             notify.success(`Rola zmieniona na ${newRole}.`)
             await fetchUsers()
         } catch (err: any) {
-            notify.error(err.message)
+            handleApiError(err, notify)
         }
     }
 
@@ -76,11 +84,13 @@ export const useUsers = () => {
 
         try {
             const res = await fetch(`${API_URL_USERS}/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-            if (!res.ok) throw new Error("Błąd usuwania.")
+            if (!res.ok)
+                throw await res.json()
+
             notify.success("Użytkownik usunięty.")
             await fetchUsers()
         } catch (err: any) {
-            notify.error(err.message)
+            handleApiError(err, notify)
         }
     }
 
@@ -91,23 +101,38 @@ export const useUsers = () => {
                 method: 'PUT',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reason })
-            });
-            if (!res.ok) throw new Error("Błąd blokowania.")
+            })
+            if (!res.ok)
+                throw await res.json()
+
             notify.success("Użytkownik zablokowany.")
             setIsBlockModalOpen(false)
             await fetchUsers()
         } catch (err: any) {
-            notify.error(err.message)
+            handleApiError(err, notify)
         }
     }
 
     const unlockUser = async (user: IUserDto) => {
-        if (!await confirm({ title: "Odblokowanie", description: "Odblokować użytkownika?", confirmText: "Tak" })) return;
+        if (!await confirm(
+            { title: "Odblokowanie",
+                description: "Odblokować użytkownika?",
+                confirmText: "Tak" }
+        )) return
+
         try {
-            await fetch(`${API_URL_USERS}/${user.id}/unlock`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
+            const res = await fetch(`${API_URL_USERS}/${user.id}/unlock`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}` } }
+            )
+            if (!res.ok)
+                throw await res.json()
+
             notify.success("Odblokowano.")
             await fetchUsers()
-        } catch (err: any) { notify.error(err.message) }
+        } catch (err: any) {
+            handleApiError(err, notify)
+        }
     }
 
     return {

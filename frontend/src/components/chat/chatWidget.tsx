@@ -33,14 +33,6 @@ export default function ChatWidget() {
                     </div>
 
                     <div className="flex-grow p-4 overflow-y-auto bg-[#F3F4F6] custom-scrollbar flex flex-col">
-                        {myMessages.length === 0 && (
-                            <div className="text-center mt-12 opacity-60 px-4">
-                                <div className="text-4xl mb-3">👋</div>
-                                <h4 className="font-bold text-gray-700">Witaj!</h4>
-                                <p className="text-sm text-gray-500">W czym możemy Ci dzisiaj pomóc?</p>
-                            </div>
-                        )}
-
                         {myMessages.map((msg, idx) => {
                             const isMe = (msg.user || "").toLowerCase() === myEmail
                             const isSystem = (msg.user || "").toLowerCase() === "system"

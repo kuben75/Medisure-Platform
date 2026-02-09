@@ -1,11 +1,15 @@
-import { type ReactNode, useEffect, useState, useCallback } from 'react'
+import { type ReactNode, useEffect, useState, useCallback, useMemo } from 'react'
 import type { IUser } from "../types/user.types"
 import { AuthContext } from "../hooks/useAuth"
 import { extractRolesFromToken, getStoredAuthData, STORAGE_KEYS } from "../utils/authHelpers"
+import { handleApiError } from "../utils/apiErrorHandler.ts"
+import { useNotification } from "../hooks/UseNotification.ts"
 
 const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/auth/login`
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const { notify } = useNotification()
+
     const [user, setUser] = useState<IUser | null>(null)
     const [token, setToken] = useState<string | null>(null)
     const [roles, setRoles] = useState<string[]>([])
@@ -52,13 +56,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return () => window.removeEventListener('storage', handleStorageChange)
     }, [])
 
-    const setAuthSession = (newToken: string, newUser: IUser) => {
+    const setAuthSession = useCallback((newToken: string, newUser: IUser) => {
         handleAuthSuccess(newToken, newUser)
-    }
+    }, [handleAuthSuccess])
 
-    const login = async (email: string, password: string): Promise<string[] | null> => {
-        setIsLoading(true);
-        setError(null);
+    const login = useCallback(async (email: string, password: string): Promise<string[] | null> => {
+        setIsLoading(true)
+        setError(null)
 
         try {
             const response = await fetch(LOGIN_API_URL, {
@@ -68,34 +72,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             })
 
             const data = await response.json()
-            if (!response.ok) throw new Error(data.message || 'Błąd logowania')
+
+            if (!response.ok)
+                throw data;
+
+
+            if (data.code === 'REQUIRES_2FA' || data.Code === 'REQUIRES_2FA')
+                return null
+
 
             handleAuthSuccess(data.token, data.user)
             return extractRolesFromToken(data.token)
 
         } catch (err) {
-            console.error(err)
-            setError(err instanceof Error ? err.message : String(err))
+            handleApiError(err, notify)
             return null
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [handleAuthSuccess, notify])
 
-    const logout = () => {
+    const logout = useCallback(() => {
         clearAuthSession()
-    }
+    }, [clearAuthSession])
 
-    const updateUser = (userData: IUser) => {
+    const updateUser = useCallback((userData: IUser) => {
         setUser(prev => {
             if (!prev) return null
             const newUser = { ...prev, ...userData }
             localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser))
             return newUser
         })
-    }
+    }, [])
 
-    const value = {
+    const value = useMemo(() => ({
         user,
         token,
         roles,
@@ -105,7 +115,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setAuthSession,
         isLoading,
         error
-    }
+    }), [user, token, roles, login, logout, updateUser, setAuthSession, isLoading, error])
 
     return (
         <AuthContext.Provider value={value}>

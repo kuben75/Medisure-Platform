@@ -31,7 +31,7 @@ export interface IUserSubscription {
     startDate: string
     endDate: string
     status: string
-    features: string[]
+    features: string[] | string
     street?: string
     houseNumber?: string
     city?: string

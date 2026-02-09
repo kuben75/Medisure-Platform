@@ -35,3 +35,8 @@ export interface IConfirmOptions {
 export interface IConfirmationContextType {
     confirm: (options: IConfirmOptions) => Promise<boolean>
 }
+export interface ApiError {
+    success: boolean
+    message: string
+    errorCode?: number
+}

@@ -1,11 +1,11 @@
-import {useAuth} from "./useAuth.ts";
-import React, {useEffect, useState} from "react";
-import {useNotification} from "./UseNotification.ts";
-import type {IEditProfileModalProps} from "../types/ui.types.ts";
+import {useAuth} from "./useAuth.ts"
+import React, {useEffect, useState} from "react"
+import {useNotification} from "./UseNotification.ts"
+import type {IEditProfileModalProps} from "../types/ui.types.ts"
 
-
-export const useEditProfile = ( { isOpen, onClose }: IEditProfileModalProps) => {
+export const useEditProfile = ({ isOpen, onClose }: IEditProfileModalProps) => {
     const { user, token, updateUser } = useAuth()
+    const { notify } = useNotification()
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -15,17 +15,14 @@ export const useEditProfile = ( { isOpen, onClose }: IEditProfileModalProps) => 
         birthDate: ''
     })
 
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [twoFactorCode, setTwoFactorCode] = useState('');
-
+    const [currentPassword, setCurrentPassword] = useState('')
+    const [twoFactorCode, setTwoFactorCode] = useState('')
     const [step, setStep] = useState<'form' | 'password' | '2fa'>('form')
-
-    const {notify} = useNotification()
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        if (user && isOpen) {
+        if (isOpen && user) {
             setFormData({
                 firstName: user.firstName || '',
                 lastName: user.lastName || '',
@@ -33,13 +30,12 @@ export const useEditProfile = ( { isOpen, onClose }: IEditProfileModalProps) => 
                 phoneNumber: user.phoneNumber || '',
                 birthDate: user.birthDate ? user.birthDate.split('T')[0] : ''
             })
-
             setStep('form')
             setCurrentPassword('')
             setTwoFactorCode('')
             setError(null)
         }
-    }, [user, isOpen])
+    }, [isOpen])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -48,6 +44,7 @@ export const useEditProfile = ( { isOpen, onClose }: IEditProfileModalProps) => 
             [name]: value
         }))
     }
+
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setError(null)
@@ -58,36 +55,28 @@ export const useEditProfile = ( { isOpen, onClose }: IEditProfileModalProps) => 
         }
 
         const isEmailChanged = formData.email.toLowerCase() !== user?.email?.toLowerCase();
-
         if (isEmailChanged) setStep('password')
-
         else performUpdate()
-
     }
 
     const handlePasswordStep = (e: React.FormEvent) => {
         e.preventDefault()
         setError(null)
-
         if (!currentPassword) {
             setError("Wprowadź hasło")
             return
         }
-
         if (user?.twoFactorEnabled) setStep('2fa')
-         else performUpdate()
-
+        else performUpdate()
     }
 
     const handle2FAStep = (e: React.FormEvent) => {
         e.preventDefault()
         setError(null)
-
         if (!twoFactorCode || twoFactorCode.length !== 6) {
             setError("Wprowadź 6-cyfrowy kod")
             return
         }
-
         performUpdate()
     }
 
@@ -113,26 +102,9 @@ export const useEditProfile = ( { isOpen, onClose }: IEditProfileModalProps) => 
                 body: JSON.stringify(payload)
             })
 
-            if (!response.ok) {
-                const errData = await response.json()
-                let msg = errData.message || "Błąd aktualizacji."
-                if(errData.errors) msg = Object.values(errData.errors).flat().join(', ')
-
-                const lowerMsg = msg.toLowerCase();
-                if (lowerMsg.includes('hasł') || lowerMsg.includes('password')) {
-                    setStep('password')
-                    setError("Nieprawidłowe hasło. Spróbuj ponownie.")
-                } else if (lowerMsg.includes('code') || lowerMsg.includes('kod') || lowerMsg.includes('2fa')) {
-                    setError("Nieprawidłowy kod 2FA.")
-                } else {
-                    setError(msg)
-                }
-
-                throw new Error(msg)
-            }
+            if (!response.ok) throw await response.json()
 
             const updatedUser = await response.json()
-
             const isEmailChangePending = updatedUser.emailChangePending || updatedUser.EmailChangePending
 
             if (isEmailChangePending) {
@@ -145,23 +117,27 @@ export const useEditProfile = ( { isOpen, onClose }: IEditProfileModalProps) => 
             updateUser(updatedUser)
             onClose()
 
-        } catch (err) {
-            if (!error) setError(err instanceof Error ? err.message : String(err))
+        } catch (err: any) {
+            const code = err.errorCode || err.ErrorCode
+
+            if (code === 2004) {
+                setTwoFactorCode('')
+                setError("Nieprawidłowy kod 2FA.")
+            } else {
+                setError(err.message || "Wystąpił błąd podczas aktualizacji.")
+            }
         } finally {
             setIsLoading(false)
         }
     }
+
     return {
-        formData,
-        handleInputChange,
+        formData, handleInputChange,
         currentPassword, setCurrentPassword,
         twoFactorCode, setTwoFactorCode,
         step, setStep,
-        isLoading,
-        error, setError,
-        handleFormSubmit,
-        handlePasswordStep,
-        handle2FAStep,
+        isLoading, error, setError,
+        handleFormSubmit, handlePasswordStep, handle2FAStep,
         user
     }
 }

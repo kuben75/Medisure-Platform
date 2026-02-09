@@ -1,41 +1,45 @@
 import { FavoritesContext } from "../hooks/UseFavourites.ts"
-import { type ReactNode, useEffect, useState} from "react"
+import {type ReactNode, useCallback, useEffect, useState} from "react"
 import {useNotification} from "../hooks/UseNotification.ts";
 import {useAuth} from "../hooks/useAuth.ts";
+import {handleApiError} from "../utils/apiErrorHandler.ts";
 
 const API_URL_FAVORITES_IDS = `${import.meta.env.VITE_API_URL}/favorites/ids`
 const API_URL_TOGGLE = `${import.meta.env.VITE_API_URL}/favorites`
 
 
 export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
-    const { token } = useAuth();
-    const { notify } = useNotification();
+    const { token } = useAuth()
+    const { notify } = useNotification()
 
-    const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [favoriteIds, setFavoriteIds] = useState<number[]>([])
+    const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        const fetchFavorites = async () => {
-            if (!token) {
-                setFavoriteIds([])
-                return
-            }
-            setLoading(true)
-            try {
-                const response = await fetch(API_URL_FAVORITES_IDS, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (response.ok) {
-                    const ids = await response.json()
-                    setFavoriteIds(ids)
-                }
-            } catch (error) {
-                console.error("Błąd pobierania ulubionych", error);
-            }
+    const fetchFavorites = useCallback(async () => {
+        if (!token) {
+            setFavoriteIds([])
+            return
         }
 
-        fetchFavorites()
+        setLoading(true)
+        try {
+            const response = await fetch(API_URL_FAVORITES_IDS, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+
+            if (!response.ok) throw await response.json()
+
+            const ids = await response.json()
+            setFavoriteIds(ids)
+        } catch (error) {
+            console.error("Nie udało się pobrać ulubionych:", error)
+        } finally {
+            setLoading(false)
+        }
     }, [token])
+    useEffect(() => {
+        fetchFavorites()
+    }, [fetchFavorites])
 
     const toggleFavorite = async (packageId: number) => {
         if (!token) {
@@ -57,18 +61,18 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
 
-            if (!response.ok) throw new Error("Błąd serwera");
+            if (!response.ok) throw await response.json()
 
             const data = await response.json()
-            notify.success(data.message)
+            notify.success(data.message || (isCurrentlyFavorite ? "Usunięto z ulubionych" : "Dodano do ulubionych"))
 
         } catch (err) {
-            notify.error("Nie udało się zmienić statusu ulubionych." + err)
             setFavoriteIds(prev =>
                 isCurrentlyFavorite
                     ? [...prev, packageId]
                     : prev.filter(id => id !== packageId)
             )
+            handleApiError(err, notify)
         }
     }
 

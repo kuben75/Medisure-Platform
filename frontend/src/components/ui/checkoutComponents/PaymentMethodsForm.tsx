@@ -14,25 +14,13 @@ const BankLogo = ({name, color}: { name: string, color: string }) => (
     </div>
 );
 
-export default function PaymentMethodsForm({
-                                               paymentMethod,
-                                               selectedBank,
-                                               cardData,
-                                               blikCode,
-                                               bankLogin,
-                                               errors,
-                                               amountToPayNow,
-                                               isProcessing,
-                                               processingStatus,
-                                               onPaymentMethodChange,
-                                               onSelectedBankChange,
-                                               onCardDataChange,
-                                               onBlikCodeChange,
-                                               onBankLoginChange,
-                                               onErrorsClear,
-                                               onBack,
-                                               onPayment
+export default function PaymentMethodsForm({paymentMethod, selectedBank, cardData,
+                                               blikCode, bankLogin, errors, amountToPayNow,
+                                               isProcessing, processingStatus, onPaymentMethodChange,
+                                               onSelectedBankChange, onCardDataChange, onBlikCodeChange,
+                                               onBankLoginChange, onErrorsClear, onBack, onPayment
                                            }: IPaymentMethodsFormProps) {
+
     const getInputClass = (errorKey: string, locked = false) => `
         w-full border rounded-xl px-4 py-3.5 font-medium transition-all outline-none 
         ${locked
@@ -41,27 +29,27 @@ export default function PaymentMethodsForm({
             ? 'bg-red-50 border-red-300 text-red-900 focus:ring-2 focus:ring-red-200 placeholder:text-red-300'
             : 'bg-white border-gray-300 text-slate-800 focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 placeholder:text-gray-300 hover:border-gray-400'
     }
-    `;
+    `
 
     const handleExpiryChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let val = e.target.value.replace(/\D/g, '');
-        if (val.length >= 2) val = `${val.slice(0, 2)}/${val.slice(2, 4)}`;
-        onCardDataChange({...cardData, expiry: val.slice(0, 5)});
-        if (errors.expiry) onErrorsClear('expiry');
+        let val = e.target.value.replace(/\D/g, '')
+        if (val.length >= 2) val = `${val.slice(0, 2)}/${val.slice(2, 4)}`
+        onCardDataChange({...cardData, expiry: val.slice(0, 5)})
+        if (errors.expiry) onErrorsClear('expiry')
     };
 
     const handleCardNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let val = e.target.value.replace(/\D/g, '').substring(0, 16);
-        val = val.match(/.{1,4}/g)?.join(' ') || val;
-        onCardDataChange({...cardData, number: val});
-        if (errors.cardNumber) onErrorsClear('cardNumber');
-    };
+        let val = e.target.value.replace(/\D/g, '').substring(0, 16)
+        val = val.match(/.{1,4}/g)?.join(' ') || val
+        onCardDataChange({...cardData, number: val})
+        if (errors.cardNumber) onErrorsClear('cardNumber')
+    }
 
     const handleBlikChange = (e: ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value.replace(/\D/g, '').substring(0, 6);
         onBlikCodeChange(val);
         if (errors.blik) onErrorsClear('blik');
-    };
+    }
 
     return (
         <div className="animate-fade-in space-y-6 md:space-y-8 pb-6 lg:pb-0">

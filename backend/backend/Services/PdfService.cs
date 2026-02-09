@@ -2,14 +2,10 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using QuestPDF.Drawing; // <--- KLUCZOWE DLA FontManager
+using QuestPDF.Drawing; 
+using backend.Services.Interfaces;
 
 namespace backend.Services;
-
-public interface IPdfService
-{
-    byte[] GenerateCertificate(UserPackage sub, ApplicationUser user);
-}
 
 public class PdfService : IPdfService
 {
@@ -37,6 +33,7 @@ public class PdfService : IPdfService
 
     public byte[] GenerateCertificate(UserPackage sub, ApplicationUser user)
     {
+        if (sub == null || user == null) throw new ArgumentNullException("Brak danych do wygenerowania PDF.");
         return Document.Create(container =>
         {
             container.Page(page =>

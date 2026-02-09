@@ -1,5 +1,7 @@
 ﻿using backend.DTOs;
-using backend.Services;
+using backend.Services.Interfaces;
+using backend.Models; 
+using backend.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -22,7 +24,15 @@ public class ChatController : ControllerBase
     public async Task<IActionResult> MarkMyMessagesAsRead()
     {
         var userId = IdentifyUser();
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+        if (string.IsNullOrEmpty(userId)) 
+        {
+            return Unauthorized(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Nie udało się zidentyfikować użytkownika.", 
+                ErrorCode = (int)ErrorCode.Unauthorized 
+            });
+        }
 
         await _chatService.MarkMessagesAsReadAsync(userId);
         return Ok();
@@ -33,7 +43,15 @@ public class ChatController : ControllerBase
     public async Task<IActionResult> GetChatHistory()
     {
         var userId = IdentifyUser();
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+        if (string.IsNullOrEmpty(userId)) 
+        {
+            return Unauthorized(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Brak dostępu do czatu (błąd identyfikacji).", 
+                ErrorCode = (int)ErrorCode.Unauthorized 
+            });
+        }
 
         var isAdmin = User.Identity?.IsAuthenticated == true && User.IsInRole("Admin");
 
@@ -45,21 +63,43 @@ public class ChatController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> MarkAsRead([FromBody] MarkReadDto dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.UserEmail))
+        {
+            return BadRequest(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Należy podać adres e-mail użytkownika.", 
+                ErrorCode = (int)ErrorCode.ValidationError 
+            });
+        }
         await _chatService.MarkUserMessagesAsReadByAdminAsync(dto.UserEmail);
         return Ok();
     }
-
 
     private string? IdentifyUser()
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            return User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue(ClaimTypes.Name);
+            var id = User.FindFirst("email")?.Value 
+                     ?? User.FindFirst(ClaimTypes.Email)?.Value 
+                     ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                     ?? User.FindFirst("sub")?.Value 
+                     ?? User.FindFirst("unique_name")?.Value 
+                     ?? User.FindFirst(ClaimTypes.Name)?.Value;
+
+            if (!string.IsNullOrEmpty(id)) 
+            {
+                return id.ToLower();
+            }
         }
 
         if (Request.Headers.TryGetValue("X-Anon-ID", out var anonId))
         {
-            return anonId.ToString();
+            var idString = anonId.ToString();
+            
+            if (idString.Contains("@")) return null; 
+            
+            return idString;
         }
 
         return null;

@@ -6,25 +6,36 @@ import {RESPONSES} from "../../../constants/panelOptions.ts";
 import CannedIcon from "../../icons/CannedIcon.tsx";
 import SendIcon from "../../icons/SendIcon.tsx";
 
-
 export const AdminChatWindow = ({ conversation, onSend, onBack }: IAdminChatWindowProps) => {
-    const [replyInput, setReplyInput] = useState("");
-    const [showCanned, setShowCanned] = useState(false);
-    const bottomRef = useRef<HTMLDivElement>(null);
+    const [replyInput, setReplyInput] = useState("")
+    const [showCanned, setShowCanned] = useState(false)
+    const [isSending, setIsSending] = useState(false)
+    const bottomRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (conversation) {
-            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
         }
-    }, [conversation, conversation?.msgs.length]);
+    }, [conversation, conversation?.msgs.length])
 
     const handleSend = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!replyInput.trim()) return;
-        await onSend(replyInput);
-        setReplyInput("");
-        setShowCanned(false);
-    };
+        e.preventDefault()
+        if (!replyInput.trim() || isSending) return;
+
+        const messageToSend = replyInput;
+
+        setReplyInput("")
+        setShowCanned(false)
+        setIsSending(true)
+
+        try {
+            await onSend(messageToSend)
+        } catch (error) {
+            setReplyInput(messageToSend)
+        } finally {
+            setIsSending(false)
+        }
+    }
 
     if (!conversation) {
         return (
@@ -35,26 +46,26 @@ export const AdminChatWindow = ({ conversation, onSend, onBack }: IAdminChatWind
                 <h2 className="text-base md:text-lg font-bold text-gray-700">Wybierz rozmowę</h2>
                 <p className="text-xs md:text-sm text-gray-400 mt-1">Kliknij na użytkownika z listy, aby rozpocząć.</p>
             </div>
-        );
+        )
     }
 
     const renderMessages = () => {
-        const result = [];
-        let lastDate = "";
-        const msgs = conversation.msgs as IChatMessage[];
+        const result = []
+        let lastDate = ""
+        const msgs = conversation.msgs as IChatMessage[]
 
         for (let i = 0; i < msgs.length; i++) {
-            const msg = msgs[i];
-            const msgDate = new Date(msg.timestamp).toDateString();
+            const msg = msgs[i]
+            const msgDate = new Date(msg.timestamp).toDateString()
 
             if (msgDate !== lastDate) {
-                result.push(<DateSeparator key={`date-${i}`} date={new Date(msg.timestamp)} />);
-                lastDate = msgDate;
+                result.push(<DateSeparator key={`date-${i}`} date={new Date(msg.timestamp)} />)
+                lastDate = msgDate
             }
 
-            const isOutgoing = msg.type === "AdminToUser";
-            let senderName = isOutgoing ? "Ty" : (conversation.displayName || "User");
-            if (msg.user === "System") senderName = "System (Bot)";
+            const isOutgoing = msg.type === "AdminToUser"
+            let senderName = isOutgoing ? "Ty" : (conversation.displayName || "User")
+            if (msg.user === "System") senderName = "System (Bot)"
 
             result.push(
                 <ChatBubble
@@ -65,10 +76,10 @@ export const AdminChatWindow = ({ conversation, onSend, onBack }: IAdminChatWind
                     senderName={senderName}
                     isRead={true}
                 />
-            );
+            )
         }
-        return result;
-    };
+        return result
+    }
 
     return (
         <div className="flex w-full md:w-2/3 flex-col bg-white relative">
@@ -128,11 +139,11 @@ export const AdminChatWindow = ({ conversation, onSend, onBack }: IAdminChatWind
                         value={replyInput}
                         onChange={e => setReplyInput(e.target.value)}
                     />
-                    <button type="submit" className="p-2 md:p-3 bg-[#4E61F6] text-white rounded-full hover:bg-blue-700 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0" disabled={!replyInput.trim()}>
+                    <button type="submit" className="p-2 md:p-3 bg-[#4E61F6] text-white rounded-full hover:bg-blue-700 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0" disabled={!replyInput.trim() || isSending}>
                         <SendIcon />
                     </button>
                 </form>
             </div>
         </div>
-    );
-};
+    )
+}

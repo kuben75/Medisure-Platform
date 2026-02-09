@@ -1,68 +1,14 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/ui/Button.tsx";
-import { useNotification } from "../../hooks/UseNotification.ts";
-import ContactMap from "../../components/ui/ContactMap.tsx";
 import PaperAirplaneIcon from "../../components/icons/PaperAirplaneIcon.tsx";
+import ContactMap from "../../components/ui/ContactMap.tsx";
+import {useFormSection} from "../../hooks/useFormSection.ts";
 
 export default function FormSection() {
-    const [isChecked, setIsChecked] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const { notify } = useNotification()
-
-    const [formData, setFormData] = useState({
-        name: '', surname: '', email: '', phone: '', topic: 'Oferta Indywidualna', message: ''
-    })
-
-    const [errors, setErrors] = useState<Record<string, boolean>>({});
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-
-        const newErrors: Record<string, boolean> = {}
-
-        if (!formData.name) newErrors.name = true
-        if (!formData.surname) newErrors.surname = true
-        if (!formData.email) newErrors.email = true
-        if (!formData.phone) newErrors.phone = true
-
-        if (!isChecked) newErrors.agreement = true
-
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            notify.error("Uzupełnij wymagane pola zaznaczone na czerwono.");
-            return
-        }
-
-        setIsLoading(true);
-
-        try {
-            const API_URL = `${import.meta.env.VITE_API_URL}/contact`;
-
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) throw new Error("Błąd serwera");
-
-            notify.success("Wiadomość wysłana! Sprawdź maila (Autoresponder).");
-
-            setFormData({ name: '', surname: '', email: '', phone: '', topic: 'Oferta Indywidualna', message: '' });
-            setIsChecked(false);
-            setErrors({});
-
-        } catch (err) {
-            console.error(err);
-            notify.error("Nie udało się wysłać wiadomości. Spróbuj ponownie.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const getInputClass = (field: string) =>
-        `w-full px-4 py-3 border rounded-xl focus:outline-none transition-colors ${errors[field] ? 'border-red-500 bg-red-50 focus:ring-red-200' : 'border-gray-300 focus:ring-2 focus:ring-[#4E61F6] bg-gray-50 focus:bg-white'}`;
+    const  {
+        formData, setFormData, errors,
+        setErrors, isChecked, setIsChecked,
+        isLoading, handleSubmit, getInputClass } = useFormSection()
 
     return (
         <section id="contact-form" className="py-16 px-4 bg-white">
@@ -94,7 +40,17 @@ export default function FormSection() {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-1">Telefon <span className="text-red-500">*</span></label>
-                                    <input type="tel" value={formData.phone} onChange={e => {setFormData({...formData, phone: e.target.value}); setErrors({...errors, phone: false})}} className={getInputClass('phone')} />
+                                    <input
+                                        type="tel"
+                                        value={formData.phone}
+                                        onChange={e => {
+                                            const val = e.target.value.replace(/\D/g, '');
+                                            setFormData({...formData, phone: val});
+                                            setErrors({...errors, phone: false})
+                                        }}
+                                        className={getInputClass('phone')}
+                                        maxLength={9}
+                                    />
                                 </div>
                             </div>
 
@@ -150,7 +106,7 @@ export default function FormSection() {
                                 </label>
                                 {errors.agreement && (
                                     <p className="text-red-500 text-xs mt-2 ml-8 font-semibold">
-                                         Zaznaczenie zgody jest wymagane.
+                                        Zaznaczenie zgody jest wymagane.
                                     </p>
                                 )}
                             </div>
@@ -174,5 +130,5 @@ export default function FormSection() {
                 </div>
             </div>
         </section>
-    );
+    )
 }

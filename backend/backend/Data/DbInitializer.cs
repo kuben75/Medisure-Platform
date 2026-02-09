@@ -121,14 +121,7 @@ public static class DbInitializer
                         Category = "Indywidualny",
                         PriceValue = 69.00m, Price = "69 zł",
                         Description = "Niezbędna opieka medyczna na start.",
-                        Features = new List<string>
-                        {
-                            "Nielimitowane konsultacje u lekarza internisty oraz pediatry.",
-                            "Dostęp do alergologa w ramach opieki podstawowej.",
-                            "Podstawowe badania krwi i moczu bez opłat.",
-                            "Gwarantowane terminy wizyt w ciągu 24h.",
-                            "Portal pacjenta: e-recepty i wyniki badań online."
-                        },
+                        Features = "Nielimitowane konsultacje u lekarza internisty oraz pediatry.;Dostęp do alergologa w ramach opieki podstawowej.;Podstawowe badania krwi i moczu bez opłat.;Gwarantowane terminy wizyt w ciągu 24h.;Portal pacjenta: e-recepty i wyniki badań online.",
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 3,
                         FacilitiesCount = 200, IsFeatured = false,
@@ -140,14 +133,7 @@ public static class DbInitializer
                         Category = "Indywidualny",
                         PriceValue = 99.00m, Price = "99 zł",
                         Description = "Rozszerzona diagnostyka i specjaliści pierwszego kontaktu.",
-                        Features = new List<string>
-                        {
-                            "Dostęp do Ginekologa, Dermatologa, Okulisty i Laryngologa.",
-                            "Rozszerzone badania laboratoryjne (w tym hormony tarczycy).",
-                            "Konsultacje internistyczne bez limitów.",
-                            "Bezpłatne szczepienie przeciw grypie raz w roku.",
-                            "Dostęp do fizjoterapeuty i rehabilitacji."
-                        },
+                        Features = "Dostęp do Ginekologa, Dermatologa, Okulisty i Laryngologa.;Rozszerzone badania laboratoryjne (w tym hormony tarczycy).;Konsultacje internistyczne bez limitów.;Bezpłatne szczepienie przeciw grypie raz w roku.;Dostęp do fizjoterapeuty i rehabilitacji.",
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 9,
                         FacilitiesCount = 250, IsFeatured = false,
@@ -159,14 +145,7 @@ public static class DbInitializer
                         Category = "Indywidualny",
                         PriceValue = 169.00m, Price = "169 zł",
                         Description = "Szeroki dostęp do specjalistów, rehabilitacja i stomatologia.",
-                        Features = new List<string>
-                        {
-                            "Dostęp do ponad 20 specjalistów bez skierowań.",
-                            "Stomatologia: Przegląd, skaling i piaskowanie raz w roku.",
-                            "Nielimitowane badania USG i RTG.",
-                            "Pakiet 5 zabiegów rehabilitacyjnych.",
-                            "Wsparcie psychologa i lekarza chorób zakaźnych."
-                        },
+                        Features = "Dostęp do ponad 20 specjalistów bez skierowań.;Stomatologia: Przegląd, skaling i piaskowanie raz w roku.;Nielimitowane badania USG i RTG.;Pakiet 5 zabiegów rehabilitacyjnych.;Wsparcie psychologa i lekarza chorób zakaźnych.",
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = true,
                         SpecialistsCount = 24,
                         FacilitiesCount = 800, IsFeatured = true,
@@ -178,14 +157,7 @@ public static class DbInitializer
                         Category = "Indywidualny",
                         PriceValue = 450.00m, Price = "450 zł",
                         Description = "Opieka VIP: wszyscy specjaliści, wizyty domowe i pełna stomatologia.",
-                        Features = new List<string>
-                        {
-                            "Pełny dostęp do wszystkich 32 specjalistów.",
-                            "Stomatologia zachowawcza (leczenie) bez limitów kosztów.",
-                            "Wizyty domowe lekarza i pielęgniarki.",
-                            "Prowadzenie ciąży i szkoła rodzenia w cenie.",
-                            "Indywidualny opiekun medyczny (Concierge)."
-                        },
+                        Features = "Pełny dostęp do wszystkich 32 specjalistów.;Stomatologia zachowawcza (leczenie) bez limitów kosztów.;Wizyty domowe lekarza i pielęgniarki.;Prowadzenie ciąży i szkoła rodzenia w cenie.;Indywidualny opiekun medyczny.",
                         HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
                         SpecialistsCount = 32,
                         FacilitiesCount = 1500, IsFeatured = true,
@@ -195,14 +167,7 @@ public static class DbInitializer
                     {
                         Name = "Rodzina 2+1 Start", Category = "Rodzinny", PriceValue = 219.00m, Price = "219 zł",
                         Description = "Ochrona zdrowia dla rodziców i dziecka.",
-                        Features = new List<string>
-                        {
-                            "Nielimitowany Pediatra i Internista dla całej rodziny.",
-                            "Dostęp do Ginekologa i Dermatologa.",
-                            "Bilans zdrowia dziecka i szczepienia obowiązkowe.",
-                            "Pomoc doraźna 24/7 (Hotline).",
-                            "Wsparcie logopedyczne (konsultacja wstępna)."
-                        },
+                        Features = "Pediatra i Internista dla całej rodziny.;Dostęp do Ginekologa i Dermatologa.;Bilans zdrowia dziecka i szczepienia obowiązkowe.;Pomoc doraźna 24/7 (Hotline).;Wsparcie logopedyczne (konsultacja wstępna).",
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 9,
                         FacilitiesCount = 400, IsFeatured = false,
@@ -214,14 +179,7 @@ public static class DbInitializer
                         Name = "Rodzina 2+2 Standard", Category = "Rodzinny", PriceValue = 380.00m,
                         Price = "380 zł",
                         Description = "Optymalny pakiet dla rodziny z dostępem do stomatologa.",
-                        Features = new List<string>
-                        {
-                            "Dostęp do większości specjalistów dziecięcych i dorosłych.",
-                            "Stomatologia: przeglądy i higienizacja dla całej rodziny.",
-                            "Wizyty domowe (2 w roku) w nagłych zachorowaniach.",
-                            "Wsparcie logopedy i medycyny sportowej dla dzieci.",
-                            "Opieka stomatologiczna w nagłych bólach."
-                        },
+                        Features = "Dostęp do większości specjalistów dziecięcych i dorosłych.;Stomatologia: przeglądy i higienizacja dla całej rodziny.;Wizyty domowe (2 w roku) w nagłych zachorowaniach.;Wsparcie logopedy i medycyny sportowej dla dzieci.;Opieka stomatologiczna w nagłych bólach.",
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 22,
                         FacilitiesCount = 600, IsFeatured = true,
@@ -234,14 +192,7 @@ public static class DbInitializer
                         Category = "Rodzinny",
                         PriceValue = 550.00m, Price = "550 zł",
                         Description = "Pełne bezpieczeństwo i komfort dla wymagających rodzin.",
-                        Features = new List<string>
-                        {
-                            "Szeroki zakres specjalistów bez skierowań dla każdego.",
-                            "Pełna profilaktyka stomatologiczna i leczenie próchnicy.",
-                            "Psycholog dziecięcy i logopeda (cykl 5 spotkań).",
-                            "Szczepienia dodatkowe (np. meningokoki, grypa) w cenie.",
-                            "Dostęp do psychiatry i lekarza chorób zakaźnych."
-                        },
+                        Features = "Szeroki zakres specjalistów bez skierowań dla każdego.;Pełna profilaktyka stomatologiczna i leczenie próchnicy.;Psycholog dziecięcy i logopeda (cykl 5 spotkań).;Szczepienia dodatkowe (np. meningokoki, grypa) w cenie.;Dostęp do psychiatry i lekarza chorób zakaźnych.",
                         HasDentalCare = true, HasHospitalization = false, HasRehabilitation = true,
                         SpecialistsCount = 28,
                         FacilitiesCount = 700, IsFeatured = true,
@@ -252,14 +203,7 @@ public static class DbInitializer
                     {
                         Name = "Rodzina 2+3 Premium", Category = "Rodzinny", PriceValue = 690.00m, Price = "690 zł",
                         Description = "Maksymalna ochrona dla rodzin wielodzietnych.",
-                        Features = new List<string>
-                        {
-                            "Wszystkie korzyści pakietu Premium dla 5 osób.",
-                            "Nielimitowana rehabilitacja wad postawy u dzieci.",
-                            "Wizyty domowe bez limitów.",
-                            "Stomatologia zachowawcza dla wszystkich członków rodziny.",
-                            "Transport medyczny w razie wypadku."
-                        },
+                        Features = "Wszystkie korzyści pakietu Premium dla 5 osób.;Nielimitowana rehabilitacja wad postawy u dzieci.;Wizyty domowe bez limitów.;Stomatologia zachowawcza dla wszystkich członków rodziny.;Transport medyczny w razie wypadku.",
                         HasDentalCare = true, HasHospitalization = true, HasRehabilitation = true,
                         SpecialistsCount = 32,
                         FacilitiesCount = 1200, IsFeatured = true,
@@ -271,14 +215,7 @@ public static class DbInitializer
                         Category = "Senior",
                         PriceValue = 210.00m, Price = "210 zł",
                         Description = "Dedykowana opieka geriatryczna i kardiologiczna.",
-                        Features = new List<string>
-                        {
-                            "Nielimitowany dostęp do Geriatry, Kardiologa i Reumatologa.",
-                            "Badania EKG spoczynkowe bez limitu.",
-                            "Pakiet 10 zabiegów rehabilitacyjnych.",
-                            "Pomoc w organizacji leków i transportu.",
-                            "Brak ankiety medycznej przy przystąpieniu."
-                        },
+                        Features = "Nielimitowany dostęp do Geriatry, Kardiologa i Reumatologa.;Badania EKG spoczynkowe bez limitu.;Pakiet 10 zabiegów rehabilitacyjnych.;Pomoc w organizacji leków i transportu.;Brak ankiety medycznej przy przystąpieniu.",
                         HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
                         SpecialistsCount = 20,
                         FacilitiesCount = 600, IsFeatured = false,
@@ -290,14 +227,7 @@ public static class DbInitializer
                         Category = "Senior",
                         PriceValue = 290.00m, Price = "290 zł",
                         Description = "Rozszerzona opieka dla seniora z wizytami domowymi.",
-                        Features = new List<string>
-                        {
-                            "Wizyty domowe lekarza i pielęgniarki.",
-                            "Rozszerzona diagnostyka (Tomografia, Rezonans).",
-                            "Opieka psychologa i onkologa.",
-                            "Konsultacje dietetyczne i diabetologiczne.",
-                            "Pełny zakres rehabilitacji usprawniającej."
-                        },
+                        Features = "Wizyty domowe lekarza i pielęgniarki.;Rozszerzona diagnostyka (Tomografia, Rezonans).;Opieka psychologa i onkologa.;Konsultacje dietetyczne i diabetologiczne.;Pełny zakres rehabilitacji usprawniającej.",
                         HasDentalCare = false, HasHospitalization = true, HasRehabilitation = true,
                         SpecialistsCount = 23,
                         FacilitiesCount = 700, IsFeatured = false,
@@ -309,14 +239,7 @@ public static class DbInitializer
                         Category = "Biznesowy",
                         PriceValue = 350.00m, Price = "350 zł",
                         Description = "Zdrowie pracowników to zysk firmy. Kompleksowa opieka.",
-                        Features = new List<string>
-                        {
-                            "Szybka ścieżka Medycyny Pracy (1 dzień).",
-                            "Dostęp do specjalistów i badań w całej Polsce.",
-                            "Wsparcie psychologiczne dla pracowników (stres, wypalenie).",
-                            "Programy profilaktyczne (Kręgosłup, Serce).",
-                            "Dedykowany opiekun klienta biznesowego."
-                        },
+                        Features = "Szybka ścieżka Medycyny Pracy (1 dzień).;Dostęp do specjalistów i badań w całej Polsce.;Wsparcie psychologiczne dla pracowników (stres, wypalenie).;Programy profilaktyczne (Kręgosłup, Serce).;Dedykowany opiekun klienta biznesowego.",
                         HasDentalCare = false, HasHospitalization = false, HasRehabilitation = false,
                         SpecialistsCount = 23,
                         FacilitiesCount = 1500, IsFeatured = false,

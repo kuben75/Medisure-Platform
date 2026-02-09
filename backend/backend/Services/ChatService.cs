@@ -1,20 +1,17 @@
 ﻿using backend.Data;
-using backend.DTOs;
 using Microsoft.EntityFrameworkCore;
-
+using backend.Services.Interfaces;
+using backend.DTOs;
+using backend.Hubs;
 namespace backend.Services;
-
-public interface IChatService
-{
-    Task MarkMessagesAsReadAsync(string receiverId);
-    Task MarkUserMessagesAsReadByAdminAsync(string userEmail);
-    Task<object> GetChatHistoryAsync(string userId, bool isAdmin);
-}
 
 public class ChatService : IChatService
 {
     private readonly ApplicationDbContext _context;
     private readonly UserConnectionManager _connectionManager;
+
+    private const string AdminRole = "Admin";
+    private const string SystemRole = "System";
 
     public ChatService(ApplicationDbContext context, UserConnectionManager connectionManager)
     {
@@ -25,20 +22,22 @@ public class ChatService : IChatService
     public async Task MarkMessagesAsReadAsync(string receiverId)
     {
         var unreadMsgs = await _context.ChatMessages
-            .Where(m => m.Receiver.ToLower() == receiverId.ToLower() && !m.IsRead)
+            .Where(m => m.Receiver == receiverId && !m.IsRead)
             .ToListAsync();
 
         if (unreadMsgs.Any())
         {
-            foreach (var msg in unreadMsgs) msg.IsRead = true;
+            foreach (var msg in unreadMsgs) {
+                msg.IsRead = true;
+            }
             await _context.SaveChangesAsync();
         }
     }
 
-    public async Task MarkUserMessagesAsReadByAdminAsync(string userEmail)
+    public async Task MarkUserMessagesAsReadByAdminAsync(string userEmailOrGuid)
     {
         var unreadMsgs = await _context.ChatMessages
-            .Where(m => m.UserId == userEmail.ToLower() && m.Sender != "Admin" && !m.IsRead)
+            .Where(m => m.UserId == userEmailOrGuid && m.Sender != AdminRole && !m.IsRead)
             .ToListAsync();
 
         if (unreadMsgs.Any())
@@ -48,49 +47,100 @@ public class ChatService : IChatService
         }
     }
 
-    public async Task<object> GetChatHistoryAsync(string userId, bool isAdmin)
+    public async Task<ChatHistoryDto> GetChatHistoryAsync(string userId, bool isAdmin)
     {
         userId = userId.ToLower();
 
         if (!isAdmin)
         {
-            return await _context.ChatMessages
-                .Where(m => m.UserId.ToLower() == userId)
+            var userMessages = await _context.ChatMessages
+                .AsNoTracking()
+                .Where(m => m.UserId == userId || m.Sender == userId || m.Receiver == userId)
                 .OrderBy(m => m.Timestamp)
                 .ToListAsync();
+
+            return new ChatHistoryDto
+            {
+                Messages = userMessages,
+                Users = new Dictionary<string, ChatUserDto>(), 
+                OnlineUsers = new List<string>()
+            };
+        }
+        
+        
+        var messages = await _context.ChatMessages
+            .AsNoTracking()
+            .OrderBy(m => m.Timestamp)
+            .ToListAsync();
+        
+        var uniqueInteractors = new HashSet<string>();
+        foreach (var msg in messages)
+        {
+            if (msg.Sender != AdminRole && msg.Sender != SystemRole) uniqueInteractors.Add(msg.Sender);
+            if (msg.Receiver != AdminRole && msg.Receiver != SystemRole) uniqueInteractors.Add(msg.Receiver);
+            if (!string.IsNullOrEmpty(msg.UserId)) uniqueInteractors.Add(msg.UserId);
+        }
+        
+        var userList = uniqueInteractors.ToList();
+        
+        var registeredUsers = await _context.Users
+            .AsNoTracking()
+            .Where(u => userList.Contains(u.Email) || userList.Contains(u.Id))
+            .ToListAsync();
+        
+        var usersMap = new Dictionary<string, ChatUserDto>();
+        foreach (var u in registeredUsers)
+        {
+            if (!string.IsNullOrEmpty(u.Email))
+            {
+                usersMap[u.Email.ToLower()] = new ChatUserDto 
+                { 
+                    FirstName = u.FirstName, 
+                    LastName = u.LastName,
+                    Email = u.Email
+                };
+            }
         }
 
-        var messages = await _context.ChatMessages.OrderBy(m => m.Timestamp).ToListAsync();
+        var finalUsersList = new Dictionary<string, ChatUserDto>();
 
-        var userIds = messages
-            .Where(m => m.UserId != "Admin" && m.UserId != "System")
-            .Select(m => m.UserId)
-            .Distinct()
-            .ToList();
-
-        var registeredUsers = await _context.Users
-            .Where(u => userIds.Contains(u.Email))
-            .ToDictionaryAsync(u => u.Email.ToLower(), u => new { u.FirstName, u.LastName });
-
-        var allUsersDetails = new Dictionary<string, object>();
-
-        foreach (var id in userIds)
+        foreach (var id in uniqueInteractors)
         {
-            if (registeredUsers.ContainsKey(id))
+            if (string.IsNullOrEmpty(id)) continue; 
+
+            var lowerId = id.ToLower();
+
+            if (usersMap.TryGetValue(lowerId, out var userDto))
             {
-                allUsersDetails[id] = registeredUsers[id];
+                finalUsersList[lowerId] = userDto;
             }
             else
             {
-                var shortId = id.Length > 10 ? id.Substring(6, 5) : id;
-                allUsersDetails[id] = new { FirstName = "Gość", LastName = $"({shortId})" };
+                string displayName = "Gość";
+                string displayLast = "";
+
+                if (id.StartsWith("guest_"))
+                {
+                    displayLast = $"({id.Substring(6)})"; 
+                }
+                else 
+                {
+                    displayLast = id.Length > 5 ? $"...{id.Substring(0, 5)}" : id;
+                }
+
+                finalUsersList[lowerId] = new ChatUserDto 
+                { 
+                    FirstName = displayName, 
+                    LastName = displayLast,
+                    Email = id 
+                };
             }
         }
 
-        return new
+        return new ChatHistoryDto
         {
             Messages = messages,
-            Users = allUsersDetails,
+            Users = finalUsersList,
             OnlineUsers = _connectionManager.GetOnlineUsers()
         };
     }

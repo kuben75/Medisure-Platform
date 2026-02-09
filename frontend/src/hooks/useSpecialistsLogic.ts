@@ -1,7 +1,8 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useMemo, useState} from "react";
-import type {IPackageSimple, ISpecialist} from "../types/specialists.types.ts";
+import type { ISpecialist} from "../types/specialists.types.ts";
 import {CATEGORY_GROUPS, SPECIALISTS_LIST} from "../constants/specialists.tsx";
+import type {IPricingPlan} from "../types/pricing.types.ts";
 
 export const useSpecialistsLogic = () => {
     const navigate = useNavigate()
@@ -13,17 +14,35 @@ export const useSpecialistsLogic = () => {
     const [selectedCategory, setSelectedCategory] = useState("Wszystkie")
     const [selectedSpecialist, setSelectedSpecialist] = useState<ISpecialist | null>(null)
 
-    const [packages, setPackages] = useState<IPackageSimple[]>([])
+    const [packages, setPackages] = useState<IPricingPlan[]>([])
 
     useEffect(() => {
         const fetchPackages = async () => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/packages`)
                 if (!response.ok) throw new Error("Błąd pobierania")
-                const data = await response.json()
-                setPackages(data)
+
+                const rawData = await response.json()
+
+                const adaptedData = rawData.map((pkg: any) => {
+
+                    const safeParse = (input: any) => {
+                        if (!input) return []
+                        if (Array.isArray(input)) return input
+                        if (typeof input === 'string') return input.split(';').map(s => s.trim())
+                        return []
+                    }
+
+                    return {
+                        ...pkg,
+                        includedSpecializations: safeParse(pkg.includedSpecializations),
+                        features: safeParse(pkg.features)
+                    }
+                })
+
+                setPackages(adaptedData)
             } catch (err) {
-                console.error("Nie udało się pobrać pakietów do filtrowania", err)
+                console.error("Nie udało się pobrać pakietów", err)
             }
         }
         fetchPackages()
@@ -54,15 +73,30 @@ export const useSpecialistsLogic = () => {
         })
     }, [searchTerm, selectedCategory])
 
+
     const getRealPackagesForSpecialist = (category: string) => {
         if (!packages || packages.length === 0) return []
 
+        console.log(`🔍 Sprawdzam specjalistę z kategorii: "${category}"`)
+
         return packages.filter(pkg => {
-            if (!pkg.includedSpecializations) return false
+            const specs = (pkg.includedSpecializations as any)
 
-            const specs = pkg.includedSpecializations.split(';').map(s => s.trim())
+            if (!specs || !Array.isArray(specs)) {
+                console.log(`   ❌ Pakiet "${pkg.name}" ma błędne specjalizacje:`, specs)
+                return false
+            }
 
-            return specs.includes(category)
+
+            const hasMatch = specs.some((s: string) =>
+                s.trim().toLowerCase() === category.trim().toLowerCase()
+            )
+
+            if (hasMatch) {
+                console.log(`   ✅ SUKCES! Pakiet "${pkg.name}" pasuje! (Znaleziono: ${specs})`)
+            }
+
+            return hasMatch
         }).map(pkg => pkg.name)
     }
     return {

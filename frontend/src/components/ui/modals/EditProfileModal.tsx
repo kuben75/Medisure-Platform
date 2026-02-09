@@ -1,29 +1,29 @@
-
 import Modal from './Modal.tsx'
 import Button from '../Button.tsx'
-import type {IEditProfileModalProps} from "../../../types/ui.types.ts";
-import InfoIcon from "../../icons/InfoIcon.tsx";
-import PhoneIcon from "../../icons/PhoneIcon.tsx";
-import KeyIcon from "../../icons/KeyIcon.tsx";
-import ShieldIcon from "../../icons/ShieldIcon.tsx";
-import MailIcon from "../../icons/MailIcon.tsx";
-import CalendarIcon from "../../icons/CalendarIcon.tsx";
-import UserIcon from "../../icons/UserIcon.tsx";
+import type {IEditProfileModalProps} from "../../../types/ui.types.ts"
+import InfoIcon from "../../icons/InfoIcon.tsx"
+import PhoneIcon from "../../icons/PhoneIcon.tsx"
+import KeyIcon from "../../icons/KeyIcon.tsx"
+import ShieldIcon from "../../icons/ShieldIcon.tsx"
+import MailIcon from "../../icons/MailIcon.tsx"
+import CalendarIcon from "../../icons/CalendarIcon.tsx"
+import UserIcon from "../../icons/UserIcon.tsx"
 import {useEditProfile} from "../../../hooks/useEditProfile.ts";
 
-
 export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalProps) {
- const {    formData,
-     handleInputChange,
-     currentPassword, setCurrentPassword,
-     twoFactorCode, setTwoFactorCode,
-     step, setStep,
-     isLoading,
-     error, setError,
-     handleFormSubmit,
-     handlePasswordStep,
-     handle2FAStep,
-     user} = useEditProfile({ isOpen, onClose })
+    const {
+        formData,
+        handleInputChange,
+        currentPassword, setCurrentPassword,
+        twoFactorCode, setTwoFactorCode,
+        step, setStep,
+        isLoading,
+        error, setError,
+        handleFormSubmit,
+        handlePasswordStep,
+        handle2FAStep,
+        user
+    } = useEditProfile({ isOpen, onClose })
 
     const isBirthDateLocked = !!user?.birthDate
 
@@ -43,22 +43,52 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                         <div className="grid grid-cols-2 gap-5">
                             <div className="space-y-1.5">
                                 <label className="block text-xs font-bold text-gray-500 uppercase ml-1">Imię *</label>
-                                <div className="relative"><div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><UserIcon className={"w-5 h-5"} /></div>
-                                    <input type="text" value={formData.firstName} onChange={handleInputChange} required className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#4E61F6] outline-none transition-all" />
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                        <UserIcon className="w-5 h-5" />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="firstName"
+                                        value={formData.firstName}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#4E61F6] outline-none transition-all"
+                                    />
                                 </div>
                             </div>
                             <div className="space-y-1.5">
                                 <label className="block text-xs font-bold text-gray-500 uppercase ml-1">Nazwisko *</label>
-                                <div className="relative"><div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><UserIcon className={"w-5 h-5"}/></div>
-                                    <input type="text" value={formData.lastName} onChange={handleInputChange} required className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#4E61F6] outline-none transition-all" />
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                        <UserIcon className="w-5 h-5"/>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        name="lastName"
+                                        value={formData.lastName}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#4E61F6] outline-none transition-all"
+                                    />
                                 </div>
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
                             <label className="block text-xs font-bold text-gray-500 uppercase ml-1">Email *</label>
-                            <div className="relative"><div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><MailIcon className={"w-5 h-5"}/></div>
-                                <input type="email" value={formData.email} onChange={handleInputChange} required className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#4E61F6] outline-none transition-all" />
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                    <MailIcon className="w-5 h-5"/>
+                                </div>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#4E61F6] outline-none transition-all"
+                                />
                             </div>
                         </div>
 
@@ -67,16 +97,20 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                                 <label className="block text-xs font-bold text-gray-500 uppercase ml-1">Telefon</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                                        <PhoneIcon className={"w-5 h-5"}/></div>
-                                    <input type="tel" value={formData.phoneNumber} onChange={handleInputChange}
-                                           className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#4E61F6] outline-none transition-all"/>
+                                        <PhoneIcon className="w-5 h-5"/>
+                                    </div>
+                                    <input
+                                        type="tel"
+                                        name="phoneNumber"
+                                        value={formData.phoneNumber}
+                                        onChange={handleInputChange}
+                                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#4E61F6] outline-none transition-all"
+                                    />
                                 </div>
                             </div>
                             <div className="space-y-1.5">
                                 <div className="flex justify-between items-center ml-1">
-                                    <label className="text-xs font-bold text-gray-500 uppercase">
-                                        Data ur.
-                                    </label>
+                                    <label className="text-xs font-bold text-gray-500 uppercase">Data ur.</label>
 
                                     {isBirthDateLocked && (
                                         <div className="group relative">
@@ -85,10 +119,13 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                                                 <InfoIcon className='w-4 h-4'/> Zweryfikowano
                                             </span>
                                             <div
-                                                className="absolute bottom-full right-0 mb-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
-                                                Data urodzenia została zatwierdzona.
-                                                <br/>
-                                                <span className="text-gray-300">W celu korekty skontaktuj się z obsługą.</span>
+                                                className="absolute bottom-full right-0 mb-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform translate-y-1 group-hover:translate-y-0">
+                                                <p className="font-semibold mb-1">Data urodzenia została
+                                                    zatwierdzona.</p>
+                                                <p className="text-gray-300 leading-relaxed">
+                                                    Ze względów bezpieczeństwa zmiana daty urodzenia jest zablokowana.
+                                                    W celu korekty skontaktuj się z obsługą klienta.
+                                                </p>
                                                 <div
                                                     className="absolute top-full right-4 -mt-1 border-4 border-transparent border-t-gray-800"></div>
                                             </div>
@@ -98,10 +135,16 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
 
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                                        <CalendarIcon className={"w-5 h-5"}/></div>
-                                    <input type="date" value={formData.birthDate} onChange={handleInputChange}
-                                           disabled={isBirthDateLocked}
-                                           className={`w-full pl-10 pr-4 py-2.5 border rounded-xl outline-none transition-all ${isBirthDateLocked ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' : 'bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#4E61F6]'}`}/>
+                                        <CalendarIcon className="w-5 h-5"/>
+                                    </div>
+                                    <input
+                                        type="date"
+                                        name="birthDate"
+                                        value={formData.birthDate}
+                                        onChange={handleInputChange}
+                                        disabled={isBirthDateLocked}
+                                        className={`w-full pl-10 pr-4 py-2.5 border rounded-xl outline-none transition-all ${isBirthDateLocked ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' : 'bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#4E61F6]'}`}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -117,19 +160,22 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
 
             {step === 'password' && (
                 <div className="animate-fade-in text-center px-4">
-                    <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-500">
-                        <KeyIcon className="w-12 h-12 text-amber-500" />
+                    <div
+                        className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-500">
+                        <KeyIcon className="w-12 h-12 text-amber-500"/>
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">Potwierdź hasłem</h3>
                     <p className="text-gray-500 text-sm mb-6">
                         Zmieniasz adres e-mail. <br/>Aby kontynuować, wprowadź swoje obecne hasło.
                     </p>
 
-                    {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 border border-red-100 animate-shake">{error}</div>}
+                    {error && <div
+                        className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 border border-red-100 animate-shake">{error}</div>}
 
                     <form onSubmit={handlePasswordStep} className="space-y-4 text-left max-w-sm mx-auto">
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Obecne hasło</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Obecne
+                                hasło</label>
                             <input
                                 type="password"
                                 value={currentPassword}
@@ -141,10 +187,13 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                         </div>
 
                         <div className="pt-8 flex gap-3">
-                            <Button type="button" variant="secondary" onClick={() => { setStep('form'); setError(null); }} className="w-1/3">
-                                Wróć
-                            </Button>
-                            <Button type="submit" variant="primary" className="w-2/3 shadow-lg bg-amber-600 hover:bg-amber-700 border-amber-600" disabled={isLoading}>
+                            <Button type="button" variant="secondary" onClick={() => {
+                                setStep('form');
+                                setError(null);
+                            }} className="w-1/3">Wróć</Button>
+                            <Button type="submit" variant="primary"
+                                    className="w-2/3 shadow-lg bg-amber-600 hover:bg-amber-700 border-amber-600"
+                                    disabled={isLoading}>
                                 {user?.twoFactorEnabled ? "Dalej" : "Potwierdź zmianę"}
                             </Button>
                         </div>
@@ -154,12 +203,14 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
 
             {step === '2fa' && (
                 <div className="animate-fade-in text-center px-4">
-                    <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-500">
-                        <ShieldIcon className={"w-12 h-12"} />
+                    <div
+                        className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-500">
+                        <ShieldIcon className="w-12 h-12"/>
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">Weryfikacja 2FA</h3>
                     <p className="text-gray-500 text-sm mb-6">
-                        Twoje konto jest zabezpieczone podwójnym uwierzytelnianiem. <br/>Podaj kod z aplikacji Authenticator.
+                        Twoje konto jest zabezpieczone podwójnym uwierzytelnianiem. <br/>Podaj kod z aplikacji
+                        Authenticator.
                     </p>
 
                     {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 border border-red-100 animate-shake">{error}</div>}
@@ -179,9 +230,7 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                         </div>
 
                         <div className="pt-8 flex gap-3">
-                            <Button type="button" variant="secondary" onClick={() => { setStep('password'); setError(null); }} className="w-1/3">
-                                Wróć
-                            </Button>
+                            <Button type="button" variant="secondary" onClick={() => { setStep('password'); setError(null); }} className="w-1/3">Wróć</Button>
                             <Button type="submit" variant="primary" className="w-2/3 shadow-lg" disabled={isLoading}>
                                 {isLoading ? "Weryfikacja..." : "Zatwierdź zmianę"}
                             </Button>

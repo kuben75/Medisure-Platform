@@ -28,27 +28,27 @@ export default function PackageCatalog() {
         checkBestMatch,
         handleOpenSpecs,
         paginate
-    } = usePackageCatalog();
+    } = usePackageCatalog()
 
 
     const {
         selectedPlan, selectedDuration, setSelectedDuration, billingPeriod, setBillingPeriod,
         openModal, closeModal, priceDetails, isCheckoutOpen, handleProceedToCheckout,
         closeCheckout, finalizePurchase, options, isBuying
-    } = usePackagePurchase();
+    } = usePackagePurchase()
 
 
-    const { addToComparison, removeFromComparison, isInComparison } = useComparison();
+    const { addToComparison, removeFromComparison, isInComparison } = useComparison()
 
 
     const handleOpenPackageDetails = (pkg: IPricingPlan) => {
-        let packageToOpen = pkg;
+        let packageToOpen = pkg
         if (showPersonalizedPricing) {
             const personalizedPrice = getPersonalizedPrice(pkg.priceValue, pkg.category);
-            packageToOpen = { ...pkg, priceValue: personalizedPrice };
+            packageToOpen = { ...pkg, priceValue: personalizedPrice }
         }
-        openModal(packageToOpen);
-    };
+        openModal(packageToOpen)
+    }
 
     return (
         <section className="py-20 px-4 bg-slate-50 border-t border-gray-200" id="full-catalog">
@@ -118,7 +118,7 @@ export default function PackageCatalog() {
                                             onOpenSpecs={(e) => handleOpenSpecs(e, pkg)}
                                             onOpenDetails={() => handleOpenPackageDetails(pkg)}
                                         />
-                                    );
+                                    )
                                 })}
                             </div>
                         )}
@@ -173,5 +173,5 @@ export default function PackageCatalog() {
                 />
             )}
         </section>
-    );
+    )
 }

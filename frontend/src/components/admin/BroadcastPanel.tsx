@@ -13,7 +13,7 @@ export default function BroadcastPanel() {
         type, setType,
         loading,
         handleSend
-    } = useBroadcastPanel();
+    } = useBroadcastPanel()
 
     const getTypeStyles = (t: string) => {
         switch (t) {

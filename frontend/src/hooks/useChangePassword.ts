@@ -1,7 +1,8 @@
-import { useState, type FormEvent } from "react";
-import { useAuth } from "./useAuth.ts";
-import { useNotification } from "./UseNotification.ts";
-import { useNavigate } from "react-router-dom";
+import {type FormEvent, useState} from "react"
+import {useAuth} from "./useAuth.ts"
+import {useNotification} from "./UseNotification.ts"
+import {useNavigate} from "react-router-dom"
+import {handleApiError} from "../utils/apiErrorHandler.ts"
 
 export const useChangePassword = (onClose: () => void) => {
     const { token, user, logout } = useAuth()
@@ -39,7 +40,7 @@ export const useChangePassword = (onClose: () => void) => {
 
         if (user?.twoFactorEnabled)
             setStep('auth')
-         else
+        else
             submitChangePassword()
     }
 
@@ -58,16 +59,14 @@ export const useChangePassword = (onClose: () => void) => {
                     confirmNewPassword: confirmPassword,
                     twoFactorCode: user?.twoFactorEnabled ? twoFactorCode : null
                 })
-            });
+            })
 
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.Message || "Błąd zmiany hasła.");
-            }
+            if (!response.ok)
+                throw await response.json()
 
-            notify.success("Hasło zmienione. Zaloguj się ponownie.");
-            resetForm();
-            onClose();
+            notify.success("Hasło zmienione. Zaloguj się ponownie.")
+            resetForm()
+            onClose()
 
             setTimeout(() => {
                 logout()
@@ -75,11 +74,12 @@ export const useChangePassword = (onClose: () => void) => {
             }, 1500)
 
         } catch (err: any) {
-            notify.error(err.message)
-            if (!err.message.toLowerCase().includes("kod"))
-                setStep('form')
-             else
+            handleApiError(err, notify)
+
+            if (err.ErrorCode === 2004)
                 setTwoFactorCode('')
+            else
+                setStep('form')
 
         } finally {
             setIsLoading(false)

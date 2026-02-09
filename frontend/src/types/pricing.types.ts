@@ -25,8 +25,8 @@ export interface IPricingPlan {
     hasRehabilitation: boolean
     specialistsCount: number
     facilitiesCount: number
-    features: string[]
-    includedSpecializations?: string
+    features: string[] | string
+    includedSpecializations?: string[] | string
     averageRating: number
     reviews: number
     isFeatured?: boolean
@@ -70,6 +70,7 @@ export interface IAddressData {
     zipCode: string
     pesel?: string
     startDate?: string | undefined
+    birthDate?: string
 }
 
 export interface IPriceDetails {

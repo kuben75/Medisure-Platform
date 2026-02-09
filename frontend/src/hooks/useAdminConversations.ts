@@ -62,5 +62,5 @@ export const useAdminConversations = ({ messages, onlineUsers, userDetails }: IU
         filteredList,
         searchTerm, setSearchTerm,
         filter, setFilter
-    };
-};
+    }
+}

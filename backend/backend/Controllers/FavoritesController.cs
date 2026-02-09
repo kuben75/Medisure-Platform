@@ -1,5 +1,6 @@
-﻿using backend.Models;
-using backend.Services;
+﻿using backend.Models; 
+using backend.Enums;  
+using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -8,7 +9,7 @@ namespace backend.Controllers;
 
 [ApiController]
 [Route("api/favorites")]
-[Authorize] 
+[Authorize]
 public class FavoritesController : ControllerBase
 {
     private readonly IFavoritesService _favoritesService;
@@ -22,26 +23,29 @@ public class FavoritesController : ControllerBase
     public async Task<IActionResult> ToggleFavorite(int packageId)
     {
         var userId = GetCurrentUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null) 
+        {
+            return Unauthorized(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Brak autoryzacji.", 
+                ErrorCode = (int)ErrorCode.Unauthorized 
+            });
+        }
 
         var userName = User.Identity?.Name ?? "Nieznany";
 
-        try 
-        {
-            var result = await _favoritesService.ToggleFavoriteAsync(packageId, userId, userName);
-            return Ok(new { Message = result.Message, IsFavorite = result.IsFavorite });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
+
+        var result = await _favoritesService.ToggleFavoriteAsync(packageId, userId, userName);
+        
+        return Ok(new { Message = result.Message, IsFavorite = result.IsFavorite });
     }
     
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Package>>> GetMyFavorites()
     {
         var userId = GetCurrentUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null) return Unauthorized(new ErrorResponse { Message = "Brak autoryzacji.", ErrorCode = (int)ErrorCode.Unauthorized });
 
         var favorites = await _favoritesService.GetUserFavoritesAsync(userId);
         return Ok(favorites);

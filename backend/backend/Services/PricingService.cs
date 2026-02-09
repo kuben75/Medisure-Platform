@@ -1,4 +1,5 @@
 ﻿using backend.Models;
+using backend.Services.Interfaces;
 
 namespace backend.Services;
 
@@ -52,41 +53,41 @@ public class PricingService : IPricingService
         if (durationId == Duration7Days) return 1.00m; 
 
         var option = GetOption(durationId);
+        
         if (option == null) return baseMonthlyPrice;
-
 
         if (billingPeriod == BillingMonthly) return baseMonthlyPrice;
         
+ 
         decimal totalBase = baseMonthlyPrice * option.Months;
         
-        decimal discount = option.Discount;
-
-        decimal finalPrice = totalBase * (1 - discount);
+        decimal discountAmount = totalBase * option.Discount;
+        decimal finalPrice = totalBase - discountAmount;
         
-        decimal rounded = Math.Round(finalPrice, 2);
-        
-        return rounded % 1 == 0 ? Math.Round(rounded, 0) : rounded;
+        return Math.Round(finalPrice, 2);
     }
     public decimal CalculateBasePriceWithRiskFactor(decimal basePackagePrice, string category, DateTime? birthDate)
     {
         if (category != CategoryIndividual) 
             return basePackagePrice;
 
+
         var actualBirthDate = birthDate ?? DateTime.UtcNow;
         var age = CalculateAge(actualBirthDate);
 
         decimal ageMultiplier = 1.0m;
 
+  
         if (age > 30 && age <= 50)
         {
-            ageMultiplier += (decimal)((age - 30) * 0.015);
+            ageMultiplier += (age - 30) * 0.015m;
         }
         else if (age > 50)
         {
-            ageMultiplier += 0.30m + (decimal)((age - 50) * 0.025);
+            ageMultiplier += 0.30m + ((age - 50) * 0.025m);
         }
 
-        return basePackagePrice * ageMultiplier;
+        return Math.Round(basePackagePrice * ageMultiplier, 2);
     }
     private int CalculateAge(DateTime birthDate)
     {

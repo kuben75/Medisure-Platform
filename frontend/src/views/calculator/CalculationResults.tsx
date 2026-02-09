@@ -38,11 +38,24 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
     }, [recommendedPlan, isContactRequired])
 
     const specialistsCount = useMemo(() => {
-        if (!recommendedPlan) return 0
+        if (!recommendedPlan)
+            return 0
+
         return SPECIALISTS_LIST.filter(s => s.availableInPackages.includes(recommendedPlan.name)).length
     }, [recommendedPlan])
 
     const isPersonalized = estimatedPrice > (recommendedPlan?.priceValue || 0) && !isContactRequired
+
+    const featuresList = useMemo(() => {
+        if (!recommendedPlan?.features)
+            return []
+
+        if (typeof recommendedPlan.features === 'string')
+            return recommendedPlan.features.split(';').map(f => f.trim()).filter(Boolean)
+
+
+        return Array.isArray(recommendedPlan.features) ? recommendedPlan.features : []
+    }, [recommendedPlan])
 
     return (
         <section className="py-20 px-4 bg-gradient-to-b from-slate-50 to-white border-b border-gray-200" id="results">
@@ -257,7 +270,7 @@ export default function CalculationResults({ estimatedPrice, packageType, age, r
 
                                                 </div>
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                    {recommendedPlan.features.slice(0, 6).map((feature, i) => (
+                                                    {featuresList.slice(0, 6).map((feature, i) => (
                                                         <div key={i} className="flex items-start text-sm font-medium text-white group/item">
                                                             <div className="mt-0.5 mr-3 p-0.5 bg-green-500/20 rounded-full group-hover/item:bg-green-500 transition-colors shrink-0">
                                                                 <CheckIcon className="w-4 h-4 text-green-400 group-hover/item:text-white transition-colors"/>

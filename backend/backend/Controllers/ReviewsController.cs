@@ -1,5 +1,7 @@
 ﻿using backend.DTOs;
-using backend.Services;
+using backend.Services.Interfaces;
+using backend.Models; // Nasz ErrorResponse
+using backend.Enums;  // Nasze ErrorCode
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -21,15 +23,34 @@ public class ReviewsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> AddReview([FromBody] CreateReviewDto dto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = "Błędne dane opinii.", 
+                ErrorCode = (int)ErrorCode.ValidationError 
+            });
+        }
+
         var userId = GetCurrentUserId();
-        var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue(ClaimTypes.Name); // Fallback
+        var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Identity?.Name; 
         
-        if (userId == null) return Unauthorized();
+        if (userId == null) 
+            return Unauthorized(new ErrorResponse { Message = "Brak autoryzacji.", ErrorCode = (int)ErrorCode.Unauthorized });
+
 
         var result = await _reviewsService.AddReviewAsync(dto, userId, userEmail);
 
         if (!result.Success)
-            return BadRequest(new { Message = result.Message });
+        {
+            return BadRequest(new ErrorResponse 
+            { 
+                Success = false, 
+                Message = result.Message, 
+                ErrorCode = (int)ErrorCode.BusinessRuleViolation 
+            });
+        }
 
         return Ok(new { Message = result.Message });
     }
@@ -55,9 +76,11 @@ public class ReviewsController : ControllerBase
     {
         var adminId = GetCurrentUserId();
         var adminName = User.Identity?.Name ?? "Admin";
-
+        
         var success = await _reviewsService.ApproveReviewAsync(id, adminId, adminName);
-        if (!success) return NotFound(new { Message = "Nie znaleziono opinii." });
+        
+        if (!success) 
+            return NotFound(new ErrorResponse { Message = "Nie znaleziono opinii.", ErrorCode = (int)ErrorCode.NotFound });
 
         return Ok(new { Message = "Opinia została zatwierdzona." });
     }
@@ -70,7 +93,9 @@ public class ReviewsController : ControllerBase
         var adminName = User.Identity?.Name ?? "Admin";
 
         var success = await _reviewsService.RejectReviewAsync(id, adminId, adminName);
-        if (!success) return NotFound(new { Message = "Nie znaleziono opinii." });
+        
+        if (!success) 
+            return NotFound(new ErrorResponse { Message = "Nie znaleziono opinii.", ErrorCode = (int)ErrorCode.NotFound });
 
         return Ok(new { Message = "Opinia została usunięta." });
     }
