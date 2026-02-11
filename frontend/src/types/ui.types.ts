@@ -3,43 +3,46 @@ import type {ICalculationData, IPricingPlan, ISubscriptionOption, TBillingType} 
 import type {IUser} from "./user.types.ts";
 
 export interface IIconProps {
-    className?: string | "w-6 h-6"
-    props?: React.SVGProps<SVGSVGElement>
-    isFilled?: string
-    hasUnread?: boolean
+    className?: string | "w-6 h-6";
+    props?: React.SVGProps<SVGSVGElement>;
+    isFilled?: string;
+    hasUnread?: boolean;
 }
+
 export interface IModalProps {
-    isOpen: boolean
-    onClose: () => void
-    children?: React.ReactNode
-    className?: string
+    isOpen: boolean;
+    onClose: () => void;
+    children?: React.ReactNode;
+    className?: string;
 }
 
 export interface IEditProfileModalProps {
-    isOpen: boolean
-    onClose: () => void
+    isOpen: boolean;
+    onClose: () => void;
 }
 
 export interface IRatingProps {
-    rating: number
-    reviews: number
-    className?: string
+    rating: number;
+    reviews: number;
+    className?: string;
 }
+
 export interface IFavoritesContext {
-    favoriteIds: number[]
-    toggleFavorite: (packageId: number) => Promise<void>
-    isFavorite: (packageId: number) => boolean
-    loading: boolean
+    favoriteIds: number[];
+    toggleFavorite: (packageId: number) => Promise<void>;
+    isFavorite: (packageId: number) => boolean;
+    loading: boolean;
 }
 
 export interface IFavoriteButtonProps {
-    packageId: number
-    className?: string
+    packageId: number;
+    className?: string;
 }
+
 export interface IComparisonModalProps {
-    isOpen: boolean
-    onClose: () => void
-    packages: IPricingPlan[]
+    isOpen: boolean;
+    onClose: () => void;
+    packages: IPricingPlan[];
 }
 
 export interface IHeroCalcProps {
@@ -49,25 +52,26 @@ export interface IHeroCalcProps {
 }
 
 export interface IFaqItem {
-    q: string
-    a: string
+    q: string;
+    a: string;
 }
 
 export interface IAccordionProps {
-    question: string
-    answer: string
-    isOpen?: boolean
-    onToggle?: () => void
+    question: string;
+    answer: string;
+    isOpen?: boolean;
+    onToggle?: () => void;
 }
+
 export interface IPackageDetailsModalProps {
-    isOpen: boolean
-    onClose: () => void
-    plan: IPricingPlan | null
-    userAge: number | undefined
-    selectedDuration: string
-    onDurationChange: (id: string) => void
-    onProceedToCheckout: () => void
-    options: ISubscriptionOption[]
+    isOpen: boolean;
+    onClose: () => void;
+    plan: IPricingPlan | null;
+    userAge: number | undefined;
+    selectedDuration: string;
+    onDurationChange: (id: string) => void;
+    onProceedToCheckout: () => void;
+    options: ISubscriptionOption[];
     priceDetails: {
         label: string
         total: number
@@ -76,11 +80,12 @@ export interface IPackageDetailsModalProps {
         isDiscounted: boolean
         months: number
         discountLabel: string
-    }
-    isBuying: boolean
+    };
+    isBuying: boolean;
     billingPeriod: TBillingType;
-    setBillingPeriod: (val: TBillingType) => void
+    setBillingPeriod: (val: TBillingType) => void;
 }
+
 export interface IPackageCardProps {
     pkg: IPricingPlan;
     isHighlighted: boolean;
@@ -106,11 +111,10 @@ export interface IProfileSidebarProps {
 }
 
 export interface IPackageTableProps {
-    packages: IPricingPlan[]
-    onEdit: (pkg: IPricingPlan) => void
-    onDelete: (id: number) => void
+    packages: IPricingPlan[];
+    onEdit: (pkg: IPricingPlan) => void;
+    onDelete: (id: number) => void;
 }
-
 
 
 export interface IPackageFormModalProps {
@@ -132,13 +136,13 @@ export type TNavbarHeaderProps = {
 }
 
 export interface ITwoFactorModalProps {
-    isOpen: boolean
-    onClose: () => void
+    isOpen: boolean;
+    onClose: () => void;
 }
 
 export interface BirthDatePickerProps {
-    value: string
-    onChange: (date: string) => void
+    value: string;
+    onChange: (date: string) => void;
 }
 
 export interface ISuccessScreenProps {

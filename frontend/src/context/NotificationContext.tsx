@@ -7,22 +7,22 @@ import type {INotification, TNotificationType} from "../types/notifications.type
 import {NotificationContext} from "../hooks/UseNotification.ts";
 
 
-export const NotificationProvider = ({ children }: { children: ReactNode }) => {
-    const [notifications, setNotifications] = useState<INotification[]>([])
+export const NotificationProvider = ({children}: { children: ReactNode }) => {
+    const [notifications, setNotifications] = useState<INotification[]>([]);
 
     const titles: Record<string, string> = {
         success: 'Sukces',
         error: 'Błąd',
         info: 'Informacja',
         warning: 'Uwaga'
-    }
+    };
 
     const removeNotification = useCallback((id: number) => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id))
-    }, [])
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, []);
 
     const addNotification = useCallback((message: string, type: TNotificationType) => {
-        const id = Date.now()
+        const id = Date.now();
 
         const newNotification: INotification = {
             id,
@@ -31,14 +31,14 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
             title: titles[type] || (type.charAt(0).toUpperCase() + type.slice(1)),
             isRead: false,
             createdAt: new Date().toISOString()
-        }
+        };
 
-        setNotifications((prev) => [...prev, newNotification])
+        setNotifications((prev) => [...prev, newNotification]);
 
         setTimeout(() => {
-            removeNotification(id)
-        }, 4000)
-    }, [removeNotification])
+            removeNotification(id);
+        }, 4000);
+    }, [removeNotification]);
 
     const notify = {
 
@@ -46,10 +46,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         error: (msg: string) => addNotification(msg, 'error' as TNotificationType),
         info: (msg: string) => addNotification(msg, 'info' as TNotificationType),
         warning: (msg: string) => addNotification(msg, 'warning' as TNotificationType),
-    }
+    };
 
     return (
-        <NotificationContext value={{ notify }}>
+        <NotificationContext value={{notify}}>
             {children}
 
             <div className="fixed top-22 right-5 z-[9999] flex flex-col gap-3">
@@ -97,6 +97,6 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
                 }
             `}</style>
         </NotificationContext>
-    )
-}
+    );
+};
 

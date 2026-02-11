@@ -5,14 +5,13 @@ import StarIcon from "../../icons/StarIcon.tsx";
 import Button from "../Button.tsx";
 
 
-
-export default function AddReviewModal({ isOpen, onClose, packageId, packageName }: IAddReviewModalProps) {
+export default function AddReviewModal({isOpen, onClose, packageId, packageName}: IAddReviewModalProps) {
 
     const {
         rating, setRating, comment,
         setComment, isLoading, hoverRating,
         setHoverRating, handleSubmit
-    } = useAddReview({ packageId, onClose })
+    } = useAddReview({packageId, onClose});
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -23,7 +22,8 @@ export default function AddReviewModal({ isOpen, onClose, packageId, packageName
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex flex-col items-center">
-                    <label className="block text-sm font-medium text-gray-500 mb-2 uppercase tracking-wide">Twoja ocena</label>
+                    <label className="block text-sm font-medium text-gray-500 mb-2 uppercase tracking-wide">Twoja
+                        ocena</label>
                     <div
                         className="flex gap-2"
                         onMouseLeave={() => setHoverRating(0)}
@@ -66,5 +66,5 @@ export default function AddReviewModal({ isOpen, onClose, packageId, packageName
                 </Button>
             </form>
         </Modal>
-    )
+    );
 }

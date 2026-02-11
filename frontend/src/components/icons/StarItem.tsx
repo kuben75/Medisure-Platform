@@ -14,5 +14,5 @@ export default function StarItem({className}: IIconProps) {
                 clipRule="evenodd"
             />
         </svg>
-    )
+    );
 }

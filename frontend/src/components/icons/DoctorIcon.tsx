@@ -2,9 +2,10 @@ import type {IIconProps} from "../../types/ui.types.ts";
 
 export default function DoctorIcon({className}: IIconProps) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className || "w-3.5 h-3.5"}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+             className={className || "w-3.5 h-3.5"}>
             <path
                 d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.125a7.125 7.125 0 011.416 4.902.75.75 0 01-1.052.667 13.075 13.075 0 01-6.761-1.873c.091-.037.18-.076.268-.117a8.624 8.624 0 005.88-3.579z"/>
         </svg>
-    )
+    );
 }

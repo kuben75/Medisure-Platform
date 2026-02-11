@@ -11,12 +11,12 @@ export default function Button({variant = "primary", className, children, ...res
         secondary: "bg-white text-[#232C6F] hover:bg-[#C1C7F9]",
         outline: "bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#4E61F6]",
         danger: "bg-white border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
-    }
+    };
     return (
-       <button className={`${baseStyles} ${variantStyles[variant]} ${className || " "}`}
-           {...rest}
-       >
-           {children}
-       </button>
-    )
+        <button className={`${baseStyles} ${variantStyles[variant]} ${className || " "}`}
+                {...rest}
+        >
+            {children}
+        </button>
+    );
 }

@@ -8,5 +8,5 @@ export default function PercentIcon({className}: IIconProps) {
             <circle cx="6.5" cy="6.5" r="2.5"/>
             <circle cx="17.5" cy="17.5" r="2.5"/>
         </svg>
-    )
+    );
 }

@@ -6,5 +6,5 @@ export default function ChevronDownIcon({className}: IIconProps) {
              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
             <path d="m6 9 6 6 6-6"/>
         </svg>
-    )
+    );
 }

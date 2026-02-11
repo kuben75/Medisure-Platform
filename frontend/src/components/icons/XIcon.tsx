@@ -6,5 +6,5 @@ export default function XIcon({className}: IIconProps) {
              className={className}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
         </svg>
-    )
+    );
 }

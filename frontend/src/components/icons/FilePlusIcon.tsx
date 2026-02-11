@@ -9,5 +9,5 @@ export default function FilePlusIcon({className}: IIconProps) {
             <path d="M9 15h6"/>
             <path d="M12 12v6"/>
         </svg>
-    )
+    );
 }

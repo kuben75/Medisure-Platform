@@ -1,48 +1,50 @@
-import {type FormEvent, useState} from "react"
-import {useAuth} from "./useAuth.ts"
-import {useNotification} from "./UseNotification.ts"
-import {useNavigate} from "react-router-dom"
-import {handleApiError} from "../utils/apiErrorHandler.ts"
+import {type FormEvent, useState} from "react";
+import {useAuth} from "./useAuth.ts";
+import {useNotification} from "./UseNotification.ts";
+import {useNavigate} from "react-router-dom";
+import {handleApiError} from "../utils/apiErrorHandler.ts";
 
 export const useChangePassword = (onClose: () => void) => {
-    const { token, user, logout } = useAuth()
-    const { notify } = useNotification()
-    const navigate = useNavigate()
+    const {token, user, logout} = useAuth();
+    const {notify} = useNotification();
+    const navigate = useNavigate();
 
-    const [currentPassword, setCurrentPassword] = useState('')
-    const [newPassword, setNewPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [twoFactorCode, setTwoFactorCode] = useState('')
-    const [step, setStep] = useState<'form' | 'auth'>('form')
-    const [isLoading, setIsLoading] = useState(false)
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [twoFactorCode, setTwoFactorCode] = useState('');
+    const [step, setStep] = useState<'form' | 'auth'>('form');
+    const [isLoading, setIsLoading] = useState(false);
 
     const resetForm = () => {
-        setStep('form')
-        setCurrentPassword('')
-        setNewPassword('')
-        setConfirmPassword('')
-        setTwoFactorCode('')
-    }
+        setStep('form');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setTwoFactorCode('');
+    };
 
     const handleInitialSubmit = (e: FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
 
         if (newPassword !== confirmPassword) {
-            notify.error("Nowe hasła muszą być identyczne.")
-            return
+            notify.error("Nowe hasła muszą być identyczne.");
+            return;
         }
 
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
         if (!passwordRegex.test(newPassword)) {
-            notify.error("Hasło nie spełnia wymagań bezpieczeństwa.")
-            return
+            notify.error("Hasło nie spełnia wymagań bezpieczeństwa.");
+            return;
         }
 
-        if (user?.twoFactorEnabled)
-            setStep('auth')
-        else
-            submitChangePassword()
-    }
+        if (user?.twoFactorEnabled) {
+            setStep('auth');
+        }
+        else {
+            submitChangePassword();
+        }
+    };
 
     const submitChangePassword = async () => {
         setIsLoading(true);
@@ -59,35 +61,47 @@ export const useChangePassword = (onClose: () => void) => {
                     confirmNewPassword: confirmPassword,
                     twoFactorCode: user?.twoFactorEnabled ? twoFactorCode : null
                 })
-            })
+            });
 
-            if (!response.ok)
-                throw await response.json()
+            if (!response.ok) {
+                throw await response.json();
+            }
 
-            notify.success("Hasło zmienione. Zaloguj się ponownie.")
-            resetForm()
-            onClose()
+            notify.success("Hasło zmienione. Zaloguj się ponownie.");
+            resetForm();
+            onClose();
 
             setTimeout(() => {
-                logout()
-                navigate('/login')
-            }, 1500)
+                logout();
+                navigate('/login');
+            }, 1500);
 
         } catch (err: any) {
-            handleApiError(err, notify)
+            handleApiError(err, notify);
 
-            if (err.ErrorCode === 2004)
-                setTwoFactorCode('')
-            else
-                setStep('form')
+            if (err.ErrorCode === 2004) {
+                setTwoFactorCode('');
+            }
+            else {
+                setStep('form');
+            }
 
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     return {
-        form: { currentPassword, setCurrentPassword, newPassword, setNewPassword, confirmPassword, setConfirmPassword, twoFactorCode, setTwoFactorCode },
+        form: {
+            currentPassword,
+            setCurrentPassword,
+            newPassword,
+            setNewPassword,
+            confirmPassword,
+            setConfirmPassword,
+            twoFactorCode,
+            setTwoFactorCode
+        },
         step, setStep, isLoading, handleInitialSubmit, submitChangePassword, resetForm
     }
 }

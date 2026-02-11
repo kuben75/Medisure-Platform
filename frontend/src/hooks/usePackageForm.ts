@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react"
-import type {IPricingPlan} from "../types/pricing.types.ts"
+import React, {useEffect, useState} from "react";
+import type {IPricingPlan} from "../types/pricing.types.ts";
 import {INITIAL_STATE} from "../constants/ui.ts";
 import {SPECIALISTS_LIST} from "../constants/specialists.tsx";
 import type {IPackageFormData} from "../types/packages.types.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/packages`
+const API_URL = `${import.meta.env.VITE_API_URL}/packages`;
 
 export const usePackageForm = (
     isOpen: boolean,
@@ -15,9 +15,9 @@ export const usePackageForm = (
     const [formData, setFormData] = useState<IPackageFormData>({
         ...INITIAL_STATE,
         includedSpecializations: ''
-    })
-    const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
+    });
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -39,36 +39,38 @@ export const usePackageForm = (
                     hasRehabilitation: packageToEdit.hasRehabilitation || false,
                     isFeatured: packageToEdit.isFeatured || false,
                     category: packageToEdit.category || 'Indywidualny'
-                } as IPackageFormData)
-            } else {
-                setFormData(INITIAL_STATE)
+                } as IPackageFormData);
+            }
+            else {
+                setFormData(INITIAL_STATE);
             }
         }
-    }, [isOpen, packageToEdit])
+    }, [isOpen, packageToEdit]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target;
+        const {name, value, type} = e.target;
 
         setFormData(prev => {
-            if (type === 'checkbox')
-                return { ...prev, [name]: (e.target as HTMLInputElement).checked }
+            if (type === 'checkbox') {
+                return {...prev, [name]: (e.target as HTMLInputElement).checked};
+            }
 
             if (type === 'number') {
                 const numValue = value === '' ? 0 : parseFloat(value);
-                return { ...prev, [name]: numValue }
+                return {...prev, [name]: numValue};
             }
 
-            return { ...prev, [name]: value }
-        })
-    }
+            return {...prev, [name]: value};
+        });
+    };
 
     const handlePriceValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value === '' ? 0 : parseFloat(e.target.value)
+        const val = e.target.value === '' ? 0 : parseFloat(e.target.value);
         setFormData(prev => ({
             ...prev,
             priceValue: val
-        }))
-    }
+        }));
+    };
 
     const handleCategoryToggle = (category: string) => {
         const rawString = formData.includedSpecializations || "";
@@ -76,35 +78,37 @@ export const usePackageForm = (
         let currentSpecs = rawString
             .split(';')
             .map(s => s.trim())
-            .filter(Boolean)
+            .filter(Boolean);
 
-        if (currentSpecs.includes(category))
-            currentSpecs = currentSpecs.filter(c => c !== category)
-         else
-            currentSpecs.push(category)
+        if (currentSpecs.includes(category)) {
+            currentSpecs = currentSpecs.filter(c => c !== category);
+        }
+        else {
+            currentSpecs.push(category);
+        }
 
 
-        const uniqueSpecs = [...new Set(currentSpecs)]
-        const newSpecString = uniqueSpecs.join(';')
+        const uniqueSpecs = [...new Set(currentSpecs)];
+        const newSpecString = uniqueSpecs.join(';');
         const realCount = SPECIALISTS_LIST.filter(s => uniqueSpecs.includes(s.category)).length;
 
         setFormData(prev => ({
             ...prev,
             includedSpecializations: newSpecString,
             specialistsCount: realCount
-        }))
-    }
+        }));
+    };
 
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         if (!token) {
-            setError("Błąd autoryzacji.")
-            return
+            setError("Błąd autoryzacji.");
+            return;
         }
 
-        setIsLoading(true)
-        setError(null)
+        setIsLoading(true);
+        setError(null);
 
         const payload = {
             ...formData,
@@ -116,10 +120,10 @@ export const usePackageForm = (
                 ? formData.includedSpecializations.split(';').map(s => s.trim()).filter(Boolean)
                 : [],
             id: packageToEdit ? packageToEdit.id : undefined
-        }
+        };
 
-        const url = packageToEdit ? `${API_URL}/${packageToEdit.id}` : API_URL
-        const method = packageToEdit ? 'PUT' : 'POST'
+        const url = packageToEdit ? `${API_URL}/${packageToEdit.id}` : API_URL;
+        const method = packageToEdit ? 'PUT' : 'POST';
 
         try {
             const response = await fetch(url, {
@@ -129,20 +133,20 @@ export const usePackageForm = (
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(payload)
-            })
+            });
 
             if (!response.ok) {
-                const errorData = await response.json()
-                throw new Error(errorData.errors ? Object.values(errorData.errors).flat().join(', ') : "Wystąpił błąd zapisu.")
+                const errorData = await response.json();
+                throw new Error(errorData.errors ? Object.values(errorData.errors).flat().join(', ') : "Wystąpił błąd zapisu.");
             }
 
-            onSuccess()
+            onSuccess();
         } catch (err) {
-            setError(err instanceof Error ? err.message : String(err))
+            setError(err instanceof Error ? err.message : String(err));
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
-    return { formData, handleChange, handlePriceValueChange,handleCategoryToggle, handleSubmit, isLoading, error }
+    return {formData, handleChange, handlePriceValueChange, handleCategoryToggle, handleSubmit, isLoading, error}
 }

@@ -3,13 +3,15 @@ import 'leaflet/dist/leaflet.css';
 import {customIcon} from "../../constants/MockData.ts";
 
 export default function ContactMap() {
-    const position: [number, number] = [52.3965, 16.8720]
+    const position: [number, number] = [52.3965, 16.8720];
 
     const googleMapsLink = `https://www.google.com/maps/dir/?api=1&destination=${position[0]},${position[1]}`;
 
     return (
-        <div className="w-full h-full min-h-[400px] relative z-0 rounded-2xl overflow-hidden shadow-inner border border-gray-200">
-            <MapContainer center={position} zoom={16} scrollWheelZoom={false} className="w-full h-full" style={{ height: "100%", width: "100%", minHeight: "400px" }}>
+        <div
+            className="w-full h-full min-h-[400px] relative z-0 rounded-2xl overflow-hidden shadow-inner border border-gray-200">
+            <MapContainer center={position} zoom={16} scrollWheelZoom={false} className="w-full h-full"
+                          style={{height: "100%", width: "100%", minHeight: "400px"}}>
                 <LayersControl position="topright">
                     <LayersControl.BaseLayer checked name="Mapa Klasyczna (OSM)">
                         <TileLayer
@@ -28,7 +30,7 @@ export default function ContactMap() {
 
                     <LayersControl.BaseLayer name="Satelita (Esri)">
                         <TileLayer
-                            attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                            attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
                             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                         />
                     </LayersControl.BaseLayer>
@@ -51,5 +53,5 @@ export default function ContactMap() {
             </MapContainer>
 
         </div>
-    )
+    );
 }

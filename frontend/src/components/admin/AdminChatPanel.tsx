@@ -1,18 +1,18 @@
-import  { useEffect, useState } from 'react';
-import { useChat } from "../../hooks/useChat.ts";
-import { useAdminConversations } from "../../hooks/useAdminConversations.ts";
-import { AdminChatSidebar } from "./chat/AdminChatSidebar.tsx";
-import { AdminChatWindow } from "./chat/AdminChatWindow.tsx";
+import {useEffect, useState} from 'react';
+import {useChat} from "../../hooks/useChat.ts";
+import {useAdminConversations} from "../../hooks/useAdminConversations.ts";
+import {AdminChatSidebar} from "./chat/AdminChatSidebar.tsx";
+import {AdminChatWindow} from "./chat/AdminChatWindow.tsx";
 
 export default function AdminChatPanel() {
-    const { messages, sendMessageToUser, onlineUsers, userDetails, markAsRead } = useChat();
+    const {messages, sendMessageToUser, onlineUsers, userDetails, markAsRead} = useChat();
 
     const {
         conversations,
         filteredList,
         searchTerm, setSearchTerm,
         filter, setFilter
-    } = useAdminConversations({ messages, onlineUsers, userDetails });
+    } = useAdminConversations({messages, onlineUsers, userDetails});
 
     const [selectedUserEmail, setSelectedUserEmail] = useState<string | null>(null);
 
@@ -36,7 +36,8 @@ export default function AdminChatPanel() {
     };
 
     return (
-        <div className="mt-4 md:mt-8 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col md:flex-row min-h-[25vh] md:h-[700px] font-sans">
+        <div
+            className="mt-4 md:mt-8 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col md:flex-row min-h-[25vh] md:h-[700px] font-sans">
             <AdminChatSidebar
                 conversations={filteredList}
                 selectedEmail={selectedUserEmail}

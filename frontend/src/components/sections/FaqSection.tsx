@@ -5,16 +5,18 @@ import {Link} from "react-router-dom";
 import Button from "../ui/Button.tsx";
 
 export default function FaqSection() {
-    const [openIndexes, setOpenIndexes] = useState<number[]>([])
+    const [openIndexes, setOpenIndexes] = useState<number[]>([]);
 
-    const featuredFaqs = FAQ_DATA.slice(0, 4)
+    const featuredFaqs = FAQ_DATA.slice(0, 4);
 
     const handleToggle = (index: number) => {
-        if(openIndexes.includes(index))
-            setOpenIndexes(p => p.filter(i => i !== index))
-        else
-            setOpenIndexes(p => [...p, index])
-    }
+        if (openIndexes.includes(index)) {
+            setOpenIndexes(p => p.filter(i => i !== index));
+        }
+        else {
+            setOpenIndexes(p => [...p, index]);
+        }
+    };
 
     return (
         <section className="py-20 px-4 bg-white">
@@ -38,7 +40,8 @@ export default function FaqSection() {
 
                 <div className="text-center">
                     <Link to="/faq">
-                        <Button variant="secondary" className="!px-8 !py-3 border-gray-300 text-gray-600 hover:border-[#4E61F6] hover:text-[#4E61F6]">
+                        <Button variant="secondary"
+                                className="!px-8 !py-3 border-gray-300 text-gray-600 hover:border-[#4E61F6] hover:text-[#4E61F6]">
                             Zobacz wszystkie pytania ({FAQ_DATA.length})
                         </Button>
                     </Link>

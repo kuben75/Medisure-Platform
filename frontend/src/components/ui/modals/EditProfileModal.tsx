@@ -1,16 +1,16 @@
-import Modal from './Modal.tsx'
-import Button from '../Button.tsx'
-import type {IEditProfileModalProps} from "../../../types/ui.types.ts"
-import InfoIcon from "../../icons/InfoIcon.tsx"
-import PhoneIcon from "../../icons/PhoneIcon.tsx"
-import KeyIcon from "../../icons/KeyIcon.tsx"
-import ShieldIcon from "../../icons/ShieldIcon.tsx"
-import MailIcon from "../../icons/MailIcon.tsx"
-import CalendarIcon from "../../icons/CalendarIcon.tsx"
-import UserIcon from "../../icons/UserIcon.tsx"
+import Modal from './Modal.tsx';
+import Button from '../Button.tsx';
+import type {IEditProfileModalProps} from "../../../types/ui.types.ts";
+import InfoIcon from "../../icons/InfoIcon.tsx";
+import PhoneIcon from "../../icons/PhoneIcon.tsx";
+import KeyIcon from "../../icons/KeyIcon.tsx";
+import ShieldIcon from "../../icons/ShieldIcon.tsx";
+import MailIcon from "../../icons/MailIcon.tsx";
+import CalendarIcon from "../../icons/CalendarIcon.tsx";
+import UserIcon from "../../icons/UserIcon.tsx";
 import {useEditProfile} from "../../../hooks/useEditProfile.ts";
 
-export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalProps) {
+export default function EditProfileModal({isOpen, onClose}: IEditProfileModalProps) {
     const {
         formData,
         handleInputChange,
@@ -23,9 +23,9 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
         handlePasswordStep,
         handle2FAStep,
         user
-    } = useEditProfile({ isOpen, onClose })
+    } = useEditProfile({isOpen, onClose});
 
-    const isBirthDateLocked = !!user?.birthDate
+    const isBirthDateLocked = !!user?.birthDate;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-xl">
@@ -38,14 +38,15 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                     </div>
 
                     <form onSubmit={handleFormSubmit} className="space-y-6 animate-fade-in">
-                        {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center border border-red-100">{error}</div>}
+                        {error && <div
+                            className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center border border-red-100">{error}</div>}
 
                         <div className="grid grid-cols-2 gap-5">
                             <div className="space-y-1.5">
                                 <label className="block text-xs font-bold text-gray-500 uppercase ml-1">Imię *</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                                        <UserIcon className="w-5 h-5" />
+                                        <UserIcon className="w-5 h-5"/>
                                     </div>
                                     <input
                                         type="text"
@@ -58,7 +59,8 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                                 </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-xs font-bold text-gray-500 uppercase ml-1">Nazwisko *</label>
+                                <label className="block text-xs font-bold text-gray-500 uppercase ml-1">Nazwisko
+                                    *</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                         <UserIcon className="w-5 h-5"/>
@@ -116,7 +118,7 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                                         <div className="group relative">
                                             <span
                                                 className="cursor-help text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1 font-bold border border-green-100 hover:bg-green-100 transition-colors">
-                                                <InfoIcon className='w-4 h-4'/> Zweryfikowano
+                                                <InfoIcon className="w-4 h-4"/> Zweryfikowano
                                             </span>
                                             <div
                                                 className="absolute bottom-full right-0 mb-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform translate-y-1 group-hover:translate-y-0">
@@ -213,11 +215,13 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                         Authenticator.
                     </p>
 
-                    {error && <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 border border-red-100 animate-shake">{error}</div>}
+                    {error && <div
+                        className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 border border-red-100 animate-shake">{error}</div>}
 
                     <form onSubmit={handle2FAStep} className="space-y-4 text-left max-w-sm mx-auto">
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Kod 6-cyfrowy</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 ml-1">Kod
+                                6-cyfrowy</label>
                             <input
                                 type="text"
                                 value={twoFactorCode}
@@ -230,7 +234,10 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                         </div>
 
                         <div className="pt-8 flex gap-3">
-                            <Button type="button" variant="secondary" onClick={() => { setStep('password'); setError(null); }} className="w-1/3">Wróć</Button>
+                            <Button type="button" variant="secondary" onClick={() => {
+                                setStep('password');
+                                setError(null);
+                            }} className="w-1/3">Wróć</Button>
                             <Button type="submit" variant="primary" className="w-2/3 shadow-lg" disabled={isLoading}>
                                 {isLoading ? "Weryfikacja..." : "Zatwierdź zmianę"}
                             </Button>
@@ -239,5 +246,5 @@ export default function EditProfileModal({ isOpen, onClose }: IEditProfileModalP
                 </div>
             )}
         </Modal>
-    )
+    );
 }

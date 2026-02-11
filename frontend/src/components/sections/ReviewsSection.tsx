@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react"
-import StarItem from "../icons/StarItem.tsx"
-import type { IReviewDisplay } from "../../types/review.types.ts"
-import { DEFAULT_REVIEWS } from "../../constants/reviews.ts"
+import {useEffect, useState} from "react";
+import StarItem from "../icons/StarItem.tsx";
+import type {IReviewDisplay} from "../../types/review.types.ts";
+import {DEFAULT_REVIEWS} from "../../constants/reviews.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/reviews/latest`
+const API_URL = `${import.meta.env.VITE_API_URL}/reviews/latest`;
 
 export default function ReviewsSection() {
     const [reviews, setReviews] = useState<IReviewDisplay[]>([]);
@@ -17,12 +17,15 @@ export default function ReviewsSection() {
                 const response = await fetch(API_URL);
                 if (response.ok) {
                     const data = await response.json();
-                    if (data && data.length > 0)
+                    if (data && data.length > 0) {
                         setReviews(data);
-                     else
+                    }
+                    else {
                         setReviews(DEFAULT_REVIEWS);
+                    }
 
-                } else {
+                }
+                else {
                     setReviews(DEFAULT_REVIEWS);
                 }
             } catch (error) {
@@ -36,7 +39,9 @@ export default function ReviewsSection() {
     }, []);
 
     useEffect(() => {
-        if (isPaused || reviews.length === 0) return;
+        if (isPaused || reviews.length === 0) {
+            return;
+        }
         const interval = setInterval(() => {
             setCurrentReview((prev) => (prev + 1) % reviews.length);
         }, 6000);
@@ -45,16 +50,22 @@ export default function ReviewsSection() {
 
     const handleDotClick = (index: number) => setCurrentReview(index);
 
-    if (loading) return null;
+    if (loading) {
+        return null;
+    }
 
     const currentData = reviews[currentReview];
 
-    if (!currentData) return null;
+    if (!currentData) {
+        return null;
+    }
 
     return (
         <section className="py-20 md:py-28 px-4 bg-slate-50 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 translate-x-1/2 translate-y-1/2"></div>
+            <div
+                className="absolute top-0 left-0 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
+            <div
+                className="absolute bottom-0 right-0 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 translate-x-1/2 translate-y-1/2"></div>
 
             <div className="max-w-5xl mx-auto text-center relative z-10">
 
@@ -71,18 +82,22 @@ export default function ReviewsSection() {
                     onMouseLeave={() => setIsPaused(false)}
                 >
                     {currentData.packageName && (
-                        <div className="absolute top-6 right-6 md:top-8 md:right-8 bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 border border-indigo-100 animate-fade-in">
+                        <div
+                            className="absolute top-6 right-6 md:top-8 md:right-8 bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 border border-indigo-100 animate-fade-in">
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                             </svg>
                             {currentData.packageName}
                         </div>
                     )}
 
-                    <div key={currentData.id} className="flex flex-col md:flex-row items-center md:items-start gap-8 animate-fade-in mt-12 md:mt-3">
+                    <div key={currentData.id}
+                         className="flex flex-col md:flex-row items-center md:items-start gap-8 animate-fade-in mt-12 md:mt-3">
 
                         <div className="flex-shrink-0">
-                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-3xl md:text-4xl font-black text-white bg-gradient-to-br from-[#4E61F6] to-indigo-600 shadow-xl shadow-indigo-200 ring-4 ring-white">
+                            <div
+                                className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-3xl md:text-4xl font-black text-white bg-gradient-to-br from-[#4E61F6] to-indigo-600 shadow-xl shadow-indigo-200 ring-4 ring-white">
                                 {currentData.avatarText}
                             </div>
                         </div>
@@ -98,7 +113,8 @@ export default function ReviewsSection() {
                             </div>
 
                             <div className="relative">
-                                <blockquote className="text-gray-700 font-medium text-lg md:text-xl leading-relaxed mb-6 relative z-10">
+                                <blockquote
+                                    className="text-gray-700 font-medium text-lg md:text-xl leading-relaxed mb-6 relative z-10">
                                     {currentData.comment}
                                 </blockquote>
                             </div>

@@ -9,5 +9,5 @@ export default function RobotIcon({className}: IIconProps) {
                   clipRule="evenodd"/>
         </svg>
 
-    )
+    );
 }

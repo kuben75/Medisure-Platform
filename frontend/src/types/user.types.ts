@@ -22,20 +22,20 @@ export interface IUserDto {
 }
 
 export interface IUserSubscription {
-    id: number
-    packageId: number
-    packageName: string
-    price: string
-    transactionId?: string
-    paymentMethod?: string
-    startDate: string
-    endDate: string
-    status: string
-    features: string[] | string
-    street?: string
-    houseNumber?: string
-    city?: string
-    zipCode?: string
+    id: number;
+    packageId: number;
+    packageName: string;
+    price: string;
+    transactionId?: string;
+    paymentMethod?: string;
+    startDate: string;
+    endDate: string;
+    status: string;
+    features: string[] | string;
+    street?: string;
+    houseNumber?: string;
+    city?: string;
+    zipCode?: string;
 }
 
 export interface ISubscriptionsTabProps {
@@ -48,14 +48,14 @@ export interface ISubscriptionsTabProps {
 }
 
 export interface IUserTableProps {
-    users: IUserDto[]
-    currentUser: any
-    amISuperAdmin: boolean
-    onEdit: (user: IUserDto) => void
-    onDelete: (id: string) => void
-    onChangeRole: (user: IUserDto) => void
-    onBlock: (user: IUserDto) => void
-    onUnlock: (user: IUserDto) => void
+    users: IUserDto[];
+    currentUser: any;
+    amISuperAdmin: boolean;
+    onEdit: (user: IUserDto) => void;
+    onDelete: (id: string) => void;
+    onChangeRole: (user: IUserDto) => void;
+    onBlock: (user: IUserDto) => void;
+    onUnlock: (user: IUserDto) => void;
 }
 
 export interface IUserFormData {
@@ -75,7 +75,7 @@ export interface IUserFormModalProps {
 }
 
 export interface IAvatarProps {
-    name: string
-    size?: "sm" | "md" | "lg"
-    className?: string
+    name: string;
+    size?: "sm" | "md" | "lg";
+    className?: string;
 }

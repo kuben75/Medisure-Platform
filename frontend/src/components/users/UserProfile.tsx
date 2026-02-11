@@ -17,11 +17,13 @@ export default function UserProfile() {
     const navigate = useNavigate();
     const {
         user, loading, activeTab, setActiveTab, unreadCount,
-         filteredSubscriptions, favorites,
+        filteredSubscriptions, favorites,
         searchTerm, setSearchTerm, refreshData, handleLogout, modals
-    } = useUserProfile()
+    } = useUserProfile();
 
-    if (loading) return <div className="text-center py-20 text-gray-400">Ładowanie profilu...</div>;
+    if (loading) {
+        return <div className="text-center py-20 text-gray-400">Ładowanie profilu...</div>;
+    }
 
     return (
         <div className="container mx-auto px-0 md:px-4 py-4 md:py-12 mt-12 md:mt-16 max-w-6xl">

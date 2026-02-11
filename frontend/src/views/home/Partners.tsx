@@ -1,7 +1,7 @@
-import { partners } from "../../constants/MockData.ts"
+import {partners} from "../../constants/MockData.ts";
 
 export default function Partners() {
-    const loopedPartners = [...partners, ...partners, ...partners, ...partners]
+    const loopedPartners = [...partners, ...partners, ...partners, ...partners];
 
     return (
         <section className="py-16 bg-white border-t border-gray-100">
@@ -10,7 +10,8 @@ export default function Partners() {
                     Nasi partnerzy
                 </p>
 
-                <div className="relative w-full overflow-hidden  [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+                <div
+                    className="relative w-full overflow-hidden  [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
 
                     <div className="flex animate-scroll hover:[animation-play-state:paused] w-max">
                         {loopedPartners.map((partner, index) => (
@@ -27,5 +28,5 @@ export default function Partners() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

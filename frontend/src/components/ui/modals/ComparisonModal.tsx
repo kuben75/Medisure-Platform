@@ -1,29 +1,38 @@
-import type {IComparisonModalProps} from "../../../types/ui.types.ts"
-import Modal from "./Modal.tsx"
-import Button from "../Button.tsx"
+import type {IComparisonModalProps} from "../../../types/ui.types.ts";
+import Modal from "./Modal.tsx";
+import Button from "../Button.tsx";
+
 const CheckIcon = () => <span className="text-green-500 font-bold text-xl">✓</span>;
-const CrossIcon = () => <span className="text-red-300 font-bold text-xl">-</span>
+const CrossIcon = () => <span className="text-red-300 font-bold text-xl">-</span>;
 export default function ComparisonModal({isOpen, onClose, packages}: IComparisonModalProps) {
-    if (packages.length === 0) return null
-    let modalWidthClass
-   switch (packages.length) {
-         case 2: modalWidthClass = "max-w-4xl"
-             break
-         case 3: modalWidthClass = "max-w-5xl"
-             break
-         case 4: modalWidthClass = "max-w-6xl"
-             break
-         case 5: modalWidthClass = "max-w-7xl"
-             break
-         case 6: modalWidthClass = "max-w-[80vw]"
-             break
-         default: modalWidthClass = "max-w-[95vw]"
-             break
-   }
+    if (packages.length === 0) {
+        return null;
+    }
+    let modalWidthClass;
+    switch (packages.length) {
+        case 2:
+            modalWidthClass = "max-w-4xl";
+            break;
+        case 3:
+            modalWidthClass = "max-w-5xl";
+            break;
+        case 4:
+            modalWidthClass = "max-w-6xl";
+            break;
+        case 5:
+            modalWidthClass = "max-w-7xl";
+            break;
+        case 6:
+            modalWidthClass = "max-w-[80vw]";
+            break;
+        default:
+            modalWidthClass = "max-w-[95vw]";
+            break;
+    }
     const labelCellClass = "p-4 text-sm font-semibold text-gray-600 bg-gray-100 border-b border-gray-200 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[150px]";
 
     const dataCellClass = "p-4 text-sm text-gray-700 border-b border-gray-200 text-center min-w-[200px] border-l border-gray-100";
-    return(
+    return (
         <Modal isOpen={isOpen} onClose={onClose} className={modalWidthClass}>
             <div className="w-full flex flex-col h-full lg:overflow-x-hidden">
 
@@ -45,9 +54,11 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                             </th>
 
                             {packages.map(pkg => (
-                                <th key={pkg.id} className="p-4 border-b-2 border-[#4E61F6] bg-white text-center min-w-[200px] align-bottom pb-6 relative">
+                                <th key={pkg.id}
+                                    className="p-4 border-b-2 border-[#4E61F6] bg-white text-center min-w-[200px] align-bottom pb-6 relative">
                                     {pkg.isFeatured && (
-                                        <span className="hidden md:none md:absolute md:top-0 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bg-yellow-100 md:text-yellow-800 md:text-[10px] md:font-bold md:px-2 md:py-0.5 md:rounded-full md:uppercase">
+                                        <span
+                                            className="hidden md:none md:absolute md:top-0 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bg-yellow-100 md:text-yellow-800 md:text-[10px] md:font-bold md:px-2 md:py-0.5 md:rounded-full md:uppercase">
                                                 Polecany
                                             </span>
                                     )}
@@ -67,7 +78,8 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                         <tr className="hover:bg-blue-50/30 transition-colors group">
                             <td className={labelCellClass}>Kategoria</td>
                             {packages.map(pkg => (
-                                <td key={pkg.id} className={`${dataCellClass} font-medium text-blue-600 group-hover:bg-blue-50/30`}>
+                                <td key={pkg.id}
+                                    className={`${dataCellClass} font-medium text-blue-600 group-hover:bg-blue-50/30`}>
                                     {pkg.category}
                                 </td>
                             ))}
@@ -77,7 +89,7 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                             <td className={labelCellClass}>Stomatologia</td>
                             {packages.map(pkg => (
                                 <td key={pkg.id} className={`${dataCellClass} group-hover:bg-blue-50/30`}>
-                                    {pkg.hasDentalCare ? <CheckIcon /> : <CrossIcon />}
+                                    {pkg.hasDentalCare ? <CheckIcon/> : <CrossIcon/>}
                                 </td>
                             ))}
                         </tr>
@@ -85,7 +97,7 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                             <td className={labelCellClass}>Szpital</td>
                             {packages.map(pkg => (
                                 <td key={pkg.id} className={`${dataCellClass} group-hover:bg-blue-50/30`}>
-                                    {pkg.hasHospitalization ? <CheckIcon /> : <CrossIcon />}
+                                    {pkg.hasHospitalization ? <CheckIcon/> : <CrossIcon/>}
                                 </td>
                             ))}
                         </tr>
@@ -93,7 +105,7 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                             <td className={labelCellClass}>Rehabilitacja</td>
                             {packages.map(pkg => (
                                 <td key={pkg.id} className={`${dataCellClass} group-hover:bg-blue-50/30`}>
-                                    {pkg.hasRehabilitation ? <CheckIcon /> : <CrossIcon />}
+                                    {pkg.hasRehabilitation ? <CheckIcon/> : <CrossIcon/>}
                                 </td>
                             ))}
                         </tr>
@@ -101,7 +113,8 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                         <tr className="hover:bg-blue-50/30 transition-colors group">
                             <td className={labelCellClass}>Liczba specjalistów</td>
                             {packages.map(pkg => (
-                                <td key={pkg.id} className={`${dataCellClass} font-bold text-gray-800 group-hover:bg-blue-50/30`}>
+                                <td key={pkg.id}
+                                    className={`${dataCellClass} font-bold text-gray-800 group-hover:bg-blue-50/30`}>
                                     {pkg.specialistsCount}
                                 </td>
                             ))}
@@ -109,7 +122,8 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                         <tr className="hover:bg-blue-50/30 transition-colors group">
                             <td className={labelCellClass}>Liczba placówek</td>
                             {packages.map(pkg => (
-                                <td key={pkg.id} className={`${dataCellClass} font-bold text-gray-800 group-hover:bg-blue-50/30`}>
+                                <td key={pkg.id}
+                                    className={`${dataCellClass} font-bold text-gray-800 group-hover:bg-blue-50/30`}>
                                     {pkg.facilitiesCount}
                                 </td>
                             ))}
@@ -118,9 +132,11 @@ export default function ComparisonModal({isOpen, onClose, packages}: IComparison
                         <tr className="bg-yellow-50/30 hover:bg-yellow-50 transition-colors group border-t-2 border-gray-100">
                             <td className={`${labelCellClass} bg-yellow-50/50`}>Ocena użytkowników</td>
                             {packages.map(pkg => (
-                                <td key={pkg.id} className={`${dataCellClass} bg-yellow-50/30 group-hover:bg-yellow-50`}>
+                                <td key={pkg.id}
+                                    className={`${dataCellClass} bg-yellow-50/30 group-hover:bg-yellow-50`}>
                                     <div className="flex flex-col items-center justify-center">
-                                        <span className="text-yellow-500 font-bold text-lg">★ {pkg.averageRating.toFixed(1)}</span>
+                                        <span
+                                            className="text-yellow-500 font-bold text-lg">★ {pkg.averageRating.toFixed(1)}</span>
                                         <span className="text-xs text-gray-400">({pkg.reviews} opinii)</span>
                                     </div>
                                 </td>

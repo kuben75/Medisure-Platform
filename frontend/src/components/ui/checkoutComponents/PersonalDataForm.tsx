@@ -29,9 +29,13 @@ export default function PersonalDataForm({
 
     const handleZipCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
         let val = e.target.value.replace(/\D/g, '');
-        if (val.length > 2) val = `${val.slice(0, 2)}-${val.slice(2, 5)}`;
+        if (val.length > 2) {
+            val = `${val.slice(0, 2)}-${val.slice(2, 5)}`;
+        }
         onFormChange({...formData, zipCode: val.slice(0, 6)});
-        if (errors.zipCode) onErrorsClear('zipCode');
+        if (errors.zipCode) {
+            onErrorsClear('zipCode');
+        }
     };
 
     return (
@@ -43,14 +47,18 @@ export default function PersonalDataForm({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                     <div className="group">
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Imię</label>
-                        <input type="text" value={formData.firstName} onChange={e => onFormChange({...formData, firstName: e.target.value})}
+                        <label
+                            className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Imię</label>
+                        <input type="text" value={formData.firstName}
+                               onChange={e => onFormChange({...formData, firstName: e.target.value})}
                                className={getInputClass(errors.firstName)}/>
                         {errors.firstName && <p className="text-red-500 text-xs mt-1 absolute">{errors.firstName}</p>}
                     </div>
                     <div className="group">
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Nazwisko</label>
-                        <input type="text" value={formData.lastName} onChange={e => onFormChange({...formData, lastName: e.target.value})}
+                        <label
+                            className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Nazwisko</label>
+                        <input type="text" value={formData.lastName}
+                               onChange={e => onFormChange({...formData, lastName: e.target.value})}
                                className={getInputClass(errors.lastName)}/>
                         {errors.lastName && <p className="text-red-500 text-xs mt-1 absolute">{errors.lastName}</p>}
                     </div>
@@ -58,17 +66,23 @@ export default function PersonalDataForm({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                     <div className="group">
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
-                        <input type="text" value={formData.email} onChange={e => onFormChange({...formData, email: e.target.value})}
+                        <label
+                            className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
+                        <input type="text" value={formData.email}
+                               onChange={e => onFormChange({...formData, email: e.target.value})}
                                className={getInputClass(errors.email)}/>
                         {errors.email && <p className="text-red-500 text-xs mt-1 absolute">{errors.email}</p>}
                     </div>
 
                     <div className="group relative">
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Telefon <span className="text-red-400">*</span></label>
+                        <label
+                            className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Telefon <span
+                            className="text-red-400">*</span></label>
                         <input type="tel" value={formData.phone} onChange={e => {
                             onFormChange({...formData, phone: e.target.value});
-                            if (errors.phone) onErrorsClear('phone');
+                            if (errors.phone) {
+                                onErrorsClear('phone');
+                            }
                         }} placeholder="np. 500 600 700" className={getInputClass(errors.phone)}/>
                         {errors.phone && <p className="text-red-500 text-xs mt-1 absolute">{errors.phone}</p>}
                     </div>
@@ -84,36 +98,49 @@ export default function PersonalDataForm({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="group relative">
-                            <label className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
-                                Data urodzenia {isBirthDateLocked && <span className="text-green-600 ml-1">(Zweryfikowano)</span>}
+                            <label
+                                className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
+                                Data urodzenia {isBirthDateLocked &&
+                                <span className="text-green-600 ml-1">(Zweryfikowano)</span>}
                             </label>
-                            <input type="date" name="birthDate" value={formData.birthDate} max={new Date().toISOString().split('T')[0]} readOnly={isBirthDateLocked}
+                            <input type="date" name="birthDate" value={formData.birthDate}
+                                   max={new Date().toISOString().split('T')[0]} readOnly={isBirthDateLocked}
                                    onChange={e => {
                                        if (!isBirthDateLocked) {
                                            onFormChange({...formData, birthDate: e.target.value});
-                                           if (errors.birthDate) onErrorsClear('birthDate');
+                                           if (errors.birthDate) {
+                                               onErrorsClear('birthDate');
+                                           }
                                        }
                                    }}
                                    className={getInputClass(errors.birthDate, isBirthDateLocked) + " bg-white"}
                             />
-                            {errors.birthDate && <p className="text-red-500 text-xs mt-1 absolute">{errors.birthDate}</p>}
+                            {errors.birthDate &&
+                                <p className="text-red-500 text-xs mt-1 absolute">{errors.birthDate}</p>}
                         </div>
 
                         <div className="group relative">
-                            <label className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
+                            <label
+                                className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
                                 PESEL {isPeselLocked && <span className="text-green-600 ml-1">(Zweryfikowano)</span>}
                             </label>
-                            <input type="text" name="pesel" maxLength={11} value={formData.pesel} readOnly={isPeselLocked}
+                            <input type="text" name="pesel" maxLength={11} value={formData.pesel}
+                                   readOnly={isPeselLocked}
                                    onChange={e => {
                                        if (!isPeselLocked) {
                                            onFormChange({...formData, pesel: e.target.value.replace(/\D/g, '')});
-                                           if (errors.pesel) onErrorsClear('pesel');
+                                           if (errors.pesel) {
+                                               onErrorsClear('pesel');
+                                           }
                                        }
                                    }}
-                                   placeholder="Wpisz numer PESEL" className={getInputClass(errors.pesel, isPeselLocked)}
+                                   placeholder="Wpisz numer PESEL"
+                                   className={getInputClass(errors.pesel, isPeselLocked)}
                             />
                             {errors.pesel && <p className="text-red-500 text-xs mt-1 absolute">{errors.pesel}</p>}
-                            {!isPeselLocked && <p className="text-[10px] text-orange-600/70 mt-1">Numer PESEL zostanie przypisany do Twojego konta na stałe.</p>}
+                            {!isPeselLocked &&
+                                <p className="text-[10px] text-orange-600/70 mt-1">Numer PESEL zostanie przypisany do
+                                    Twojego konta na stałe.</p>}
                         </div>
                     </div>
                 </div>
@@ -134,7 +161,8 @@ export default function PersonalDataForm({
                                onChange={e => onFormChange({...formData, startDate: e.target.value})}
                                className="w-full border rounded-xl px-4 py-3 font-medium bg-white border-blue-200 text-slate-800 focus:ring-2 focus:ring-blue-500/20"
                         />
-                        <p className="text-[10px] text-blue-600/70 mt-1">Pozostaw puste, aby aktywować pakiet od dzisiaj.</p>
+                        <p className="text-[10px] text-blue-600/70 mt-1">Pozostaw puste, aby aktywować pakiet od
+                            dzisiaj.</p>
                     </div>
                 </div>
             </div>
@@ -147,35 +175,46 @@ export default function PersonalDataForm({
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                     <div className="sm:col-span-2 group relative">
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Ulica</label>
+                        <label
+                            className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Ulica</label>
                         <input type="text" value={formData.street} onChange={e => {
                             onFormChange({...formData, street: e.target.value});
-                            if (errors.street) onErrorsClear('street');
+                            if (errors.street) {
+                                onErrorsClear('street');
+                            }
                         }} className={getInputClass(errors.street)} placeholder="np. Marszałkowska"/>
                         {errors.street && <p className="text-red-500 text-xs mt-1 absolute">{errors.street}</p>}
                     </div>
                     <div className="group relative">
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Nr domu</label>
+                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Nr
+                            domu</label>
                         <input type="text" value={formData.houseNumber} onChange={e => {
                             onFormChange({...formData, houseNumber: e.target.value});
-                            if (errors.houseNumber) onErrorsClear('houseNumber');
+                            if (errors.houseNumber) {
+                                onErrorsClear('houseNumber');
+                            }
                         }} className={getInputClass(errors.houseNumber)} placeholder="10/24"/>
-                        {errors.houseNumber && <p className="text-red-500 text-xs mt-1 absolute">{errors.houseNumber}</p>}
+                        {errors.houseNumber &&
+                            <p className="text-red-500 text-xs mt-1 absolute">{errors.houseNumber}</p>}
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                     <div className="group relative">
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Kod pocztowy</label>
+                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Kod
+                            pocztowy</label>
                         <input type="text" maxLength={6} value={formData.zipCode} onChange={handleZipCodeChange}
                                className={getInputClass(errors.zipCode)} placeholder="00-000"/>
                         {errors.zipCode && <p className="text-red-500 text-xs mt-1 absolute">{errors.zipCode}</p>}
                     </div>
                     <div className="sm:col-span-2 group relative">
-                        <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Miejscowość</label>
+                        <label
+                            className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Miejscowość</label>
                         <input type="text" value={formData.city} onChange={e => {
                             onFormChange({...formData, city: e.target.value});
-                            if (errors.city) onErrorsClear('city');
+                            if (errors.city) {
+                                onErrorsClear('city');
+                            }
                         }} className={getInputClass(errors.city)} placeholder="Warszawa"/>
                         {errors.city && <p className="text-red-500 text-xs mt-1 absolute">{errors.city}</p>}
                     </div>
@@ -186,7 +225,8 @@ export default function PersonalDataForm({
                 <label className="flex items-start sm:items-center cursor-pointer group">
                     <input type="checkbox" checked={saveInfo} onChange={e => onSaveInfoChange(e.target.checked)}
                            className="w-4 h-4 mt-0.5 sm:mt-0 rounded border-gray-300 text-[#4E61F6] focus:ring-[#4E61F6] cursor-pointer accent-[#4E61F6] flex-shrink-0"/>
-                    <span className="ml-3 text-sm text-slate-600 group-hover:text-slate-900 transition-colors font-medium leading-tight">
+                    <span
+                        className="ml-3 text-sm text-slate-600 group-hover:text-slate-900 transition-colors font-medium leading-tight">
                         Zapamiętaj moje dane do przyszłych transakcji
                     </span>
                 </label>

@@ -1,7 +1,7 @@
-import Modal from '../../ui/modals/Modal.tsx'
-import Button from '../../ui/Button.tsx'
-import BirthDatePicker from '../../ui/BirthDatePicker.tsx'
-import { useOnboardingModal } from '../../../hooks/useOnboardingModal.ts'
+import Modal from '../../ui/modals/Modal.tsx';
+import Button from '../../ui/Button.tsx';
+import BirthDatePicker from '../../ui/BirthDatePicker.tsx';
+import {useOnboardingModal} from '../../../hooks/useOnboardingModal.ts';
 
 export default function OnboardingModal() {
     const {
@@ -11,12 +11,13 @@ export default function OnboardingModal() {
         setBirthDateStr,
         handleSave,
         loading
-    } = useOnboardingModal()
+    } = useOnboardingModal();
 
     return (
         <Modal isOpen={isOpen} onClose={handleSkip} className="max-w-md">
             <div className="text-center">
-                <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4 text-2xl">
+                <div
+                    className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4 text-2xl">
                     🎁
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Dokończ konfigurację</h2>
@@ -36,7 +37,8 @@ export default function OnboardingModal() {
                 </div>
 
                 <div className="flex flex-col gap-3">
-                    <Button variant="primary" onClick={handleSave} disabled={loading || !birthDateStr} className="w-full py-3">
+                    <Button variant="primary" onClick={handleSave} disabled={loading || !birthDateStr}
+                            className="w-full py-3">
                         {loading ? "Zapisywanie..." : "Zapisz i przejdź dalej"}
                     </Button>
                     <button onClick={handleSkip} className="text-sm text-gray-400 hover:text-gray-600 underline py-2">
@@ -45,5 +47,5 @@ export default function OnboardingModal() {
                 </div>
             </div>
         </Modal>
-    )
+    );
 }

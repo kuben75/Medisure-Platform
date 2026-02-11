@@ -11,66 +11,81 @@ import AlertIcon from "../../icons/AlertIcon.tsx";
 import {useSubscriptionDetails} from "../../../hooks/useSubscriptionDetails.ts";
 import {formatDate} from "../../../utils/dateHelpers.ts";
 
-export default function SubscriptionDetailsModal({ isOpen, onClose, subscription, onRefresh }: ISubscriptionDetailsModalProps) {
-const {
-    isDownloading,
-    isCancelling,
-    isMonthly,
-    handleDownload,
-    handleCancelSubscription,
-    isExpired,
-    isPending,
-    isCancelled,
-    endDate
-} = useSubscriptionDetails({subscription, onRefresh, onClose})
+export default function SubscriptionDetailsModal({
+                                                     isOpen,
+                                                     onClose,
+                                                     subscription,
+                                                     onRefresh
+                                                 }: ISubscriptionDetailsModalProps) {
+    const {
+        isDownloading,
+        isCancelling,
+        isMonthly,
+        handleDownload,
+        handleCancelSubscription,
+        isExpired,
+        isPending,
+        isCancelled,
+        endDate
+    } = useSubscriptionDetails({subscription, onRefresh, onClose});
 
-    if (!subscription) return null
+    if (!subscription) {
+        return null;
+    }
     const featuresList = typeof subscription.features === 'string'
         ? subscription.features.split(';').map(f => f.trim()).filter(Boolean)
         : (Array.isArray(subscription.features) ? subscription.features : []);
 
-    let dateLabel = "Koniec ochrony"
-    let dateColorClass = "text-gray-800"
-    let badge = null
+    let dateLabel = "Koniec ochrony";
+    let dateColorClass = "text-gray-800";
+    let badge = null;
 
     if (isExpired) {
         dateLabel = "Wygasła";
         dateColorClass = "text-red-500 font-bold";
         badge = (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-500 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+            <span
+                className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-500 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
                 <ClockIcon className="w-5 h-5"/> Historyczna
             </span>
         );
-    } else if (isPending) {
+    }
+    else if (isPending) {
         dateLabel = "Startuje";
         dateColorClass = "text-blue-600 font-bold";
         badge = (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+            <span
+                className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
                 <ClockIcon className="w-5 h-5"/> Oczekująca
             </span>
         );
-    } else if (isCancelled) {
+    }
+    else if (isCancelled) {
         dateLabel = "Wygasa";
         dateColorClass = "text-orange-600 font-bold";
         badge = (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+            <span
+                className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
                 <AlertIcon className="w-5 h-5"/>Wygasa wkrótce
             </span>
-        )
-    } else {
+        );
+    }
+    else {
         if (isMonthly) {
             dateLabel = "Odnawia się";
             dateColorClass = "text-green-600 font-bold";
-        } else {
+        }
+        else {
             dateLabel = "Koniec umowy";
             dateColorClass = "text-gray-800 font-bold";
         }
 
         badge = (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+            <span
+                className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
                 <CheckCircleIcon className="w-5 h-5"/> Aktywna Polisa
             </span>
-        )
+        );
     }
 
     return (
@@ -85,11 +100,13 @@ const {
                 <p className="text-gray-500 text-sm">Szczegóły Twojego ubezpieczenia</p>
             </div>
 
-            <div className={`bg-slate-50 rounded-xl p-6 border border-slate-100 mb-6 ${isExpired ? 'opacity-70 grayscale' : ''}`}>
+            <div
+                className={`bg-slate-50 rounded-xl p-6 border border-slate-100 mb-6 ${isExpired ? 'opacity-70 grayscale' : ''}`}>
                 <div className="flex justify-between items-center mb-6 pb-6 border-b border-slate-200">
                     <div className="flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-sm text-[#4E61F6] w-10 h-10 flex items-center justify-center">
-                            <CalendarIcon />
+                        <div
+                            className="bg-white p-2 rounded-lg border border-slate-200 shadow-sm text-[#4E61F6] w-10 h-10 flex items-center justify-center">
+                            <CalendarIcon/>
                         </div>
                         <div className="text-left">
                             <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Start</p>
@@ -148,7 +165,8 @@ const {
                 {featuresList.length > 0 ? (
                     <div className="grid grid-cols-1 gap-2">
                         {featuresList.map((feature, idx) => (
-                            <div key={idx} className={`flex items-center gap-3 text-sm p-2 rounded border transition-colors ${isExpired ? 'bg-gray-100 text-gray-400 border-gray-200' : 'bg-green-50/50 text-gray-700 border-green-100'}`}>
+                            <div key={idx}
+                                 className={`flex items-center gap-3 text-sm p-2 rounded border transition-colors ${isExpired ? 'bg-gray-100 text-gray-400 border-gray-200' : 'bg-green-50/50 text-gray-700 border-green-100'}`}>
                                 <div className={`w-4 h-4 ${isExpired ? 'text-gray-400' : 'text-green-500'}`}>
                                     <CheckCircleIcon className="w-4 h-4"/>
                                 </div>
@@ -175,12 +193,13 @@ const {
                     >
                         {isDownloading ? (
                             <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                <div
+                                    className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                                 Generowanie...
                             </>
                         ) : (
                             <>
-                                <div className="w-4 h-4"><BriefcaseIcon className="w-4 h-4" /></div>
+                                <div className="w-4 h-4"><BriefcaseIcon className="w-4 h-4"/></div>
                                 Pobierz potwierdzenie
                             </>
                         )}
@@ -201,7 +220,8 @@ const {
                 )}
 
                 {isCancelled && !isExpired && (
-                    <div className="mt-4 pt-2 text-center text-xs text-orange-600 bg-orange-50 p-2 rounded border border-orange-100">
+                    <div
+                        className="mt-4 pt-2 text-center text-xs text-orange-600 bg-orange-50 p-2 rounded border border-orange-100">
                         Twoja subskrypcja została anulowana. Dostęp wygaśnie {formatDate(endDate)}.
                     </div>
                 )}
