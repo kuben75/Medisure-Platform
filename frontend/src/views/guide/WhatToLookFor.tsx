@@ -5,11 +5,11 @@ import FileTextIcon from "../../components/icons/FileTextIcon.tsx";
 
 export default function WhatToLookFor() {
     const items = [
-        { icon: <BuildingIcon />, title: "Liczba dostępnych placówek", desc: "Sprawdź zasięg terytorialny." },
-        { icon: <ClockIconGuide />, title: "Czas oczekiwania na wizytę", desc: "Gwarantowane terminy (np. 24h)." },
-        { icon: <PercentIcon />, title: "Cena i koszty dodatkowe", desc: "Czy są dopłaty za wizyty domowe?" },
-        { icon: <FileTextIcon />, title: "Warunki umowy i rezygnacji", desc: "Okres wypowiedzenia i kary." },
-    ]
+        {icon: <BuildingIcon/>, title: "Liczba dostępnych placówek", desc: "Sprawdź zasięg terytorialny."},
+        {icon: <ClockIconGuide/>, title: "Czas oczekiwania na wizytę", desc: "Gwarantowane terminy (np. 24h)."},
+        {icon: <PercentIcon/>, title: "Cena i koszty dodatkowe", desc: "Czy są dopłaty za wizyty domowe?"},
+        {icon: <FileTextIcon/>, title: "Warunki umowy i rezygnacji", desc: "Okres wypowiedzenia i kary."},
+    ];
 
     return (
         <section className="py-16 md:py-24 px-4 bg-white">
@@ -28,7 +28,8 @@ export default function WhatToLookFor() {
                             key={i}
                             className="flex flex-col items-center text-center justify-start p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group h-full"
                         >
-                            <div className="w-16 h-16 bg-blue-50 text-[#4E61F6] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#4E61F6] group-hover:text-white transition-colors duration-300 shadow-sm">
+                            <div
+                                className="w-16 h-16 bg-blue-50 text-[#4E61F6] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#4E61F6] group-hover:text-white transition-colors duration-300 shadow-sm">
                                 <div className="w-8 h-8 [&>svg]:w-full [&>svg]:h-full">
                                     {e.icon}
                                 </div>
@@ -46,5 +47,5 @@ export default function WhatToLookFor() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

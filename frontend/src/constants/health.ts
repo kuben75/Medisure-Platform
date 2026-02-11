@@ -48,4 +48,4 @@ export const PREVENTION_GUIDELINES = [
             "Kontrola dentystyczna co pół roku."
         ]
     }
-]
+];

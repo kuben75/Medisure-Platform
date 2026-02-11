@@ -1,4 +1,4 @@
-import { useState, type SetStateAction} from "react";
+import {useState, type SetStateAction} from "react";
 import SearchIcon from "../icons/SearchIcon.tsx";
 import Button from "../ui/Button.tsx";
 import Modal from "../ui/modals/Modal.tsx";
@@ -11,40 +11,50 @@ export default function UserManagement() {
     const {
         users, loading, error, token, currentUser, amISuperAdmin, fetchUsers,
         modals, actions
-    } = useUsers()
+    } = useUsers();
 
-    const [filterText, setFilterText] = useState('')
-    const [filterRole, setFilterRole] = useState<'ALL' | 'Admin' | 'User'>('ALL')
-    const [filterStatus, setFilterStatus] = useState<'ALL' | 'Active' | 'Locked'>('ALL')
-    const [blockReason, setBlockReason] = useState("")
+    const [filterText, setFilterText] = useState('');
+    const [filterRole, setFilterRole] = useState<'ALL' | 'Admin' | 'User'>('ALL');
+    const [filterStatus, setFilterStatus] = useState<'ALL' | 'Active' | 'Locked'>('ALL');
+    const [blockReason, setBlockReason] = useState("");
 
     const filteredUsers = users.filter(user => {
-        const search = filterText.toLowerCase()
+        const search = filterText.toLowerCase();
         const matchesText = (
             (user.firstName?.toLowerCase() || '').includes(search) ||
             (user.lastName?.toLowerCase() || '').includes(search) ||
             (user.email?.toLowerCase() || '').includes(search)
-        )
+        );
 
         let matchesRole = true;
-        if (filterRole === 'Admin') matchesRole = user.roles.includes('Admin')
-        if (filterRole === 'User') matchesRole = user.roles.includes('User') && !user.roles.includes('Admin')
+        if (filterRole === 'Admin') {
+            matchesRole = user.roles.includes('Admin');
+        }
+        if (filterRole === 'User') {
+            matchesRole = user.roles.includes('User') && !user.roles.includes('Admin');
+        }
 
         let matchesStatus = true;
-        if (filterStatus === 'Locked') matchesStatus = !!user.isLocked
-        if (filterStatus === 'Active') matchesStatus = !user.isLocked
+        if (filterStatus === 'Locked') {
+            matchesStatus = !!user.isLocked;
+        }
+        if (filterStatus === 'Active') {
+            matchesStatus = !user.isLocked;
+        }
 
         return matchesText && matchesRole && matchesStatus;
-    })
+    });
 
     const handleSaveSuccess = () => {
-        modals.setIsEditModalOpen(false)
-        modals.setUserToEdit(null)
+        modals.setIsEditModalOpen(false);
+        modals.setUserToEdit(null);
 
-        fetchUsers().then(() => console.log("Użytkownik zapisany, lista odświeżona"))
+        fetchUsers().then(() => console.log("Użytkownik zapisany, lista odświeżona"));
+    };
+
+    if (loading) {
+        return <div className="text-center py-10 text-gray-500">Ładowanie listy...</div>;
     }
-
-    if (loading) return <div className="text-center py-10 text-gray-500">Ładowanie listy...</div>
 
     return (
         <>
@@ -80,14 +90,23 @@ export default function UserManagement() {
                     users={filteredUsers}
                     currentUser={currentUser}
                     amISuperAdmin={amISuperAdmin}
-                    onEdit={(u: SetStateAction<IUserDto | null>) => { modals.setUserToEdit(u); modals.setIsEditModalOpen(true); }}
+                    onEdit={(u: SetStateAction<IUserDto | null>) => {
+                        modals.setUserToEdit(u);
+                        modals.setIsEditModalOpen(true);
+                    }}
                     onDelete={actions.deleteUser}
                     onChangeRole={actions.changeRole}
-                    onBlock={(u: SetStateAction<IUserDto | null>) => { modals.setUserToBlock(u); setBlockReason(""); modals.setIsBlockModalOpen(true); }}
+                    onBlock={(u: SetStateAction<IUserDto | null>) => {
+                        modals.setUserToBlock(u);
+                        setBlockReason("");
+                        modals.setIsBlockModalOpen(true);
+                    }}
                     onUnlock={actions.unlockUser}
                 />
 
-                <div className="md:hidden text-center text-gray-500 py-4">Widok mobilny jest uproszczony (zobacz na tablecie/desktopie).</div>
+                <div className="md:hidden text-center text-gray-500 py-4">Widok mobilny jest uproszczony (zobacz na
+                    tablecie/desktopie).
+                </div>
 
                 {filteredUsers.length === 0 && <div className="py-12 text-center text-gray-400">Brak wyników</div>}
             </div>
@@ -102,7 +121,8 @@ export default function UserManagement() {
 
             <Modal isOpen={modals.isBlockModalOpen} onClose={() => modals.setIsBlockModalOpen(false)}>
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Blokowanie użytkownika</h2>
-                <p className="text-sm text-gray-600 mb-4">Blokujesz <strong>{modals.userToBlock?.email}</strong>. Podaj powód.</p>
+                <p className="text-sm text-gray-600 mb-4">Blokujesz <strong>{modals.userToBlock?.email}</strong>. Podaj
+                    powód.</p>
                 <textarea
                     value={blockReason}
                     onChange={(e) => setBlockReason(e.target.value)}
@@ -111,7 +131,8 @@ export default function UserManagement() {
                 />
                 <div className="flex justify-end gap-3">
                     <Button variant="secondary" onClick={() => modals.setIsBlockModalOpen(false)}>Anuluj</Button>
-                    <Button variant="primary" className="!bg-red-600 hover:!bg-red-700" onClick={() => actions.blockUser(blockReason)}>Zablokuj</Button>
+                    <Button variant="primary" className="!bg-red-600 hover:!bg-red-700"
+                            onClick={() => actions.blockUser(blockReason)}>Zablokuj</Button>
                 </div>
             </Modal>
         </>

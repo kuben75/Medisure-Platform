@@ -7,7 +7,7 @@ import {ComparisonProvider} from "./ComparisonContext.tsx";
 import {UserNotificationsProvider} from "./UserNotificationsContext.tsx";
 import {ChatProvider} from "./ChatContext.tsx";
 
-export const AppProviders = ({ children }: { children: ReactNode }) => {
+export const AppProviders = ({children}: { children: ReactNode }) => {
     return (
         <NotificationProvider>
             <ConfirmationProvider>

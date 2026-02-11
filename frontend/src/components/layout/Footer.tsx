@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
-import type {ReactNode} from "react"
+import {Link} from 'react-router-dom';
+import type {ReactNode} from "react";
 import PhoneIcon from "../icons/PhoneIcon.tsx";
 import MailIcon from "../icons/MailIcon.tsx";
 import MapIcon from "../icons/MapIcon.tsx";
@@ -9,17 +9,21 @@ export default function Footer() {
         <footer className="bg-white border-t border-gray-200 font-sans">
 
             <div className="bg-[#F8FAFC] border-b border-gray-200">
-                <div className="container mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div
+                    className="container mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="text-center md:text-left">
                         <h3 className="text-lg font-bold text-gray-800 mb-1">Potrzebujesz pomocy w wyborze?</h3>
                         <p className="text-sm text-gray-500">Nasi konsultanci medyczni są do Twojej dyspozycji.</p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <a href="tel:+48123456789" className="flex items-center justify-center gap-2 px-6 py-2.5 bg-white text-[#4E61F6] font-bold rounded-full border border-[#4E61F6] hover:bg-[#4E61F6] hover:text-white transition-all shadow-sm active:scale-95 group">
-                            <PhoneIcon className={"w-5 h-5"}/> <span className="group-hover:text-white">+48 123 456 789</span>
+                        <a href="tel:+48123456789"
+                           className="flex items-center justify-center gap-2 px-6 py-2.5 bg-white text-[#4E61F6] font-bold rounded-full border border-[#4E61F6] hover:bg-[#4E61F6] hover:text-white transition-all shadow-sm active:scale-95 group">
+                            <PhoneIcon className={"w-5 h-5"}/> <span
+                            className="group-hover:text-white">+48 123 456 789</span>
                         </a>
-                        <Link to="/kontakt" className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#4E61F6] text-white font-medium rounded-full hover:bg-blue-700 transition-all shadow-md shadow-blue-200 active:scale-95">
-                            <MailIcon className={"w-5 h-5"} /> Napisz do nas
+                        <Link to="/kontakt"
+                              className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#4E61F6] text-white font-medium rounded-full hover:bg-blue-700 transition-all shadow-md shadow-blue-200 active:scale-95">
+                            <MailIcon className={"w-5 h-5"}/> Napisz do nas
                         </Link>
                     </div>
                 </div>
@@ -30,7 +34,8 @@ export default function Footer() {
 
                     <div className="lg:col-span-4 space-y-5">
                         <Link to="/" className="flex items-center gap-3 group w-fit">
-                            <div className="w-10 h-10 bg-[#4E61F6] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">
+                            <div
+                                className="w-10 h-10 bg-[#4E61F6] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">
                                 M
                             </div>
                             <span className="text-xl font-bold text-gray-800 tracking-tight">
@@ -45,7 +50,7 @@ export default function Footer() {
 
                         <div className="space-y-3 pt-2">
                             <div className="flex items-start gap-3 text-sm text-gray-600">
-                                <span className="mt-0.5 text-[#4E61F6]"><MapIcon className={"w-5 h-5"} /></span>
+                                <span className="mt-0.5 text-[#4E61F6]"><MapIcon className={"w-5 h-5"}/></span>
                                 <div>
                                     <p className="font-bold text-gray-800">Siedziba główna</p>
                                     <p>ul. Grochowska 21, 61-001 Poznań</p>
@@ -68,7 +73,8 @@ export default function Footer() {
                             <FooterLink to="/kalkulator?category=Senior">Pakiet Seniorski</FooterLink>
                             <FooterLink to="/kalkulator?category=Biznesowy">Dla Firm i Korporacji</FooterLink>
                             <li className="pt-2">
-                                <Link to="/kalkulator" className="text-[#4E61F6] font-bold text-sm hover:underline transition-colors flex items-center gap-1 group">
+                                <Link to="/kalkulator"
+                                      className="text-[#4E61F6] font-bold text-sm hover:underline transition-colors flex items-center gap-1 group">
                                     Porównaj wszystkie
                                 </Link>
                             </li>
@@ -93,19 +99,21 @@ export default function Footer() {
             </div>
 
             <div className="border-t border-gray-100 bg-white">
-                <div className="container mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
+                <div
+                    className="container mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
                     <p>© {new Date().getFullYear()} Medisure Sp. z o.o. Wszelkie prawa zastrzeżone.</p>
                     <div className="flex gap-6">
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> SSL Secure</span>
+                        <span className="flex items-center gap-1"><span
+                            className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> SSL Secure</span>
                         <span>Bezpieczne płatności</span>
                     </div>
                 </div>
             </div>
         </footer>
-    )
+    );
 }
 
-const FooterLink = ({ to, children }: { to: string, children: ReactNode }) => (
+const FooterLink = ({to, children}: { to: string, children: ReactNode }) => (
     <li>
         <Link
             to={to}
@@ -114,4 +122,4 @@ const FooterLink = ({ to, children }: { to: string, children: ReactNode }) => (
             {children}
         </Link>
     </li>
-)
+);

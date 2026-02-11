@@ -1,5 +1,5 @@
-
 import adviserImage from '../../assets/doradca.svg';
+
 export default function HelpSection() {
     return (
         <section
@@ -57,5 +57,5 @@ export default function HelpSection() {
                 </svg>
             </div>
         </section>
-    )
+    );
 }

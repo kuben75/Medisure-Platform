@@ -1,7 +1,7 @@
-import {Link} from 'react-router-dom'
-import Navbar from "../components/layout/Navbar.tsx"
-import Button from "../components/ui/Button.tsx"
-import LockIcon from "../components/icons/LockIcon.tsx"
+import {Link} from 'react-router-dom';
+import Navbar from "../components/layout/Navbar.tsx";
+import Button from "../components/ui/Button.tsx";
+import LockIcon from "../components/icons/LockIcon.tsx";
 import KeyIcon from "../components/icons/KeyIcon.tsx";
 import {useLoginPage} from "../hooks/useLoginPage.ts";
 
@@ -22,7 +22,7 @@ export default function LoginPage() {
         navigate,
         authEmail,
         setStep
-    } = useLoginPage()
+    } = useLoginPage();
     return (
         <>
             <Navbar/>
@@ -141,5 +141,5 @@ export default function LoginPage() {
                 </div>
             </div>
         </>
-    )
+    );
 }

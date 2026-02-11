@@ -6,11 +6,13 @@ import {AVATAR_COLORS, QUICK_OPTIONS, SIZE_CLASSES} from "../../constants/ui.ts"
 import type {IAvatarProps} from "../../types/user.types.ts";
 
 
-export const Avatar = ({ name, size = "md", className = "" }: IAvatarProps) => {
-    const safeName = (name || "").trim() || "?"
-    const isSystem = safeName.toLowerCase() === "system"
+export const Avatar = ({name, size = "md", className = ""}: IAvatarProps) => {
+    const safeName = (name || "").trim() || "?";
+    const isSystem = safeName.toLowerCase() === "system";
     const colorClass = useMemo(() => {
-        if (isSystem) return "bg-indigo-600 border-indigo-100";
+        if (isSystem) {
+            return "bg-indigo-600 border-indigo-100";
+        }
 
         let hash = 0;
         for (let i = 0; i < safeName.length; i++) {
@@ -20,8 +22,12 @@ export const Avatar = ({ name, size = "md", className = "" }: IAvatarProps) => {
     }, [safeName, isSystem]);
 
     const initials = useMemo(() => {
-        if (isSystem) return null;
-        if (safeName.includes("@")) return safeName.substring(0, 2).toUpperCase();
+        if (isSystem) {
+            return null;
+        }
+        if (safeName.includes("@")) {
+            return safeName.substring(0, 2).toUpperCase();
+        }
 
         return safeName
             .split(' ')
@@ -30,29 +36,35 @@ export const Avatar = ({ name, size = "md", className = "" }: IAvatarProps) => {
             .join('')
             .toUpperCase()
             .slice(0, 2);
-    }, [safeName, isSystem])
+    }, [safeName, isSystem]);
 
     if (isSystem) {
         return (
-            <div className={`${SIZE_CLASSES[size]} rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-indigo-100 ${className}`}>
-                <RobotIcon className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"} />
+            <div
+                className={`${SIZE_CLASSES[size]} rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-indigo-100 ${className}`}>
+                <RobotIcon className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"}/>
             </div>
-        )
+        );
     }
     return (
-        <div className={`${SIZE_CLASSES[size]} rounded-full bg-gradient-to-br ${colorClass} text-white flex items-center justify-center font-bold shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-gray-100 ${className}`}>
+        <div
+            className={`${SIZE_CLASSES[size]} rounded-full bg-gradient-to-br ${colorClass} text-white flex items-center justify-center font-bold shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-gray-100 ${className}`}>
             {initials}
         </div>
-    )
-}
+    );
+};
 
-export const DateSeparator = ({ date }: { date: Date }) => {
+export const DateSeparator = ({date}: { date: Date }) => {
     const isToday = new Date().toDateString() === date.toDateString();
     const isYesterday = new Date(Date.now() - 86400000).toDateString() === date.toDateString();
 
     let label = date.toLocaleDateString();
-    if (isToday) label = "Dzisiaj";
-    else if (isYesterday) label = "Wczoraj";
+    if (isToday) {
+        label = "Dzisiaj";
+    }
+    else if (isYesterday) {
+        label = "Wczoraj";
+    }
 
     return (
         <div className="flex items-center justify-center my-4 opacity-80">
@@ -60,20 +72,23 @@ export const DateSeparator = ({ date }: { date: Date }) => {
             <span className="text-[10px] uppercase font-bold text-gray-400 px-3 tracking-widest">{label}</span>
             <div className="h-[1px] bg-gray-200 w-12"></div>
         </div>
-    )
-}
+    );
+};
 
-export const ChatBubble = ({ message, isMe, timestamp, senderName, isRead }: IChatBubbleProps) => {
+export const ChatBubble = ({message, isMe, timestamp, senderName, isRead}: IChatBubbleProps) => {
     const isSystem = senderName === "System";
 
     let bubbleClass = "px-4 py-2.5 text-[14px] leading-relaxed relative shadow-sm transition-all ";
 
-    if (isMe)
+    if (isMe) {
         bubbleClass += "bg-[#4E61F6] text-white rounded-2xl rounded-tr-sm";
-     else if (isSystem)
+    }
+    else if (isSystem) {
         bubbleClass += "bg-indigo-50 border border-indigo-100 text-indigo-900 rounded-2xl rounded-tl-sm";
-     else
+    }
+    else {
         bubbleClass += "bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-tl-sm";
+    }
 
 
     return (
@@ -98,17 +113,18 @@ export const ChatBubble = ({ message, isMe, timestamp, senderName, isRead }: ICh
                         {timestamp.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
                     </span>
                     {isMe && (
-                        <div className={`transition-colors duration-300 ${isRead ? 'text-[#4E61F6]' : 'text-gray-300'}`}>
+                        <div
+                            className={`transition-colors duration-300 ${isRead ? 'text-[#4E61F6]' : 'text-gray-300'}`}>
                             <CheckChatIcon double={true}/>
                         </div>
                     )}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export const QuickReplies = ({ onSelect }: { onSelect: (text: string) => void }) => {
+export const QuickReplies = ({onSelect}: { onSelect: (text: string) => void }) => {
 
     return (
         <div className="flex gap-2 overflow-x-auto pb-2 px-1 scrollbar-hide">

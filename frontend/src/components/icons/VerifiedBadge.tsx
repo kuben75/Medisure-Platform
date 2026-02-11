@@ -9,5 +9,5 @@ export default function VerifiedBadge() {
                       clipRule="evenodd"/>
             </svg>
         </div>
-    )
+    );
 }

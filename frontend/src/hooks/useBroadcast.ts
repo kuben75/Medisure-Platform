@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { useAuth } from './useAuth.ts';
-import { useNotification } from './UseNotification.ts';
-import { useConfirm } from './UseConfrim.ts';
-import type { TNotificationType } from "../types/notifications.types.ts";
+import {useState} from 'react';
+import {useAuth} from './useAuth.ts';
+import {useNotification} from './UseNotification.ts';
+import {useConfirm} from './UseConfrim.ts';
+import type {TNotificationType} from "../types/notifications.types.ts";
 
 export const useBroadcastPanel = () => {
-    const { token } = useAuth();
-    const { notify } = useNotification();
+    const {token} = useAuth();
+    const {notify} = useNotification();
     const confirm = useConfirm();
 
     const [title, setTitle] = useState('');
@@ -16,7 +16,9 @@ export const useBroadcastPanel = () => {
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title || !message) return;
+        if (!title || !message) {
+            return;
+        }
 
         const shouldSend = await confirm({
             title: "Potwierdzenie wysłania ogłoszenia",
@@ -26,7 +28,9 @@ export const useBroadcastPanel = () => {
             variant: "info"
         });
 
-        if (!shouldSend) return;
+        if (!shouldSend) {
+            return;
+        }
 
         setLoading(true);
         try {
@@ -36,7 +40,7 @@ export const useBroadcastPanel = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ title, message, type })
+                body: JSON.stringify({title, message, type})
             });
 
             if (res.ok) {
@@ -44,7 +48,8 @@ export const useBroadcastPanel = () => {
                 setTitle('');
                 setMessage('');
                 setType('Info');
-            } else {
+            }
+            else {
                 const errData = await res.json();
                 notify.error(errData.message || "Wystąpił błąd podczas wysyłania.");
             }
@@ -54,7 +59,7 @@ export const useBroadcastPanel = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return {
         title, setTitle,

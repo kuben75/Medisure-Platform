@@ -1,6 +1,6 @@
 import type {ReactNode} from "react";
 
-export const StatCard = ({ title, value, icon, colorClass }: {
+export const StatCard = ({title, value, icon, colorClass}: {
     title: string;
     value: number | string;
     icon: ReactNode;
@@ -15,4 +15,4 @@ export const StatCard = ({ title, value, icon, colorClass }: {
             <p className="text-3xl font-bold text-gray-800">{value}</p>
         </div>
     </div>
-)
+);

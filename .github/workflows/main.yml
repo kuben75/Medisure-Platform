@@ -19,16 +19,19 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore backend/backend/backend.csproj
+        working-directory: ./backend
+        run: dotnet restore backend.sln
 
       - name: Build Backend
-        run: dotnet build backend/backend/backend.csproj --no-restore --configuration Release
+        working-directory: ./backend
+        run: dotnet build backend.sln --no-restore --configuration Release
 
-      - name: 🧪 Run Unit Tests
-        run: dotnet test backend/backend/backend.Tests/backend.Tests.csproj --verbosity normal
+      - name: Run Unit Tests
+        working-directory: ./backend
+        run: dotnet test backend.Tests/backend.Tests.csproj --no-build --configuration Release --verbosity normal
 
   build-frontend:
-    name:  Frontend Build
+    name: Frontend Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

@@ -16,5 +16,5 @@ export default function BuildingIcon({className}: IIconProps) {
             <path d="M8 10h.01"/>
             <path d="M8 14h.01"/>
         </svg>
-    )
+    );
 }

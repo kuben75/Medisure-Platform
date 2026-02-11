@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import {useEffect, useState, useRef} from 'react';
 import * as signalR from '@microsoft/signalr';
 
 export const useChatConnection = (hubUrl: string, token: string | null, guestId: string | null) => {
@@ -6,14 +6,14 @@ export const useChatConnection = (hubUrl: string, token: string | null, guestId:
     const connectionRef = useRef<signalR.HubConnection | null>(null);
 
     useEffect(() => {
-        let isMounted = true
-        let finalUrl = hubUrl
+        let isMounted = true;
+        let finalUrl = hubUrl;
 
         if (!token && guestId) {
-            finalUrl += `?anonId=${guestId}`
+            finalUrl += `?anonId=${guestId}`;
         }
 
-        const safeToken = token ? token.replace(/^"|"$/g, '') : ''
+        const safeToken = token ? token.replace(/^"|"$/g, '') : '';
 
         const newConnection = new signalR.HubConnectionBuilder()
             .withUrl(finalUrl, {
@@ -23,40 +23,44 @@ export const useChatConnection = (hubUrl: string, token: string | null, guestId:
             })
             .withAutomaticReconnect()
             .configureLogging(signalR.LogLevel.Warning)
-            .build()
+            .build();
 
-        connectionRef.current = newConnection
+        connectionRef.current = newConnection;
 
         const startConnection = async () => {
             try {
-                if (!isMounted) return
+                if (!isMounted) {
+                    return;
+                }
 
-                await newConnection.start()
+                await newConnection.start();
 
                 if (isMounted) {
-                    console.log("SignalR Connected ✅")
-                    setConnection(newConnection)
-                } else {
-                    await newConnection.stop()
+                    console.log("SignalR Connected ✅");
+                    setConnection(newConnection);
+                }
+                else {
+                    await newConnection.stop();
                 }
             } catch (err) {
                 if (isMounted) {
-                    console.error("SignalR Connection Error:", err)
+                    console.error("SignalR Connection Error:", err);
                 }
             }
-        }
+        };
 
         startConnection();
 
         return () => {
             isMounted = false;
-            const conn = connectionRef.current
+            const conn = connectionRef.current;
             if (conn) {
-                console.log("SignalR Cleaning up... 🧹")
-                conn.stop().catch(() => {})
-                setConnection(null)
+                console.log("SignalR Cleaning up... 🧹");
+                conn.stop().catch(() => {
+                });
+                setConnection(null);
             }
-        }
+        };
     }, [token, guestId, hubUrl]);
 
     return connection

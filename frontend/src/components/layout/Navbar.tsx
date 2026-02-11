@@ -1,9 +1,9 @@
-import { useNavbar } from "../../hooks/useNavbar.ts";
+import {useNavbar} from "../../hooks/useNavbar.ts";
 import NavbarHeader from "./NavbarHeader";
 import NavbarDrawers from "./NavbarDrawers";
 
 export default function Navbar() {
-    const navbarLogic = useNavbar()
+    const navbarLogic = useNavbar();
 
     return (
         <>
@@ -15,5 +15,5 @@ export default function Navbar() {
                 {...navbarLogic}
             />
         </>
-    )
+    );
 }

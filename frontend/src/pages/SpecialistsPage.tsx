@@ -1,29 +1,33 @@
-import {CATEGORY_BUTTONS} from '../constants/specialists.tsx'
-import Modal from '../components/ui/modals/Modal.tsx'
-import Button from '../components/ui/Button.tsx'
-import CheckIcon from '../components/icons/CheckIcon.tsx'
-import BriefcaseIcon from "../components/icons/BriefcaseIcon.tsx"
-import VerifiedBadge from "../components/icons/VerifiedBadge.tsx"
+import {CATEGORY_BUTTONS} from '../constants/specialists.tsx';
+import Modal from '../components/ui/modals/Modal.tsx';
+import Button from '../components/ui/Button.tsx';
+import CheckIcon from '../components/icons/CheckIcon.tsx';
+import BriefcaseIcon from "../components/icons/BriefcaseIcon.tsx";
+import VerifiedBadge from "../components/icons/VerifiedBadge.tsx";
 import {useSpecialistsLogic} from "../hooks/useSpecialistsLogic.ts";
 import SearchIcon from "../components/icons/SearchIcon.tsx";
+
 export default function SpecialistsPage() {
     const {
         searchTerm, setSearchTerm, selectedCategory, setSelectedCategory, filtered,
         selectedSpecialist, setSelectedSpecialist, getRealPackagesForSpecialist, navigate
-    } = useSpecialistsLogic()
+    } = useSpecialistsLogic();
     return (
         <div className="min-h-screen bg-slate-50 py-12 md:py-24 px-4">
             <div className="max-w-7xl mx-auto">
 
                 <div className="text-center mb-16">
-                    <span className="text-[#4E61F6] font-bold tracking-wider uppercase text-xs bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
+                    <span
+                        className="text-[#4E61F6] font-bold tracking-wider uppercase text-xs bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
                         Nasza kadra medyczna
                     </span>
                     <h1 className="text-4xl md:text-6xl font-black text-gray-900 mt-6 mb-6 tracking-tight">
-                        Poznaj naszych <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4E61F6] to-purple-600">Specjalistów</span>
+                        Poznaj naszych <br/><span
+                        className="text-transparent bg-clip-text bg-gradient-to-r from-[#4E61F6] to-purple-600">Specjalistów</span>
                     </h1>
                     <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                        Współpracujemy tylko z najlepszymi lekarzami. Sprawdź ich doświadczenie i zobacz, w których pakietach są dostępni.
+                        Współpracujemy tylko z najlepszymi lekarzami. Sprawdź ich doświadczenie i zobacz, w których
+                        pakietach są dostępni.
                     </p>
                 </div>
 
@@ -35,8 +39,11 @@ export default function SpecialistsPage() {
                             onChange={e => setSearchTerm(e.target.value)}
                             className="w-full px-6 py-4 rounded-2xl border border-gray-200 shadow-sm focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-lg pl-14 bg-white transition-all group-hover:shadow-md"
                         />
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 absolute left-5 top-4.5 group-focus-within:text-blue-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             className="h-6 w-6 text-gray-400 absolute left-5 top-4.5 group-focus-within:text-blue-500 transition-colors"
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </div>
 
@@ -63,10 +70,12 @@ export default function SpecialistsPage() {
                             onClick={() => setSelectedSpecialist(spec)}
                             className="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl border border-gray-100 hover:border-blue-200 transition-all duration-300 cursor-pointer group flex flex-col items-center text-center relative overflow-hidden"
                         >
-                            <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-blue-50 to-white"></div>
+                            <div
+                                className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-blue-50 to-white"></div>
 
                             <div className="relative mb-4 mt-2">
-                                <div className="w-28 h-28 rounded-full p-1 bg-white border-2 border-gray-100 shadow-md group-hover:border-blue-400 transition-colors">
+                                <div
+                                    className="w-28 h-28 rounded-full p-1 bg-white border-2 border-gray-100 shadow-md group-hover:border-blue-400 transition-colors">
                                     <img
                                         src={spec.imageUrl}
                                         alt={spec.name}
@@ -74,11 +83,12 @@ export default function SpecialistsPage() {
                                         loading="lazy"
                                     />
                                 </div>
-                                <VerifiedBadge />
+                                <VerifiedBadge/>
                             </div>
 
                             <div className="relative z-10 w-full">
-                                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1 block">{spec.category}</span>
+                                <span
+                                    className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1 block">{spec.category}</span>
                                 <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors truncate px-2">{spec.title} {spec.name}</h3>
                                 <p className="text-sm text-gray-500 mb-4">{spec.experienceYears} lat doświadczenia</p>
 
@@ -86,7 +96,8 @@ export default function SpecialistsPage() {
                                     {spec.description}
                                 </div>
 
-                                <Button variant="secondary" className="w-full text-sm !py-3 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 border-gray-200 hover:border-blue-200">
+                                <Button variant="secondary"
+                                        className="w-full text-sm !py-3 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 border-gray-200 hover:border-blue-200">
                                     Zobacz profil
                                 </Button>
                             </div>
@@ -96,11 +107,17 @@ export default function SpecialistsPage() {
 
                 {filtered.length === 0 && (
                     <div className="text-center py-20 animate-fade-in-up">
-                        <div className="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400 text-4xl shadow-inner"><SearchIcon className="w-6 h-6 text-[#4E61F6]" /></div>
+                        <div
+                            className="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400 text-4xl shadow-inner">
+                            <SearchIcon className="w-6 h-6 text-[#4E61F6]"/></div>
                         <h3 className="text-xl font-bold text-gray-800 mb-2">Nie znaleziono specjalisty</h3>
-                        <p className="text-gray-500 mb-6">W tej kategorii nie ma lekarzy pasujących do Twojego wyszukiwania.</p>
+                        <p className="text-gray-500 mb-6">W tej kategorii nie ma lekarzy pasujących do Twojego
+                            wyszukiwania.</p>
                         <button
-                            onClick={() => {setSearchTerm(''); setSelectedCategory('Wszystkie')}}
+                            onClick={() => {
+                                setSearchTerm('');
+                                setSelectedCategory('Wszystkie');
+                            }}
                             className="text-[#4E61F6] font-bold hover:underline px-6 py-2 bg-blue-50 rounded-lg"
                         >
                             Wyczyść wszystkie filtry
@@ -115,7 +132,8 @@ export default function SpecialistsPage() {
                 >
                     {selectedSpecialist && (
                         <div>
-                            <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start pb-8 border-b border-gray-100">
+                            <div
+                                className="flex flex-col sm:flex-row gap-6 items-center sm:items-start pb-8 border-b border-gray-100">
                                 <div className="relative flex-shrink-0">
                                     <img
                                         src={selectedSpecialist.imageUrl}
@@ -124,14 +142,16 @@ export default function SpecialistsPage() {
                                     />
                                     <div className="absolute -bottom-3 -right-3 bg-white p-1.5 rounded-full shadow-md">
                                         <div className="bg-green-100 text-green-700 p-1 rounded-full">
-                                            <CheckIcon className="w-4 h-4" />
+                                            <CheckIcon className="w-4 h-4"/>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="text-center sm:text-left">
-                                    <span className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-2">{selectedSpecialist.category}</span>
+                                    <span
+                                        className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-2">{selectedSpecialist.category}</span>
                                     <h2 className="text-3xl font-bold text-gray-900 mb-1">{selectedSpecialist.title} {selectedSpecialist.name}</h2>
-                                    <p className="text-gray-500 font-medium mb-4">{selectedSpecialist.experienceYears} lat praktyki lekarskiej</p>
+                                    <p className="text-gray-500 font-medium mb-4">{selectedSpecialist.experienceYears} lat
+                                        praktyki lekarskiej</p>
                                     <p className="text-sm text-gray-600 leading-relaxed">
                                         {selectedSpecialist.description}
                                     </p>
@@ -144,11 +164,14 @@ export default function SpecialistsPage() {
                                     Dostępny w pakietach:
                                 </h4>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">
+                                <div
+                                    className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">
                                     {getRealPackagesForSpecialist(selectedSpecialist.category).length > 0 ? (
                                         getRealPackagesForSpecialist(selectedSpecialist.category).map((pkgName, idx) => (
-                                            <div key={idx} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-gray-50 hover:bg-blue-50 hover:border-blue-200 transition-colors group">
-                                                <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-800">{pkgName}</span>
+                                            <div key={idx}
+                                                 className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-gray-50 hover:bg-blue-50 hover:border-blue-200 transition-colors group">
+                                                <span
+                                                    className="text-sm font-semibold text-gray-700 group-hover:text-blue-800">{pkgName}</span>
                                                 <button
                                                     onClick={() => {
                                                         navigate('/kalkulator');
@@ -178,5 +201,5 @@ export default function SpecialistsPage() {
 
             </div>
         </div>
-    )
+    );
 }

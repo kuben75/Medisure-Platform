@@ -1,4 +1,4 @@
-import type { IReviewDisplay } from "../types/review.types.ts";
+import type {IReviewDisplay} from "../types/review.types.ts";
 
 export const DEFAULT_REVIEWS: IReviewDisplay[] = [
     {

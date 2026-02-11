@@ -5,10 +5,10 @@ import CheckoutOverlay from "../../components/ui/CheckoutOverlay.tsx";
 import PackageDetailsModal from "../../components/ui/modals/PackageDetailsModal.tsx";
 import PriceFactorsSection from "../../components/sections/PriceFactorsSection.tsx";
 
-import { usePackagePurchase } from "../../hooks/usePackagePurchase.ts";
-import { useCalculatorLogic } from "../../hooks/useCalculatorLogic.ts";
-import { calculatePersonalizedPrice } from "../../utils/pricingHelpers.ts";
-import type { IPricingPlan } from "../../types/pricing.types.ts";
+import {usePackagePurchase} from "../../hooks/usePackagePurchase.ts";
+import {useCalculatorLogic} from "../../hooks/useCalculatorLogic.ts";
+import {calculatePersonalizedPrice} from "../../utils/pricingHelpers.ts";
+import type {IPricingPlan} from "../../types/pricing.types.ts";
 
 export default function CalculatorPage() {
     const {
@@ -26,7 +26,7 @@ export default function CalculatorPage() {
         handleProceedToCheckout,
         options,
         isBuying
-    } = usePackagePurchase()
+    } = usePackagePurchase();
 
     const {
         isCalculated,
@@ -38,14 +38,14 @@ export default function CalculatorPage() {
         budgetExceeded,
         calculatedAge,
         calculateSubscription
-    } = useCalculatorLogic()
+    } = useCalculatorLogic();
 
     const handleOpenRecommended = (pkg: IPricingPlan) => {
         const ageToUse = userAge || calculatedAge || 30;
         const personalizedPrice = calculatePersonalizedPrice(pkg.priceValue, pkg.category, ageToUse);
-        const packageWithCustomPrice = { ...pkg, priceValue: personalizedPrice };
+        const packageWithCustomPrice = {...pkg, priceValue: personalizedPrice};
         openModal(packageWithCustomPrice);
-    }
+    };
 
     return (
         <div className="min-h-screen bg-white">
@@ -95,7 +95,7 @@ export default function CalculatorPage() {
                 />
             )}
 
-            <PriceFactorsSection />
+            <PriceFactorsSection/>
         </div>
-    )
+    );
 }

@@ -39,28 +39,34 @@ export interface ICheckoutFinancials {
     effectiveStart: Date;
     effectiveEnd: Date;
 }
+
 export interface ICheckoutStepIndicatorProps {
     step: 1 | 2;
 }
+
 export interface ICheckoutOrderSummaryProps {
     plan: IPricingPlan;
     billingPeriod: TBillingType;
     financials: ICheckoutFinancials;
     onClose: () => void;
 }
+
 export interface IPaymentMethodSelectorProps {
-    selectedMethod: TPaymentMethodType
-    onSelect: (method: TPaymentMethodType) => void
+    selectedMethod: TPaymentMethodType;
+    onSelect: (method: TPaymentMethodType) => void;
 }
+
 export interface ICardPaymentFormProps {
     cardData: ICardData;
     setCardData: React.Dispatch<React.SetStateAction<ICardData>>;
     errors: Record<string, string>;
 }
+
 export interface ICheckoutSuccessScreenProps {
-    countdown: number
-    onRedirect: () => void
+    countdown: number;
+    onRedirect: () => void;
 }
+
 export interface ICheckoutPaymentFormProps {
     paymentMethod: TPaymentMethodType;
     setPaymentMethod: React.Dispatch<React.SetStateAction<TPaymentMethodType>>;

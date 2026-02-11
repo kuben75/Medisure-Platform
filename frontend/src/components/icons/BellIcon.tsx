@@ -1,6 +1,6 @@
 import type {IIconProps} from "../../types/ui.types.ts";
 
-export default function BellIcon  ({ hasUnread, className = "" }: IIconProps)  {
+export default function BellIcon({hasUnread, className = ""}: IIconProps) {
 
     const baseClasses = "w-6 h-6 transition-transform duration-300 group-hover:rotate-12";
 

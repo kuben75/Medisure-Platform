@@ -10,5 +10,5 @@ export default function FileTextIcon({className}: IIconProps) {
             <path d="M16 13H8"/>
             <path d="M16 17H8"/>
         </svg>
-    )
+    );
 }

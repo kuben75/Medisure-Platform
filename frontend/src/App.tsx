@@ -1,20 +1,20 @@
-import {Routes, Route, Outlet} from "react-router-dom"
-import Navbar from "./components/layout/Navbar.tsx"
-import HomePage from "./views/home/HomePage.tsx"
-import Footer from "./components/layout/Footer.tsx"
-import PatientGuidePage from "./views/guide/PatientGuidePage.tsx"
-import ContactPage from "./views/contact/ContactPage.tsx"
-import CalculatorPage from "./views/calculator/CalculatorPage.tsx"
-import LoginPage from "./pages/LoginPage.tsx"
-import AdminRoute from './components/auth/AdminRoute.tsx'
-import AdminPanel from './components/admin/AdminPanel.tsx'
-import RegisterPage from "./pages/RegisterPage.tsx"
-import UserProfile from "./components/users/UserProfile.tsx"
-import UserRoute from "./components/auth/UserRoute.tsx"
-import OnboardingModal from "./components/ui/modals/OnboardingModal.tsx"
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx"
-import FaqPage from "./pages/FaqPage.tsx"
-import ScrollToTop from "./utils/ScrollToTop.tsx"
+import {Routes, Route, Outlet} from "react-router-dom";
+import Navbar from "./components/layout/Navbar.tsx";
+import HomePage from "./views/home/HomePage.tsx";
+import Footer from "./components/layout/Footer.tsx";
+import PatientGuidePage from "./views/guide/PatientGuidePage.tsx";
+import ContactPage from "./views/contact/ContactPage.tsx";
+import CalculatorPage from "./views/calculator/CalculatorPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
+import AdminRoute from './components/auth/AdminRoute.tsx';
+import AdminPanel from './components/admin/AdminPanel.tsx';
+import RegisterPage from "./pages/RegisterPage.tsx";
+import UserProfile from "./components/users/UserProfile.tsx";
+import UserRoute from "./components/auth/UserRoute.tsx";
+import OnboardingModal from "./components/ui/modals/OnboardingModal.tsx";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage.tsx";
+import FaqPage from "./pages/FaqPage.tsx";
+import ScrollToTop from "./utils/ScrollToTop.tsx";
 import CookieConsent from "./components/ui/CookieConsent.tsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.tsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
@@ -38,7 +38,7 @@ function AppLayout() {
             <CookieConsent/>
             <ChatWidget/>
         </div>
-    )
+    );
 }
 
 function App() {
@@ -71,7 +71,7 @@ function App() {
                 </Route>
             </Routes>
         </AppProviders>
-    )
+    );
 }
 
-export default App
+export default App;

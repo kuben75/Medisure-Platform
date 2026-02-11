@@ -11,5 +11,5 @@ export default function StethoscopeIcon({className}: IIconProps) {
             <path d="M8 15.5v5a2 2 0 0 0 2 2v0a2 2 0 0 0 2-2v-5"/>
             <path d="M14 2.5a4.5 4.5 0 0 1 4.5 4.5v0a4.5 4.5 0 0 1-4.5 4.5"/>
         </svg>
-    )
+    );
 }

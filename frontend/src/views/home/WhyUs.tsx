@@ -20,7 +20,8 @@ export default function WhyUs() {
                             key={i}
                             className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:cursor-pointer group"
                         >
-                            <div className="w-14 h-14 bg-[#eff1ff] rounded-xl flex items-center justify-center text-[#4E61F6] mb-6 group-hover:bg-[#4E61F6] group-hover:text-white transition-colors duration-300">
+                            <div
+                                className="w-14 h-14 bg-[#eff1ff] rounded-xl flex items-center justify-center text-[#4E61F6] mb-6 group-hover:bg-[#4E61F6] group-hover:text-white transition-colors duration-300">
                                 <div className="w-8 h-8 [&>svg]:w-full [&>svg]:h-full">
                                     {item.icon}
                                 </div>
@@ -38,5 +39,5 @@ export default function WhyUs() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

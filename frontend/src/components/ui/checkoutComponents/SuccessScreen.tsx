@@ -10,7 +10,8 @@ export default function SuccessScreen({countdown, onCountdownChange}: ISuccessSc
             timer = setInterval(() => {
                 onCountdownChange(countdown - 1);
             }, 1000);
-        } else if (countdown === 0) {
+        }
+        else if (countdown === 0) {
             window.location.href = '/profile?tab=subscriptions';
         }
         return () => clearInterval(timer);
@@ -20,7 +21,8 @@ export default function SuccessScreen({countdown, onCountdownChange}: ISuccessSc
         <div className="text-center py-12 animate-fade-in-up flex flex-col items-center justify-center h-full">
             <div className="relative">
                 <div className="absolute inset-0 bg-green-500/20 blur-xl rounded-full"></div>
-                <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-8 shadow-xl relative z-10 animate-bounce-short">
+                <div
+                    className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-8 shadow-xl relative z-10 animate-bounce-short">
                     <CheckIcon className="w-12 h-12 text-white"/>
                 </div>
             </div>
@@ -36,7 +38,8 @@ export default function SuccessScreen({countdown, onCountdownChange}: ISuccessSc
                     Wróć do strony głównej
                 </Button>
                 <p className="text-xs text-gray-400 font-medium">
-                    Automatyczne przekierowanie do panelu za <span className="text-slate-800 font-bold text-base mx-1">{countdown}s</span>
+                    Automatyczne przekierowanie do panelu za <span
+                    className="text-slate-800 font-bold text-base mx-1">{countdown}s</span>
                 </p>
             </div>
         </div>

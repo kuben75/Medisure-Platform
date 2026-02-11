@@ -1,52 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useNotification } from "../hooks/UseNotification.ts";
+import React, {useState, useEffect} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import {useNotification} from "../hooks/UseNotification.ts";
 import Navbar from "../components/layout/Navbar.tsx";
-import { useAuth } from "../hooks/useAuth.ts";
-import { handleApiError } from "../utils/apiErrorHandler.ts";
+import {useAuth} from "../hooks/useAuth.ts";
+import {handleApiError} from "../utils/apiErrorHandler.ts";
 import UserPlusIcon from "../components/icons/UserPlusIcon.tsx";
 
 export default function RegisterPage() {
-    const navigate = useNavigate()
-    const { user } = useAuth()
-    const { notify } = useNotification()
+    const navigate = useNavigate();
+    const {user} = useAuth();
+    const {notify} = useNotification();
 
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [acceptTerms, setAcceptTerms] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [acceptTerms, setAcceptTerms] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user) {
-            navigate('/', { replace: true });
+            navigate('/', {replace: true});
         }
     }, [user, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
 
         if (password !== confirmPassword) {
-            notify.error("Hasła nie są identyczne.")
-            return
+            notify.error("Hasła nie są identyczne.");
+            return;
         }
         if (!acceptTerms) {
-            notify.error("Musisz zaakceptować regulamin.")
-            return
+            notify.error("Musisz zaakceptować regulamin.");
+            return;
         }
         if (password.length < 8) {
-            notify.error("Hasło musi mieć co najmniej 8 znaków.")
-            return
+            notify.error("Hasło musi mieć co najmniej 8 znaków.");
+            return;
         }
 
-        setIsLoading(true)
+        setIsLoading(true);
 
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     firstName,
                     lastName,
@@ -54,39 +54,42 @@ export default function RegisterPage() {
                     password,
                     confirmPassword
                 }),
-            })
+            });
 
-            const data = await response.json()
+            const data = await response.json();
 
-            if (!response.ok)
-                throw data
+            if (!response.ok) {
+                throw data;
+            }
 
 
-            notify.success(data.message || "Konto utworzone! Sprawdź email.")
-            navigate('/login')
+            notify.success(data.message || "Konto utworzone! Sprawdź email.");
+            navigate('/login');
 
         } catch (err: any) {
-            handleApiError(err, notify)
+            handleApiError(err, notify);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
         <>
-            <Navbar />
+            <Navbar/>
             <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4 py-25 animate-fade-in">
                 <div className="w-full max-w-lg">
                     <div className="bg-white p-8 md:p-10 rounded-2xl shadow-xl border border-gray-200">
 
                         <div className="flex justify-center mb-6">
-                            <div className="w-16 h-16 bg-[#E4E7FE] rounded-full flex items-center justify-center animate-bounce-slow">
-                                <UserPlusIcon className="w-8 h-8 text-[#4E61F6]" />
+                            <div
+                                className="w-16 h-16 bg-[#E4E7FE] rounded-full flex items-center justify-center animate-bounce-slow">
+                                <UserPlusIcon className="w-8 h-8 text-[#4E61F6]"/>
                             </div>
                         </div>
 
                         <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Utwórz konto</h2>
-                        <p className="text-center text-gray-500 mb-8">Dołącz do nas i znajdź najlepszy pakiet medyczny.</p>
+                        <p className="text-center text-gray-500 mb-8">Dołącz do nas i znajdź najlepszy pakiet
+                            medyczny.</p>
 
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div className="grid grid-cols-2 gap-4">
@@ -157,8 +160,12 @@ export default function RegisterPage() {
                                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-[#4E61F6] text-[#4E61F6] cursor-pointer"
                                     />
                                 </div>
-                                <label htmlFor="terms" className="ml-2 text-sm font-medium text-gray-900 cursor-pointer select-none">
-                                    Akceptuję <Link to="/polityka-prywatnosci" className="text-[#4E61F6] hover:underline">Regulamin</Link> oraz <Link to="/polityka-prywatnosci" className="text-[#4E61F6] hover:underline">Politykę Prywatności</Link>.
+                                <label htmlFor="terms"
+                                       className="ml-2 text-sm font-medium text-gray-900 cursor-pointer select-none">
+                                    Akceptuję <Link to="/polityka-prywatnosci"
+                                                    className="text-[#4E61F6] hover:underline">Regulamin</Link> oraz <Link
+                                    to="/polityka-prywatnosci" className="text-[#4E61F6] hover:underline">Politykę
+                                    Prywatności</Link>.
                                 </label>
                             </div>
 
@@ -170,7 +177,8 @@ export default function RegisterPage() {
                                 >
                                     {isLoading ? (
                                         <span className="flex items-center justify-center gap-2">
-                                            <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"/>
+                                            <span
+                                                className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"/>
                                             Rejestracja...
                                         </span>
                                     ) : 'Zarejestruj się'}
@@ -180,7 +188,8 @@ export default function RegisterPage() {
 
                         <p className="text-center text-sm text-gray-600 mt-8">
                             Masz już konto?{' '}
-                            <Link to="/login" className="font-medium text-[#4E61F6] hover:text-[#3B4EDC] transition-colors">
+                            <Link to="/login"
+                                  className="font-medium text-[#4E61F6] hover:text-[#3B4EDC] transition-colors">
                                 Zaloguj się
                             </Link>
                         </p>

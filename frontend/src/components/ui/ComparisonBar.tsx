@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import Button from '../ui/Button.tsx';
 import ComparisonModal from './modals/ComparisonModal.tsx';
 import {useComparison} from "../../hooks/useComparison.ts";
 
 export default function ComparisonBar() {
-    const { selectedPackages, removeFromComparison, clearComparison, limit } = useComparison()
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const {selectedPackages, removeFromComparison, clearComparison, limit} = useComparison();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    if (selectedPackages.length === 0) return null
+    if (selectedPackages.length === 0) {
+        return null;
+    }
 
     return (
         <>

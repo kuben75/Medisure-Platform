@@ -1,7 +1,7 @@
 export default function BlikLogo() {
     return (
         (
-            <svg  viewBox="0 0 105.67 50" className="w-17 h-12" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 105.67 50" className="w-17 h-12" xmlns="http://www.w3.org/2000/svg">
                 <linearGradient id="a" gradientUnits="objectBoundingBox" x1=".5" x2=".5" y1=".993" y2=".004">
                     <stop offset="0" stop-color="#5a5a5a"/>
                     <stop offset=".146" stop-color="#484848"/>

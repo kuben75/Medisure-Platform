@@ -1,19 +1,28 @@
 import {useMemo, useState} from 'react';
 import type {IChatMessage, IUseAdminConversationsProps} from "../types/chat.types.ts";
 
-export const useAdminConversations = ({ messages, onlineUsers, userDetails }: IUseAdminConversationsProps) => {
+export const useAdminConversations = ({messages, onlineUsers, userDetails}: IUseAdminConversationsProps) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState<'all' | 'unread' | 'online'>('all');
 
     const conversationList = useMemo(() => {
-        const groups: Record<string, { msgs: IChatMessage[], unread: number, lastMsg: IChatMessage, hasUserInteraction: boolean }> = {};
+        const groups: Record<string, {
+            msgs: IChatMessage[],
+            unread: number,
+            lastMsg: IChatMessage,
+            hasUserInteraction: boolean
+        }> = {};
 
         messages.forEach(msg => {
             const key = (msg.type === "UserToAdmin" ? msg.user : (msg.targetUserEmail || "unknown")).toLowerCase();
 
-            if (!key || key === "unknown" || key === "admin" || key === "system") return;
+            if (!key || key === "unknown" || key === "admin" || key === "system") {
+                return;
+            }
 
-            if (!groups[key]) groups[key] = { msgs: [], unread: 0, lastMsg: msg, hasUserInteraction: false };
+            if (!groups[key]) {
+                groups[key] = {msgs: [], unread: 0, lastMsg: msg, hasUserInteraction: false};
+            }
 
             groups[key].msgs.push(msg);
 
@@ -21,8 +30,12 @@ export const useAdminConversations = ({ messages, onlineUsers, userDetails }: IU
                 groups[key].lastMsg = msg;
             }
 
-            if (msg.type === "UserToAdmin" && !msg.isRead) groups[key].unread++;
-            if (msg.type === "UserToAdmin") groups[key].hasUserInteraction = true;
+            if (msg.type === "UserToAdmin" && !msg.isRead) {
+                groups[key].unread++;
+            }
+            if (msg.type === "UserToAdmin") {
+                groups[key].hasUserInteraction = true;
+            }
         });
 
         return Object.entries(groups)

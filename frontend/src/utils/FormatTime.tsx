@@ -4,4 +4,4 @@ export const formatTime = (date: Date) => {
     return isToday
         ? date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
         : date.toLocaleDateString([], {month: 'short', day: 'numeric'});
-}
+};
