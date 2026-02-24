@@ -93,26 +93,17 @@ export const useSpecialistsLogic = () => {
             return [];
         }
 
-        console.log(`🔍 Sprawdzam specjalistę z kategorii: "${category}"`);
-
         return packages.filter(pkg => {
             const specs = (pkg.includedSpecializations as any);
 
             if (!specs || !Array.isArray(specs)) {
-                console.log(`   ❌ Pakiet "${pkg.name}" ma błędne specjalizacje:`, specs);
                 return false;
             }
 
 
-            const hasMatch = specs.some((s: string) =>
+            return specs.some((s: string) =>
                 s.trim().toLowerCase() === category.trim().toLowerCase()
-            );
-
-            if (hasMatch) {
-                console.log(`   ✅ SUKCES! Pakiet "${pkg.name}" pasuje! (Znaleziono: ${specs})`);
-            }
-
-            return hasMatch
+            )
         }).map(pkg => pkg.name)
     }
     return {

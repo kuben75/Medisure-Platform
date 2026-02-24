@@ -5,7 +5,7 @@ import {useNotification} from "../hooks/UseNotification";
 import {useChatConnection} from "../hooks/useChatConnection";
 import type {IChatMessage, IUserDetail} from "../types/chat.types";
 import {ChatContext} from "../hooks/useChat.ts";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 const getGuestId = () => {
     let id = localStorage.getItem('guest_chat_id');
@@ -97,7 +97,6 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
                 headersObj['X-Anon-ID'] = guestId;
             }
 
-            console.log("Fetching history headers:", headersObj);
 
             const endpoint = `${BASE_URL.replace(/\/$/, '')}/chat/history`;
 
@@ -142,7 +141,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
             } catch (err: any) {
                 console.error("Błąd pobierania historii:", err);
                 if (err?.errorCode !== 3001) {
-                    handleApiError(err, notify);
+                    displayApiError(err, notify);
                 }
             }
         };
@@ -155,7 +154,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
             try {
                 await connection.invoke('SendMessageToAdmin', msg);
             } catch (err) {
-                handleApiError(err, notify);
+                displayApiError(err, notify);
             }
         }
         else {
@@ -168,7 +167,7 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
             try {
                 await connection.invoke('SendMessageToUser', targetEmail, msg);
             } catch (err) {
-                handleApiError(err, notify);
+                displayApiError(err, notify);
             }
         }
     };

@@ -2,7 +2,7 @@ import SearchIcon from "../icons/SearchIcon.tsx";
 import ChevronDownIcon from "../icons/ChevronDownIcon.tsx";
 import RefreshIcon from "../icons/RefreshIcon.tsx";
 import {useLogs} from "../../hooks/useLogs.ts";
-import {LogRowDesktop} from "../admin/adminLogs/LogTableRow.tsx";
+import {LogTableRow} from "../admin/adminLogs/LogTableRow.tsx";
 import {LogCardMobile} from "../admin/adminLogs/LogCardMobile.tsx";
 
 export default function LogsTable() {
@@ -76,7 +76,7 @@ export default function LogsTable() {
                                 </td>
                             </tr>
                         ) : (
-                            displayedLogs.map((log) => <LogRowDesktop key={log.id} log={log}/>)
+                            displayedLogs.map((log) => <LogTableRow key={log.id} log={log}/>)
                         )}
                         </tbody>
                     </table>

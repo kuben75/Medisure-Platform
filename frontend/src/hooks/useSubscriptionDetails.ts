@@ -3,10 +3,8 @@ import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
 import {useConfirm} from "./UseConfrim.ts";
 import {generatePolicyPDF} from "../utils/pdfGenerator.ts";
-import type {ISubscriptionDetailsModalProps} from "../types/pricing.types.ts";
+import type {TUseSubscriptionDetailsProps} from "../types/pricing.types.ts";
 import {formatDate} from "../utils/dateHelpers.ts";
-
-type TUseSubscriptionDetailsProps = Pick<ISubscriptionDetailsModalProps, 'subscription' | 'onClose' | 'onRefresh'>;
 
 export const useSubscriptionDetails = ({subscription, onRefresh, onClose}: TUseSubscriptionDetailsProps) => {
     const {notify} = useNotification();

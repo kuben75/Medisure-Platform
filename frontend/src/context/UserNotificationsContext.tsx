@@ -2,7 +2,7 @@ import {type ReactNode, useEffect, useState} from 'react';
 import {useAuth} from "../hooks/useAuth.ts";
 import type {INotification} from "../types/notifications.types.ts";
 import {UserNotificationsContext} from "../hooks/useUserNotifications.ts";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 import {useNotification} from "../hooks/UseNotification.ts";
 
 
@@ -57,7 +57,7 @@ export const UserNotificationsProvider = ({children}: { children: ReactNode }) =
                 throw await res.json();
             }
         } catch (e) {
-            handleApiError(e, notify);
+            displayApiError(e, notify);
             await fetchNotifications();
         }
     };
@@ -73,7 +73,7 @@ export const UserNotificationsProvider = ({children}: { children: ReactNode }) =
                 throw await res.json();
             }
         } catch (e) {
-            handleApiError(e, notify);
+            displayApiError(e, notify);
         }
     };
     const deleteNotification = async (id: number) => {
@@ -89,7 +89,7 @@ export const UserNotificationsProvider = ({children}: { children: ReactNode }) =
                 throw await getError(res);
             }
         } catch (e) {
-            handleApiError(e, notify);
+            displayApiError(e, notify);
             await fetchNotifications();
         }
     };

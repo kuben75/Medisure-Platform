@@ -4,7 +4,6 @@ import PackageCatalog from "./PackageCatalog.tsx";
 import CheckoutOverlay from "../../components/ui/CheckoutOverlay.tsx";
 import PackageDetailsModal from "../../components/ui/modals/PackageDetailsModal.tsx";
 import PriceFactorsSection from "../../components/sections/PriceFactorsSection.tsx";
-
 import {usePackagePurchase} from "../../hooks/usePackagePurchase.ts";
 import {useCalculatorLogic} from "../../hooks/useCalculatorLogic.ts";
 import {calculatePersonalizedPrice} from "../../utils/pricingHelpers.ts";

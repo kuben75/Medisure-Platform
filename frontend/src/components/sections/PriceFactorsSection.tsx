@@ -4,7 +4,7 @@ import ListIcon from "../icons/ListIcon.tsx";
 
 export default function PriceFactorsSection() {
     return (
-        <section className="py-20 px-4 bg-slate-50 border-t border-gray-200">
+        <section className="py-20 px-4 bg-white border-t border-gray-200">
             <div className="container mx-auto text-center max-w-5xl">
                 <h2 className="text-3xl font-bold text-gray-900 mb-12">
                     Co ma wpływ na cenę pakietu medycznego?

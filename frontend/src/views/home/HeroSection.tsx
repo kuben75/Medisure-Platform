@@ -1,84 +1,26 @@
 import Button from "../../components/ui/Button.tsx";
-import {useEffect, useState} from "react";
 import Modal from "../../components/ui/modals/Modal.tsx";
 import Rating from "../../components/ui/Rating.tsx";
-import {useNavigate} from 'react-router-dom';
-import type {IPricingPlan} from "../../types/pricing.types.ts";
 import FavoriteButton from "../../components/ui/FavouriteButton.tsx";
-import {useNotification} from "../../hooks/UseNotification.ts";
-import {usePackagePurchase} from "../../hooks/usePackagePurchase.ts";
 import FlashIcon from "../../components/icons/FlashIcon.tsx";
-import {useComparison} from "../../hooks/useComparison.ts";
 import ChevronRightIcon from "../../components/icons/ChevronRightIcon.tsx";
-import {useAuth} from "../../hooks/useAuth.ts";
 import ShieldCheckIcon from "../../components/icons/ShieldCheckIcon.tsx";
 import CalendarIcon from "../../components/icons/CalendarIcon.tsx";
+import {useHeroSection} from "../../hooks/useHeroSection.ts";
 
 export default function HeroSection() {
-    const {user} = useAuth();
     const {
-        selectedPlan,
+        plans,
+        loading,
+        error,
+        handleProceedToCalculator,
+        handleCompareAndRedirect,
+        user,
         openModal,
         closeModal,
-    } = usePackagePurchase();
-
-    const [plans, setPlans] = useState<IPricingPlan[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const navigate = useNavigate();
-    const {notify} = useNotification();
-    const {addToComparison} = useComparison();
-
-    const API_URL = `${import.meta.env.VITE_API_URL}/packages`;
-
-    useEffect(() => {
-        const fetchPackages = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch(API_URL);
-                if (!response.ok) {
-                    throw new Error("Błąd sieci");
-                }
-
-                const data: IPricingPlan[] = await response.json();
-                const featuredPlans = data.filter((p) => p.isFeatured).slice(0, 3);
-
-                if (featuredPlans.length === 0) {
-                    setPlans(data.slice(0, 3));
-                }
-                else {
-                    setPlans(featuredPlans);
-                }
-
-            } catch (e) {
-                notify.error("Nie udało się pobrać ofert.");
-                setError(`Nie udało się pobrać ofert.`);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPackages();
-    }, []);
-
-    const handleProceedToCalculator = () => {
-        if (!selectedPlan) {
-            return;
-        }
-        const targetId = selectedPlan.id;
-        closeModal();
-        navigate('/kalkulator', {state: {highlightPackageId: targetId}});
-    };
-
-    const handleCompareAndRedirect = () => {
-        if (selectedPlan) {
-            const targetId = selectedPlan.id;
-            addToComparison(selectedPlan);
-            closeModal();
-            navigate('/kalkulator', {state: {highlightPackageId: targetId}});
-        }
-    };
-
+        selectedPlan,
+        navigate
+    } = useHeroSection();
     return (
         <section
             className="relative w-full text-center text-white py-24 md:py-32 px-4 bg-gradient-to-br from-[#2563EB] via-[#4F46E5] to-[#4338ca] overflow-hidden">
@@ -300,5 +242,5 @@ export default function HeroSection() {
                 )}
             </Modal>
         </section>
-    )
+    );
 }

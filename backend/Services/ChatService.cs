@@ -27,7 +27,8 @@ public class ChatService : IChatService
 
         if (unreadMsgs.Any())
         {
-            foreach (var msg in unreadMsgs) {
+            foreach (var msg in unreadMsgs) 
+            {
                 msg.IsRead = true;
             }
             await _context.SaveChangesAsync();
@@ -36,9 +37,25 @@ public class ChatService : IChatService
 
     public async Task MarkUserMessagesAsReadByAdminAsync(string userEmailOrGuid)
     {
-        var unreadMsgs = await _context.ChatMessages
-            .Where(m => m.UserId == userEmailOrGuid && m.Sender != AdminRole && !m.IsRead)
-            .ToListAsync();
+        
+        bool isGuest = userEmailOrGuid.StartsWith("guest_");
+        
+        IQueryable<backend.Models.ChatMessage> query = _context.ChatMessages;
+
+        if (isGuest)
+        {
+            query = query.Where(m => (m.Sender == userEmailOrGuid || m.Receiver == userEmailOrGuid) 
+                                     && m.Sender != AdminRole 
+                                     && !m.IsRead);
+        }
+        else
+        {
+            query = query.Where(m => m.UserId == userEmailOrGuid 
+                                     && m.Sender != AdminRole 
+                                     && !m.IsRead);
+        }
+
+        var unreadMsgs = await query.ToListAsync();
 
         if (unreadMsgs.Any())
         {
@@ -50,12 +67,22 @@ public class ChatService : IChatService
     public async Task<ChatHistoryDto> GetChatHistoryAsync(string userId, bool isAdmin)
     {
         userId = userId.ToLower();
+        bool isGuest = userId.StartsWith("guest_");
 
         if (!isAdmin)
         {
-            var userMessages = await _context.ChatMessages
-                .AsNoTracking()
-                .Where(m => m.UserId == userId || m.Sender == userId || m.Receiver == userId)
+            var query = _context.ChatMessages.AsNoTracking();
+
+            if (isGuest)
+            {
+                query = query.Where(m => m.Sender == userId || m.Receiver == userId);
+            }
+            else
+            {
+                query = query.Where(m => m.UserId == userId || m.Sender == userId || m.Receiver == userId);
+            }
+
+            var userMessages = await query
                 .OrderBy(m => m.Timestamp)
                 .ToListAsync();
 
@@ -67,7 +94,6 @@ public class ChatService : IChatService
             };
         }
         
-        
         var messages = await _context.ChatMessages
             .AsNoTracking()
             .OrderBy(m => m.Timestamp)
@@ -78,14 +104,20 @@ public class ChatService : IChatService
         {
             if (msg.Sender != AdminRole && msg.Sender != SystemRole) uniqueInteractors.Add(msg.Sender);
             if (msg.Receiver != AdminRole && msg.Receiver != SystemRole) uniqueInteractors.Add(msg.Receiver);
-            if (!string.IsNullOrEmpty(msg.UserId)) uniqueInteractors.Add(msg.UserId);
+            
+            if (!string.IsNullOrEmpty(msg.UserId) && msg.UserId != "guest") 
+            {
+                uniqueInteractors.Add(msg.UserId);
+            }
         }
         
-        var userList = uniqueInteractors.ToList();
+        var realUserIds = uniqueInteractors
+            .Where(id => !id.StartsWith("guest_"))
+            .ToList();
         
         var registeredUsers = await _context.Users
             .AsNoTracking()
-            .Where(u => userList.Contains(u.Email!) || userList.Contains(u.Id))
+            .Where(u => realUserIds.Contains(u.Email!) || realUserIds.Contains(u.Id))
             .ToListAsync();
         
         var usersMap = new Dictionary<string, ChatUserDto>();
@@ -93,12 +125,14 @@ public class ChatService : IChatService
         {
             if (!string.IsNullOrEmpty(u.Email))
             {
-                usersMap[u.Email.ToLower()] = new ChatUserDto 
+                var dto = new ChatUserDto 
                 { 
                     FirstName = u.FirstName, 
                     LastName = u.LastName,
                     Email = u.Email
                 };
+                usersMap[u.Email.ToLower()] = dto;
+                usersMap[u.Id.ToLower()] = dto;
             }
         }
 
@@ -107,7 +141,6 @@ public class ChatService : IChatService
         foreach (var id in uniqueInteractors)
         {
             if (string.IsNullOrEmpty(id)) continue; 
-
             var lowerId = id.ToLower();
 
             if (usersMap.TryGetValue(lowerId, out var userDto))
@@ -121,7 +154,7 @@ public class ChatService : IChatService
 
                 if (id.StartsWith("guest_"))
                 {
-                    displayLast = $"({id.Substring(6)})"; 
+                    displayLast = id.Length > 6 ? $"({id.Substring(6)})" : "(-)"; 
                 }
                 else 
                 {

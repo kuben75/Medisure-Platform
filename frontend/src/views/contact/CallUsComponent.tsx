@@ -5,7 +5,6 @@ export default function CallUsComponent() {
     return (
         <section className="py-20 px-4 bg-slate-50 border-t border-gray-200">
             <div className="container mx-auto text-center">
-                {/* ZMIANA NAGŁÓWKA */}
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
                     Potrzebujesz pomocy doradcy?
                 </h2>

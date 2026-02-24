@@ -1,4 +1,4 @@
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 import React, {useState} from "react";
 import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
@@ -60,7 +60,7 @@ export const useAddReview = ({onClose, packageId}: IUseAddReviewParams) => {
             onClose();
 
         } catch (err) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         } finally {
             setIsLoading(false);
         }

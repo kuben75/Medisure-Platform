@@ -51,7 +51,7 @@ export default function PackageCatalog() {
     };
 
     return (
-        <section className="py-20 px-4 bg-slate-50 border-t border-gray-200" id="full-catalog">
+        <section className="py-20 px-4 bg-white border-t border-gray-200" id="full-catalog">
             <div className="container mx-auto max-w-7xl">
                 <div className="text-center mb-8">
                     <span className="text-[#4E61F6] font-bold tracking-wider uppercase text-sm">Pełna oferta</span>

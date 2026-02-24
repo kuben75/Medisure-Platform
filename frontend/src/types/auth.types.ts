@@ -26,3 +26,6 @@ export interface IChangePasswordModalProps {
     isOpen: boolean;
     onClose: () => void;
 }
+
+export type TConfirmChangeEmailStatus = 'verifying' | 'success' | 'error';
+export type TForgotPasswordPageProps = 'idle' | 'loading' | 'success'

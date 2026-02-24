@@ -177,7 +177,7 @@ export default function OrderSummary({
 
             <div className="relative z-10 p-4 bg-[#0F172A] border-t border-white/5 flex justify-center flex-shrink-0">
                 <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium opacity-60">
-                    <LockIcon className="w-3 h-3"/> Płatność szyfrowana SSL 256-bit
+                    <LockIcon className="w-4 h-4"/> Płatność szyfrowana SSL 256-bit
                 </div>
             </div>
         </div>

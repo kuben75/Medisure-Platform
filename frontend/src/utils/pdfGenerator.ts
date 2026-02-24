@@ -250,7 +250,7 @@ export const generatePolicyPDF = async (
 
     doc.setFont("Roboto", "normal");
     doc.setTextColor(darkGray);
-    doc.text("NIP: 2137004852", 195, pageHeight - 27, {align: 'right'});
+    doc.text("NIP: 1237004852", 195, pageHeight - 27, {align: 'right'});
     doc.text(`Data wystawienia: ${now}`, 195, pageHeight - 22, {align: 'right'});
     doc.text("ul. Grochowska 21, 61-001 Poznań", 195, pageHeight - 17, {align: 'right'});
 

@@ -176,3 +176,5 @@ export interface IPersonalDataFormProps {
     onSubmit: (e: FormEvent) => void;
     onErrorsClear: (key: string) => void;
 }
+
+export type TUseSubscriptionDetailsProps = Pick<ISubscriptionDetailsModalProps, 'subscription' | 'onClose' | 'onRefresh'>;

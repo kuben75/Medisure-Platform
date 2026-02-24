@@ -1,62 +1,10 @@
-import {useEffect, useState, useRef} from 'react';
-import {useSearchParams, Link} from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import Navbar from '../components/layout/Navbar.tsx';
 import Button from '../components/ui/Button.tsx';
+import {useConfirmEmailPage} from "../hooks/useConfirmEmailPage.ts";
 
 export default function ConfirmEmailPage() {
-    const [searchParams] = useSearchParams();
-    const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
-    const [errorMessage, setErrorMessage] = useState("Link weryfikacyjny jest nieprawidłowy lub wygasł.");
-
-    const effectRan = useRef(false);
-
-    useEffect(() => {
-        if (effectRan.current) {
-            return;
-        }
-
-        const verifyEmail = async () => {
-            const userId = searchParams.get('userId');
-            const token = searchParams.get('token');
-
-            if (!userId || !token) {
-                setStatus('error');
-                return;
-            }
-
-            try {
-                const url = new URL(`${import.meta.env.VITE_API_URL}/auth/confirm-email`);
-                url.searchParams.append('userId', userId);
-                url.searchParams.append('token', token);
-
-                const response = await fetch(url.toString(), {
-                    method: 'GET',
-                    headers: {'Content-Type': 'application/json'}
-                });
-
-                if (response.ok) {
-                    setStatus('success');
-                }
-                else {
-                    const data = await response.json().catch(() => ({}));
-                    if (data.message) {
-                        setErrorMessage(data.message);
-                    }
-
-                    setStatus('error');
-                }
-
-            } catch (e) {
-                setErrorMessage("Wystąpił problem z połączeniem. Spróbuj później.");
-                setStatus('error');
-            }
-        };
-        verifyEmail();
-
-        return () => {
-            effectRan.current = true;
-        };
-    }, [searchParams]);
+   const {status, errorMessage} = useConfirmEmailPage();
 
     return (
         <>

@@ -2,17 +2,8 @@ import {Link, useNavigate} from 'react-router-dom';
 import Button from '../../components/ui/Button.tsx';
 import CheckIcon from "../../components/icons/CheckIcon.tsx";
 import {PROMO_SPECIALISTS} from "../../constants/specialists.tsx";
-
-const DoctorIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-                              stroke="currentColor" className="w-12 h-12 text-[#4E61F6]">
-    <path strokeLinecap="round" strokeLinejoin="round"
-          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-</svg>;
-const StethoscopeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-                                   stroke="currentColor" className="w-6 h-6 text-white">
-    <path strokeLinecap="round" strokeLinejoin="round"
-          d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/>
-</svg>;
+import StethoscopeIcon from "../../components/icons/StethoscopeIcon.tsx";
+import DoctorIcon from "../../components/icons/DoctorIcon.tsx";
 
 export default function SpecialistsPromo() {
     const navigate = useNavigate();
@@ -64,7 +55,7 @@ export default function SpecialistsPromo() {
                         className="relative bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-sm mx-auto">
                         <div className="flex items-center gap-4 mb-6 border-b border-gray-100 pb-4">
                             <div className="bg-blue-50 p-3 rounded-xl">
-                                <DoctorIcon/>
+                                <DoctorIcon className="w-12 h-12 text-[#4E61F6]"/>
                             </div>
                             <div>
                                 <h4 className="font-bold text-gray-800 text-lg">Baza Specjalistów</h4>
@@ -92,7 +83,7 @@ export default function SpecialistsPromo() {
 
                         <div
                             className="absolute -bottom-6 -right-6 bg-[#4E61F6] text-white p-4 rounded-2xl shadow-lg flex items-center gap-3 animate-bounce-slow pointer-events-none">
-                            <StethoscopeIcon/>
+                            <StethoscopeIcon className="w-6 h-6 text-white"/>
                             <div>
                                 <p className="text-xs font-bold opacity-80 uppercase">Wizyty</p>
                                 <p className="font-bold">od ręki</p>

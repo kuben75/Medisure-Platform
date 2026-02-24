@@ -13,11 +13,11 @@ export const Avatar = ({name, size = "md", className = ""}: IAvatarProps) => {
         if (isSystem) {
             return "bg-indigo-600 border-indigo-100";
         }
-
         let hash = 0;
         for (let i = 0; i < safeName.length; i++) {
             hash = safeName.charCodeAt(i) + ((hash << 5) - hash);
         }
+
         return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
     }, [safeName, isSystem]);
 
@@ -28,20 +28,15 @@ export const Avatar = ({name, size = "md", className = ""}: IAvatarProps) => {
         if (safeName.includes("@")) {
             return safeName.substring(0, 2).toUpperCase();
         }
-
-        return safeName
-            .split(' ')
-            .filter(n => n.length > 0)
-            .map(n => n[0])
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
+        return safeName.split(' ').filter(n => n.length > 0)
+            .map(n => n[0]).join('')
+            .toUpperCase().slice(0, 2);
     }, [safeName, isSystem]);
 
     if (isSystem) {
         return (
-            <div
-                className={`${SIZE_CLASSES[size]} rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-indigo-100 ${className}`}>
+            <div className={`${SIZE_CLASSES[size]} rounded-full bg-indigo-600 text-white flex items-center 
+            justify-center shadow-sm flex-shrink-0 border-2 border-white ring-1 ring-indigo-100 ${className}`}>
                 <RobotIcon className={size === 'sm' ? "w-4 h-4" : "w-5 h-5"}/>
             </div>
         );

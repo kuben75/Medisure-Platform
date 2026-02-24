@@ -2,7 +2,7 @@ import {whyUsItems} from "../../constants/specialists.tsx";
 
 export default function WhyUs() {
     return (
-        <section className="py-20 md:py-28 px-4 bg-slate-50">
+        <section className="py-20 md:py-28 px-4 bg-white">
             <div className="max-w-7xl mx-auto">
 
                 <div className="text-center mb-16">

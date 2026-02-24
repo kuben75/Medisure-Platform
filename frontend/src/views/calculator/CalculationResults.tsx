@@ -359,7 +359,7 @@ export default function CalculationResults({
                                             {isContactRequired ? "Wsparcie Doradcy" : "Gwarancja jakości"}
                                         </p>
                                         <p className="text-sm text-white/80 mt-0.5">
-                                            {isContactRequired ? "Odpowiedź w 24h" : "Bezpieczna płatność SSL"}
+                                            {isContactRequired ? "Odpowiedź w 24h" : "Transakcja szyfrowana SSL"}
                                         </p>
                                     </div>
 

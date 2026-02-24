@@ -2,7 +2,7 @@ import {type FormEvent, useState} from "react";
 import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
 import {useNavigate} from "react-router-dom";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 export const useChangePassword = (onClose: () => void) => {
     const {token, user, logout} = useAuth();
@@ -77,7 +77,7 @@ export const useChangePassword = (onClose: () => void) => {
             }, 1500);
 
         } catch (err: any) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
 
             if (err.ErrorCode === 2004) {
                 setTwoFactorCode('');

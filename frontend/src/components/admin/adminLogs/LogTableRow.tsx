@@ -3,7 +3,7 @@ import ChevronDownIcon from "../../icons/ChevronDownIcon.tsx";
 import {formatLogDate, LevelBadge, LogDetails} from "./LogUiComponents.tsx";
 import type {ISystemLog} from "../../../types/dashboard.types.ts";
 
-export const LogRowDesktop = ({log}: { log: ISystemLog }) => {
+export const LogTableRow = ({log}: { log: ISystemLog }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const {day, time} = formatLogDate(log.timestamp);
 

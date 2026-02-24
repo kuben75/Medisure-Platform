@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
                                 <p className="mb-2">Administratorem Twoich danych osobowych jest:</p>
                                 <p className="font-semibold text-gray-900">Medisure Sp. z o.o.</p>
                                 <p>ul. Grochowska 21, 61-001 Poznań</p>
-                                <p>NIP: 2137004852</p>
+                                <p>NIP: 1237004852</p>
                                 <div className="mt-4 space-y-1">
                                     <p>e-mail: <a href="mailto:kontakt@medisure.pl"
                                                   className="text-[#4E61F6] hover:underline font-medium">kontakt@medisure.pl</a>

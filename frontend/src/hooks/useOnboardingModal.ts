@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useAuth} from './useAuth.ts';
 import {useNotification} from './UseNotification.ts';
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 export const useOnboardingModal = () => {
     const {user, token, updateUser} = useAuth();
@@ -95,7 +95,7 @@ export const useOnboardingModal = () => {
             setIsOpen(false);
 
         } catch (err) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         } finally {
             setLoading(false);
         }

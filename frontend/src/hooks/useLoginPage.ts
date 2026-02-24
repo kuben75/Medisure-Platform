@@ -2,7 +2,7 @@ import {useNavigate} from "react-router-dom";
 import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
 import React, {useEffect, useState} from "react";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 export const useLoginPage = () => {
 
@@ -74,7 +74,7 @@ export const useLoginPage = () => {
                 setLockedError(err.message || "Konto zostało zablokowane.");
             }
             else {
-                handleApiError(err, notify);
+                displayApiError(err, notify);
             }
         }
     };
@@ -117,7 +117,7 @@ export const useLoginPage = () => {
 
         } catch (err) {
             setIsLoading(false);
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         }
     };
 

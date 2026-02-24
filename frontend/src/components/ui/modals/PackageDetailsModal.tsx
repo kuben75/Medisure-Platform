@@ -8,19 +8,9 @@ import {useEffect} from "react";
 import type {IPackageDetailsModalProps} from "../../../types/ui.types.ts";
 import ShieldCheckIcon from "../../icons/ShieldCheckIcon.tsx";
 
-export default function PackageDetailsModal({
-                                                isOpen,
-                                                onClose,
-                                                plan,
-                                                userAge,
-                                                selectedDuration,
-                                                onDurationChange,
-                                                billingPeriod,
-                                                setBillingPeriod,
-                                                onProceedToCheckout,
-                                                options,
-                                                priceDetails,
-                                                isBuying
+export default function PackageDetailsModal({isOpen, onClose, plan, userAge, selectedDuration,
+                                                onDurationChange, billingPeriod, setBillingPeriod, onProceedToCheckout,
+                                                options, priceDetails, isBuying
                                             }: IPackageDetailsModalProps) {
     useEffect(() => {
         if (isOpen) {
