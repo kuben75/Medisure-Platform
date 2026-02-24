@@ -23,7 +23,7 @@ public class SubscriptionExpirationWorker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            _logger.LogInformation("Worker: Sprawdzanie wygasających subskrypcji...");
+            _logger.LogInformation("Sprawdzanie wygasających subskrypcji");
 
             try
             {

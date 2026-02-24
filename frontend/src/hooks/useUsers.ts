@@ -3,7 +3,7 @@ import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
 import {useConfirm} from "./UseConfrim.ts";
 import type {IUserDto} from "../types/user.types.ts";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 const API_URL_USERS = `${import.meta.env.VITE_API_URL}/admin/users`;
 
@@ -37,7 +37,7 @@ export const useUsers = () => {
 
             setUsers(await response.json());
         } catch (err) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
 
             setError(err instanceof Error ? err.message : "Wystąpił błąd podczas pobierania danych.");
         } finally {
@@ -76,7 +76,7 @@ export const useUsers = () => {
             notify.success(`Rola zmieniona na ${newRole}.`);
             await fetchUsers();
         } catch (err: any) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         }
     };
 
@@ -102,7 +102,7 @@ export const useUsers = () => {
             notify.success("Użytkownik usunięty.");
             await fetchUsers();
         } catch (err: any) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         }
     };
 
@@ -124,7 +124,7 @@ export const useUsers = () => {
             setIsBlockModalOpen(false);
             await fetchUsers();
         } catch (err: any) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         }
     };
 
@@ -152,7 +152,7 @@ export const useUsers = () => {
             notify.success("Odblokowano.");
             await fetchUsers();
         } catch (err: any) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         }
     };
 

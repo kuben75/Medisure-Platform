@@ -205,7 +205,7 @@ public class PdfService : IPdfService
                     {
                         c.Item().AlignRight().Text("MEDISURE POLSKA SP. Z O.O.")
                             .FontSize(8).Bold().FontColor(PrimaryColor);
-                        c.Item().AlignRight().Text("NIP: 2137004852")
+                        c.Item().AlignRight().Text("NIP: 1237004852")
                             .FontSize(8).FontColor(DarkGrayColor);
                         c.Item().AlignRight().Text($"Data wystawienia: {DateTime.Now:dd.MM.yyyy, HH:mm:ss}")
                             .FontSize(8).FontColor(DarkGrayColor);

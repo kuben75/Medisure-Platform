@@ -2,7 +2,7 @@ import {FavoritesContext} from "../hooks/UseFavourites.ts";
 import {type ReactNode, useCallback, useEffect, useState} from "react";
 import {useNotification} from "../hooks/UseNotification.ts";
 import {useAuth} from "../hooks/useAuth.ts";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 const API_URL_FAVORITES_IDS = `${import.meta.env.VITE_API_URL}/favorites/ids`;
 const API_URL_TOGGLE = `${import.meta.env.VITE_API_URL}/favorites`;
@@ -76,7 +76,7 @@ export const FavoritesProvider = ({children}: { children: ReactNode }) => {
                     ? [...prev, packageId]
                     : prev.filter(id => id !== packageId)
             );
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         }
     };
 

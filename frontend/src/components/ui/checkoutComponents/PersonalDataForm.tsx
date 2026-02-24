@@ -83,7 +83,7 @@ export default function PersonalDataForm({
                             if (errors.phone) {
                                 onErrorsClear('phone');
                             }
-                        }} placeholder="np. 500 600 700" className={getInputClass(errors.phone)}/>
+                        }} className={getInputClass(errors.phone)}/>
                         {errors.phone && <p className="text-red-500 text-xs mt-1 absolute">{errors.phone}</p>}
                     </div>
                 </div>
@@ -120,8 +120,7 @@ export default function PersonalDataForm({
                         </div>
 
                         <div className="group relative">
-                            <label
-                                className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
+                            <label className="block text-[11px] font-bold text-orange-800 uppercase tracking-wider mb-2">
                                 PESEL {isPeselLocked && <span className="text-green-600 ml-1">(Zweryfikowano)</span>}
                             </label>
                             <input type="text" name="pesel" maxLength={11} value={formData.pesel}
@@ -134,7 +133,6 @@ export default function PersonalDataForm({
                                            }
                                        }
                                    }}
-                                   placeholder="Wpisz numer PESEL"
                                    className={getInputClass(errors.pesel, isPeselLocked)}
                             />
                             {errors.pesel && <p className="text-red-500 text-xs mt-1 absolute">{errors.pesel}</p>}
@@ -169,7 +167,7 @@ export default function PersonalDataForm({
 
             <div className="space-y-6 pt-2">
                 <div className="flex items-center gap-3 border-b border-gray-100 pb-4 mb-6">
-                    <div className="bg-blue-50 p-2 rounded-lg"><MapIcon/></div>
+                    <div className="bg-blue-50 p-2 rounded-lg"><MapIcon className="w-5 h-5"/></div>
                     <h3 className="text-lg font-bold text-slate-800">Dane do umowy</h3>
                 </div>
 
@@ -182,7 +180,7 @@ export default function PersonalDataForm({
                             if (errors.street) {
                                 onErrorsClear('street');
                             }
-                        }} className={getInputClass(errors.street)} placeholder="np. Marszałkowska"/>
+                        }} className={getInputClass(errors.street)} />
                         {errors.street && <p className="text-red-500 text-xs mt-1 absolute">{errors.street}</p>}
                     </div>
                     <div className="group relative">
@@ -193,7 +191,7 @@ export default function PersonalDataForm({
                             if (errors.houseNumber) {
                                 onErrorsClear('houseNumber');
                             }
-                        }} className={getInputClass(errors.houseNumber)} placeholder="10/24"/>
+                        }} className={getInputClass(errors.houseNumber)} />
                         {errors.houseNumber &&
                             <p className="text-red-500 text-xs mt-1 absolute">{errors.houseNumber}</p>}
                     </div>
@@ -204,7 +202,7 @@ export default function PersonalDataForm({
                         <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Kod
                             pocztowy</label>
                         <input type="text" maxLength={6} value={formData.zipCode} onChange={handleZipCodeChange}
-                               className={getInputClass(errors.zipCode)} placeholder="00-000"/>
+                               className={getInputClass(errors.zipCode)} />
                         {errors.zipCode && <p className="text-red-500 text-xs mt-1 absolute">{errors.zipCode}</p>}
                     </div>
                     <div className="sm:col-span-2 group relative">
@@ -215,7 +213,7 @@ export default function PersonalDataForm({
                             if (errors.city) {
                                 onErrorsClear('city');
                             }
-                        }} className={getInputClass(errors.city)} placeholder="Warszawa"/>
+                        }} className={getInputClass(errors.city)} />
                         {errors.city && <p className="text-red-500 text-xs mt-1 absolute">{errors.city}</p>}
                     </div>
                 </div>

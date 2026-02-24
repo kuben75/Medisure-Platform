@@ -1,97 +1,20 @@
-import React, {useState, useEffect} from 'react';
-import {useSearchParams, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import Navbar from '../components/layout/Navbar.tsx';
 import Button from '../components/ui/Button.tsx';
-import {useNotification} from "../hooks/UseNotification.ts";
+import KeyIcon from "../components/icons/KeyIcon.tsx";
+import {useResetPasswordPage} from "../hooks/useResetPasswordPage.ts";
 
-const KeyIcon = ({className = "w-6 h-6"}) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-         className={className}>
-        <path strokeLinecap="round" strokeLinejoin="round"
-              d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/>
-    </svg>);
-
-const API_URL = `${import.meta.env.VITE_API_URL}/auth`;
 
 export default function ResetPasswordPage() {
-    const [searchParams] = useSearchParams();
-    const {notify} = useNotification();
-
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-
-    const [pageState, setPageState] = useState<'verifying' | 'valid' | 'invalid' | 'submitting' | 'success'>('verifying');
-    const [errorMessage, setErrorMessage] = useState('');
-
-    const token = searchParams.get('token');
-    const email = searchParams.get('email');
-
-    useEffect(() => {
-        const verifyToken = async () => {
-            if (!token || !email) {
-                setPageState('invalid');
-                setErrorMessage("Link jest niekompletny.");
-                return;
-            }
-            try {
-                const response = await fetch(`${API_URL}/verify-reset-token?email=${email}&token=${encodeURIComponent(token)}`);
-
-                if (response.ok) {
-                    setPageState('valid');
-                }
-                else {
-                    setPageState('invalid');
-                    setErrorMessage("Ten link wygasł lub został już wykorzystany.");
-                }
-            } catch (e) {
-                setPageState('invalid');
-                setErrorMessage("Błąd połączenia z serwerem.");
-            }
-        };
-
-        verifyToken();
-    }, [token, email]);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (password !== confirmPassword) {
-            notify.error("Hasła nie są identyczne.");
-            return;
-        }
-
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
-        if (!passwordRegex.test(password)) {
-            notify.error("Hasło: min. 8 znaków, duża litera, cyfra, znak specjalny.");
-            return;
-        }
-
-        setPageState('submitting');
-
-        try {
-            const response = await fetch(`${API_URL}/reset-password`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    email: email,
-                    token: token,
-                    newPassword: password
-                })
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.Message || "Błąd resetowania hasła.");
-            }
-
-            setPageState('success');
-            notify.success("Hasło zmienione pomyślnie!");
-
-        } catch (err) {
-            notify.error(err instanceof Error ? err.message : "Błąd resetowania hasła.");
-            setPageState('valid');
-        }
-    };
-
+    const {
+        password,
+        setPassword,
+        confirmPassword,
+        setConfirmPassword,
+        pageState,
+        errorMessage,
+        handleSubmit
+    } = useResetPasswordPage();
     return (
         <>
             <Navbar/>

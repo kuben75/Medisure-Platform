@@ -23,13 +23,11 @@ export const useAdminConversations = ({messages, onlineUsers, userDetails}: IUse
             if (!groups[key]) {
                 groups[key] = {msgs: [], unread: 0, lastMsg: msg, hasUserInteraction: false};
             }
-
             groups[key].msgs.push(msg);
 
             if (new Date(msg.timestamp) > new Date(groups[key].lastMsg.timestamp)) {
                 groups[key].lastMsg = msg;
             }
-
             if (msg.type === "UserToAdmin" && !msg.isRead) {
                 groups[key].unread++;
             }

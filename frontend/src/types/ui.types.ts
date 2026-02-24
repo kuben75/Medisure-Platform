@@ -149,3 +149,7 @@ export interface ISuccessScreenProps {
     countdown: number;
     onCountdownChange: (value: number) => void;
 }
+
+export type TButtonProps = React.ComponentPropsWithoutRef<"button"> & {
+    variant?: "primary" | "secondary" | "outline" | "danger"
+}

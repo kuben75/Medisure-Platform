@@ -116,7 +116,6 @@
         margin-left: 100%;
     }
 }
-
 @keyframes fadeInScale {
     from {
         transform: scale(0.95);
@@ -127,7 +126,6 @@
         opacity: 1;
     }
 }
-
 @keyframes scroll {
     0% {
         transform: translateX(0);

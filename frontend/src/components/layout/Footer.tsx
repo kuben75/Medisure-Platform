@@ -34,10 +34,9 @@ export default function Footer() {
 
                     <div className="lg:col-span-4 space-y-5">
                         <Link to="/" className="flex items-center gap-3 group w-fit">
-                            <div
-                                className="w-10 h-10 bg-[#4E61F6] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">
-                                M
-                            </div>
+                            <div className="w-10 h-10 bg-[#4E61F6] rounded-xl flex items-center
+                            justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105
+                            transition-transform">M</div>
                             <span className="text-xl font-bold text-gray-800 tracking-tight">
                                 Medisure<span className="text-[#4E61F6]">.pl</span>
                             </span>
@@ -57,7 +56,7 @@ export default function Footer() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 text-sm text-gray-500 pl-8">
-                                <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">NIP: 2137004852</span>
+                                <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">NIP: 1237004852</span>
                             </div>
                         </div>
                     </div>

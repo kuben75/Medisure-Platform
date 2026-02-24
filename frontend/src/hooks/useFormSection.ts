@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {useNotification} from "./UseNotification.ts";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 export const useFormSection = () => {
     const [isChecked, setIsChecked] = useState(false);
@@ -86,7 +86,7 @@ export const useFormSection = () => {
             setErrors({});
 
         } catch (err) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         } finally {
             setIsLoading(false);
         }

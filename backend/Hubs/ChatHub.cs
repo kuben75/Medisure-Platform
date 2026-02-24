@@ -20,14 +20,8 @@ public class ChatHub : Hub
     private readonly IConfiguration _configuration;
     private readonly ILogger<ChatHub> _logger; 
 
-    public ChatHub(
-        ApplicationDbContext context, 
-        UserConnectionManager connections, 
-        IEmailService emailService,
-        IMemoryCache cache, 
-        IConfiguration configuration,
-        ILogger<ChatHub> logger)
-    {
+    public ChatHub(ApplicationDbContext context, UserConnectionManager connections, IEmailService emailService, IMemoryCache cache, 
+        IConfiguration configuration, ILogger<ChatHub> logger) {
         _context = context;
         _connections = connections;
         _emailService = emailService;
@@ -152,33 +146,33 @@ public class ChatHub : Hub
 
     private async Task SaveMessageAsync(string sender, string receiver, string ownerId, string text)
     {
-        try
+    try
+    {
+        string? dbUserId = ownerId;
+        
+        if (ownerId.StartsWith("guest_") || ownerId == "System" || ownerId == "Admin")
         {
-            string? dbUserId = ownerId;
-            if (ownerId.StartsWith("guest_"))
-            {
-                dbUserId = null; 
-            }
+            dbUserId = null; 
+        }
 
-            var chatMsg = new ChatMessage
-            {
-                Sender = sender,
-                Receiver = receiver,
-                UserId = dbUserId ?? "guest", 
-                Message = text,
-                Timestamp = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
-                IsRead = false
-            };
-            
-            
-            _context.ChatMessages.Add(chatMsg);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception ex)
+        var chatMsg = new ChatMessage
         {
-            _logger.LogError(ex, $"[ChatHub] Database save failed for user {ownerId}. Chat continues without history.");
-        }
+            Sender = sender,
+            Receiver = receiver,
+            UserId = dbUserId, 
+            Message = text,
+            Timestamp = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+            IsRead = false
+        };
+        
+        _context.ChatMessages.Add(chatMsg);
+        await _context.SaveChangesAsync();
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, $"[ChatHub] Database save failed for user {ownerId}.");
+    }
+}
 
     private async Task TrySendEmailNotification(string targetUserEmail, string message)
     {

@@ -2,7 +2,7 @@ import {type ReactNode, useEffect, useState, useCallback, useMemo} from 'react';
 import type {IUser} from "../types/user.types";
 import {AuthContext} from "../hooks/useAuth";
 import {extractRolesFromToken, getStoredAuthData, STORAGE_KEYS} from "../utils/authHelpers";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 import {useNotification} from "../hooks/UseNotification.ts";
 
 const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/auth/login`;
@@ -88,7 +88,7 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
             return extractRolesFromToken(data.token);
 
         } catch (err) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
             return null;
         } finally {
             setIsLoading(false);

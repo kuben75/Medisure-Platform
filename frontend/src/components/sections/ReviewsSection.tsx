@@ -1,67 +1,24 @@
-import {useEffect, useState} from "react";
 import StarItem from "../icons/StarItem.tsx";
-import type {IReviewDisplay} from "../../types/review.types.ts";
-import {DEFAULT_REVIEWS} from "../../constants/reviews.ts";
+import {useReviewsSection} from "../../hooks/useReviewsSection.ts";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/reviews/latest`;
 
 export default function ReviewsSection() {
-    const [reviews, setReviews] = useState<IReviewDisplay[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [currentReview, setCurrentReview] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
+    const {
+        reviews,
+        currentData,
+        handleDotClick,
+        setIsPaused,
+        currentReview,
+        loading
+    } = useReviewsSection();
 
-    useEffect(() => {
-        const fetchReviews = async () => {
-            try {
-                const response = await fetch(API_URL);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.length > 0) {
-                        setReviews(data);
-                    }
-                    else {
-                        setReviews(DEFAULT_REVIEWS);
-                    }
 
-                }
-                else {
-                    setReviews(DEFAULT_REVIEWS);
-                }
-            } catch (error) {
-                console.error("Błąd pobierania opinii:", error);
-                setReviews(DEFAULT_REVIEWS);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchReviews();
-    }, []);
-
-    useEffect(() => {
-        if (isPaused || reviews.length === 0) {
-            return;
-        }
-        const interval = setInterval(() => {
-            setCurrentReview((prev) => (prev + 1) % reviews.length);
-        }, 6000);
-        return () => clearInterval(interval);
-    }, [reviews.length, isPaused]);
-
-    const handleDotClick = (index: number) => setCurrentReview(index);
-
-    if (loading) {
-        return null;
-    }
-
-    const currentData = reviews[currentReview];
-
-    if (!currentData) {
+    if (!currentData || loading) {
         return null;
     }
 
     return (
-        <section className="py-20 md:py-28 px-4 bg-slate-50 relative overflow-hidden">
+        <section className="py-20 md:py-28 px-4 bg-white relative overflow-hidden">
             <div
                 className="absolute top-0 left-0 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
             <div
@@ -135,7 +92,7 @@ export default function ReviewsSection() {
                             <button
                                 key={i}
                                 onClick={() => handleDotClick(i)}
-                                className={`transition-all duration-300 rounded-full ${
+                                className={ `transition-all duration-300 rounded-full ${
                                     i === currentReview
                                         ? "bg-[#4E61F6] w-10 h-3 shadow-lg shadow-indigo-200"
                                         : "bg-gray-300 w-3 h-3 hover:bg-gray-400"

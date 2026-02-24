@@ -30,7 +30,7 @@ export default function TermsPage() {
                                 <li><strong>Serwis</strong> – strona internetowa dostępna pod adresem www.medisure.pl.
                                 </li>
                                 <li><strong>Administrator / Usługodawca</strong> – Medisure Sp. z o.o., ul. Grochowska
-                                    21, 61-001 Poznań, NIP: 2137004852.
+                                    21, 61-001 Poznań, NIP: 1237004852.
                                 </li>
                                 <li><strong>Użytkownik</strong> – każda osoba korzystająca z Serwisu.</li>
                                 <li><strong>Konto Klienta</strong> – indywidualny profil tworzony przez Użytkownika w

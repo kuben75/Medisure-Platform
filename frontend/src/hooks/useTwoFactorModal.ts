@@ -2,7 +2,7 @@ import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
 import React, {useEffect, useState} from "react";
 import type {ITwoFactorModalProps} from "../types/ui.types.ts";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 export const useTwoFactorModal = ({isOpen, onClose}: ITwoFactorModalProps) => {
     const {token} = useAuth();
@@ -41,7 +41,7 @@ export const useTwoFactorModal = ({isOpen, onClose}: ITwoFactorModalProps) => {
             setSetupKey(data.key);
             setStep(data.isEnabled ? 'disabled' : 'intro');
         } catch (e) {
-            handleApiError(e, notify);
+            displayApiError(e, notify);
             onClose();
         }
     };
@@ -61,7 +61,7 @@ export const useTwoFactorModal = ({isOpen, onClose}: ITwoFactorModalProps) => {
             setStep('success');
             notify.success("Weryfikacja dwuetapowa włączona!");
         } catch (e) {
-            handleApiError(e, notify);
+            displayApiError(e, notify);
             setCode('');
         }
     };
@@ -91,7 +91,7 @@ export const useTwoFactorModal = ({isOpen, onClose}: ITwoFactorModalProps) => {
             notify.info("Weryfikacja dwuetapowa została wyłączona.");
             onClose();
         } catch (e) {
-            handleApiError(e, notify);
+            displayApiError(e, notify);
             setDisablePassword('');
         } finally {
             setIsLoading(false);

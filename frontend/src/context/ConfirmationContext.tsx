@@ -1,7 +1,7 @@
 import {type ReactNode, useRef, useState} from 'react';
 import Button from '../components/ui/Button.tsx';
 import type {IConfirmOptions} from "../types/notifications.types.ts";
-import {ConfirmationContext as ConfirmationContext1} from "../hooks/UseConfrim.ts";
+import {ConfirmationContext} from "../hooks/UseConfrim.ts";
 
 export const ConfirmationProvider = ({children}: { children: ReactNode }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +33,7 @@ export const ConfirmationProvider = ({children}: { children: ReactNode }) => {
     };
 
     return (
-        <ConfirmationContext1 value={{confirm}}>
+        <ConfirmationContext value={{confirm}}>
             {children}
 
             {isOpen && (
@@ -74,9 +74,9 @@ export const ConfirmationProvider = ({children}: { children: ReactNode }) => {
 
                         <div className="flex gap-3 justify-end">
                             <Button
-                                variant="outline"
+                                variant="secondary"
                                 onClick={handleCancel}
-                                className="!py-2 !px-4 !text-base !border-gray-300 !text-gray-700 hover:!bg-gray-50"
+                                className="!py-2 !px-4 !text-base !border-gray-300 hover:!bg-gray-50"
                             >
                                 {options.cancelText}
                             </Button>
@@ -101,7 +101,7 @@ export const ConfirmationProvider = ({children}: { children: ReactNode }) => {
                 .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
                 .animate-scale-in { animation: scaleIn 0.2s ease-out forwards; }
             `}</style>
-        </ConfirmationContext1>
+        </ConfirmationContext>
     );
 };
 

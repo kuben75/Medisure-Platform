@@ -4,7 +4,7 @@ import type {IAddressData, IPricingPlan, ISubscriptionOption, TBillingType} from
 import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
 import {useConfirm} from "./UseConfrim.ts";
-import {handleApiError} from "../utils/apiErrorHandler.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
 
 const SUBSCRIBE_URL = `${import.meta.env.VITE_API_URL}/subscriptions`;
 const OPTIONS_URL = `${import.meta.env.VITE_API_URL}/packages/options`;
@@ -181,7 +181,7 @@ export const usePackagePurchase = () => {
             closeModal();
             navigate('/profile');
         } catch (err) {
-            handleApiError(err, notify);
+            displayApiError(err, notify);
         } finally {
             setIsBuying(false);
         }
