@@ -17,5 +17,4 @@ export interface IPackage {
     reviews?: number;
     calculatedPrice?: number;
 }
-
 export type IPackageFormData = Omit<IPackage, 'id' | 'averageRating' | 'reviews' | 'calculatedPrice'>;

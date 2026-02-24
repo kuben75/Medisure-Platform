@@ -35,7 +35,7 @@ export default function PackageCard({
 
         const specs = pkg.includedSpecializations;
         const allowedCategories = typeof specs === 'string'
-            ? specs.split(';').map(c => c.trim())
+            ? specs.split(';').map((c: string) => c.trim())
             : (Array.isArray(specs) ? specs : []);
 
         return SPECIALISTS_LIST.filter(s => allowedCategories.includes(s.category)).length;

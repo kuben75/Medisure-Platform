@@ -255,9 +255,9 @@ export const usePackageCatalog = () => {
     const handleOpenSpecs = (e: React.MouseEvent, pkg: IPricingPlan) => {
         e.stopPropagation();
         const specsValue = pkg.includedSpecializations;
-        const formattedSpecs = typeof specsValue === 'string'
-            ? specsValue
-            : (Array.isArray(specsValue) ? specsValue.join('; ') : '');
+        const formattedSpecs = Array.isArray(specsValue)
+            ? specsValue.join('; ')
+            : String(specsValue || '');
 
         setSpecModalData({
             name: pkg.name,
