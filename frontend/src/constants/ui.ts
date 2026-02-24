@@ -1,5 +1,6 @@
 import type {IPackageFormData} from "../types/packages.types.ts";
 
+
 export const AVATAR_COLORS = [
     'from-blue-500 to-blue-600',
     'from-violet-500 to-violet-600',

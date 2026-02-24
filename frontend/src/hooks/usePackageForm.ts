@@ -50,7 +50,7 @@ export const usePackageForm = (
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const {name, value, type} = e.target;
 
-        setFormData(prev => {
+        setFormData((prev: IPackageFormData) => {
             if (type === 'checkbox') {
                 return {...prev, [name]: (e.target as HTMLInputElement).checked};
             }
@@ -66,7 +66,7 @@ export const usePackageForm = (
 
     const handlePriceValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value === '' ? 0 : parseFloat(e.target.value);
-        setFormData(prev => ({
+        setFormData((prev: IPackageFormData) => ({
             ...prev,
             priceValue: val
         }));
@@ -77,28 +77,26 @@ export const usePackageForm = (
 
         let currentSpecs = rawString
             .split(';')
-            .map(s => s.trim())
+            .map((s: string) => s.trim())
             .filter(Boolean);
 
         if (currentSpecs.includes(category)) {
-            currentSpecs = currentSpecs.filter(c => c !== category);
+            currentSpecs = currentSpecs.filter((c: string) => c !== category);
         }
         else {
             currentSpecs.push(category);
         }
 
-
         const uniqueSpecs = [...new Set(currentSpecs)];
         const newSpecString = uniqueSpecs.join(';');
         const realCount = SPECIALISTS_LIST.filter(s => uniqueSpecs.includes(s.category)).length;
 
-        setFormData(prev => ({
+        setFormData((prev: IPackageFormData) => ({
             ...prev,
             includedSpecializations: newSpecString,
             specialistsCount: realCount
         }));
     };
-
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -114,10 +112,10 @@ export const usePackageForm = (
             ...formData,
             price: `${formData.priceValue} zł`,
             features: typeof formData.features === 'string'
-                ? formData.features.split(';').map(f => f.trim()).filter(Boolean)
+                ? formData.features.split(';').map((f: string) => f.trim()).filter(Boolean)
                 : [],
             includedSpecializations: typeof formData.includedSpecializations === 'string'
-                ? formData.includedSpecializations.split(';').map(s => s.trim()).filter(Boolean)
+                ? formData.includedSpecializations.split(';').map((s: string) => s.trim()).filter(Boolean)
                 : [],
             id: packageToEdit ? packageToEdit.id : undefined
         };
