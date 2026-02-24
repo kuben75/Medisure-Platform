@@ -19,7 +19,7 @@ bld/
 
 # Visual Studio 2015/2017/2019/2022 cache/options directory
 .vs/
-
+node_modules
 # User-specific files
 *.rsuser
 *.suo
