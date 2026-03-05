@@ -1,7 +1,8 @@
 import {useState} from 'react';
 import ChevronDownIcon from "../../icons/ChevronDownIcon.tsx";
-import {formatLogDate, LevelBadge, LogDetails} from "./LogUiComponents.tsx";
+import { LevelBadge, LogDetails} from "./LogUiComponents.tsx";
 import type {ISystemLog} from "../../../types/dashboard.types.ts";
+import {formatLogDate} from "../../../utils/dateHelpers.ts";
 
 export const LogTableRow = ({log}: { log: ISystemLog }) => {
     const [isExpanded, setIsExpanded] = useState(false);

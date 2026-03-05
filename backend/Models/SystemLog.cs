@@ -15,3 +15,4 @@ public class SystemLog
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public bool IsSensitive { get; set; } = false;
 }
+

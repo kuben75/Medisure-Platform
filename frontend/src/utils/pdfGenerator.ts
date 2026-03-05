@@ -1,9 +1,5 @@
 import jsPDF from 'jspdf';
-import type {IUserSubscription} from '../types/user.types.ts';
-
-interface ExtendedSubscription extends IUserSubscription {
-    pesel?: string;
-}
+import type {ExtendedSubscription} from "../types/pricing.types.ts";
 
 const loadLocalFont = async (filename: string): Promise<string> => {
     const url = `${window.location.origin}/fonts/${filename}`;
@@ -41,7 +37,7 @@ export const generatePolicyPDF = async (
 
         doc.setFont("Roboto");
     } catch (e) {
-        console.warn("Błąd ładowania czcionek. Używam Helvetica.", e);
+        console.error("Błąd ładowania czcionek, używanie domyślnych: ", e);
         doc.setFont("helvetica");
     }
 

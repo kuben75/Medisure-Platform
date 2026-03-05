@@ -6,8 +6,11 @@ import UsersIcon from "../components/icons/UsersIcon.tsx";
 import ClockIcon from "../components/icons/ClockIcon.tsx";
 import ShieldIcon from "../components/icons/ShieldIcon.tsx";
 
-const getDocImg = (gender: 'male' | 'female', id: number) =>
-    `https://randomuser.me/api/portraits/${gender === 'male' ? 'men' : 'women'}/${id}.jpg`;
+const getDocImg
+    = (gender: 'male' | 'female', id: number) =>
+    `https://randomuser.me/api/portraits/${gender === 'male' 
+        ? 'men' 
+        : 'women'}/${id}.jpg`;
 
 const PKG = {
     BASIC: "Pakiet Podstawowy",
@@ -435,7 +438,7 @@ export const whyUsItems = [
     {
         icon: <StethoscopeIcon/>,
         title: "Pewność i ochrona zdrowia",
-        desc: "Agregujemy oferty wyłącznie od sprawdzonych dostawców usług medycznych."
+        desc: "Prezentujemy oferty tylko od sprawdzonych dostawców usług medycznych."
     },
     {
         icon: <PillIcon/>,

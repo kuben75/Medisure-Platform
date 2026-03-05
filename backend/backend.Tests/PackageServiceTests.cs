@@ -79,10 +79,8 @@ public class PackageServiceTests
             Features = new List<string>()
         };
 
-        // Act
         await _sut.UpdatePackageAsync(existingPackage.Id, updateDto, "AdminJan");
 
-        // Assert
         var dbPackage = await _context.Packages.FindAsync(existingPackage.Id);
         dbPackage!.Name.Should().Be("Nowy");
         dbPackage.PriceValue.Should().Be(200);
@@ -92,10 +90,9 @@ public class PackageServiceTests
     [Fact]
     public async Task DeletePackageAsync_ShouldThrowException_WhenPackageIsUsedByUsers()
     {
-        // Arrange
+       
         var packageId = 1;
     
-        // 1. Dodajemy pakiet, który będziemy chcieli usunąć
         _context.Packages.Add(new Package 
         { 
             Id = packageId, Name = "P", Description = "D", Category = "C", 
@@ -113,7 +110,7 @@ public class PackageServiceTests
             Package = null!, 
         
             PriceAtPurchase = "100",
-            Street = "Ul", HouseNumber = "1", City = "Poz", ZipCode = "00", 
+            Street = "Ul", HouseNumber = "1", City = "Poznan", ZipCode = "000-00", 
             PaymentMethod = "Card", TransactionId = "123", Pesel = "123"
         });
     
@@ -123,9 +120,15 @@ public class PackageServiceTests
         Func<Task> act = async () => await _sut.DeletePackageAsync(packageId, "AdminJan");
 
         await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("Nie można usunąć pakietu, który jest przypisany do użytkowników.");
+            .WithMessage("Nie można usunąć pakietu, który " +
+                         "jest przypisany do użytkowników.");
         
-        _logServiceMock.Verify(x => x.LogAsync("BLAD_USUNIECIA", It.IsAny<string>(), "AdminJan", null, "Error", false), Times.Once);
+        _logServiceMock.Verify(x => x.LogAsync("BLAD_USUNIECIA", 
+            It.IsAny<string>(), 
+            "AdminJan", 
+            null, 
+            "Error", 
+            false), Times.Once);
     }
 
     [Fact]

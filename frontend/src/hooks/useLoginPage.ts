@@ -51,7 +51,7 @@ export const useLoginPage = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw data;
+                throw await data;
             }
 
             if (data.code === "REQUIRES_2FA" || data.Code === "REQUIRES_2FA") {

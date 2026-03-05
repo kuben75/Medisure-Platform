@@ -53,7 +53,7 @@ export default function AdminPanel() {
                     >
                         <MenuIcon className="w-6 h-6"/>
                     </button>
-                    <span className="font-bold text-gray-800 text-lg">Admin Panel</span>
+                    <span className="font-bold text-gray-800 text-lg">Panel administratora</span>
                 </div>
                 <div
                     className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xs border border-indigo-200">

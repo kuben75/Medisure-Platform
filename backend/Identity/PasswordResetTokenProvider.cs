@@ -22,3 +22,4 @@ public class PasswordResetTokenProvider<TUser> : DataProtectorTokenProvider<TUse
     {
     }
 }
+

@@ -116,20 +116,23 @@ export default function EditProfileModal({isOpen, onClose}: IEditProfileModalPro
 
                                     {isBirthDateLocked && (
                                         <div className="group relative">
-                                            <span
-                                                className="cursor-help text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1 font-bold border border-green-100 hover:bg-green-100 transition-colors">
+                                            <span className="cursor-help text-[10px] text-green-600
+                                                bg-green-50 px-2 py-0.5 rounded-full flex items-center gap-1
+                                                font-bold border border-green-100 hover:bg-green-100 transition-colors">
                                                 <InfoIcon className="w-4 h-4"/> Zweryfikowano
                                             </span>
-                                            <div
-                                                className="absolute bottom-full right-0 mb-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform translate-y-1 group-hover:translate-y-0">
+                                            <div className="absolute bottom-full right-0 mb-2 w-64
+                                                bg-gray-800 text-white text-xs rounded-lg p-3 shadow-xl opacity-0 invisible
+                                                 group-hover:opacity-100 group-hover:visible transition-all
+                                                 duration-200 z-50 transform translate-y-1 group-hover:translate-y-0">
                                                 <p className="font-semibold mb-1">Data urodzenia została
                                                     zatwierdzona.</p>
                                                 <p className="text-gray-300 leading-relaxed">
                                                     Ze względów bezpieczeństwa zmiana daty urodzenia jest zablokowana.
                                                     W celu korekty skontaktuj się z obsługą klienta.
                                                 </p>
-                                                <div
-                                                    className="absolute top-full right-4 -mt-1 border-4 border-transparent border-t-gray-800"></div>
+                                                <div className="absolute top-full right-4 -mt-1 border-4
+                                                    border-transparent border-t-gray-800"></div>
                                             </div>
                                         </div>
                                     )}
@@ -139,13 +142,13 @@ export default function EditProfileModal({isOpen, onClose}: IEditProfileModalPro
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                         <CalendarIcon className="w-5 h-5"/>
                                     </div>
-                                    <input
-                                        type="date"
-                                        name="birthDate"
-                                        value={formData.birthDate}
-                                        onChange={handleInputChange}
+                                    <input type="date" name="birthDate" value={formData.birthDate} onChange={handleInputChange}
                                         disabled={isBirthDateLocked}
-                                        className={`w-full pl-10 pr-4 py-2.5 border rounded-xl outline-none transition-all ${isBirthDateLocked ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' : 'bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#4E61F6]'}`}
+                                        className={`w-full pl-10 pr-4 py-2.5 border rounded-xl outline-none transition-all 
+                                        ${isBirthDateLocked 
+                                            ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200' 
+                                            : 'bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#4E61F6]'}`
+                                        }
                                     />
                                 </div>
                             </div>

@@ -25,6 +25,7 @@ import CookiePolicyPage from "./pages/CookiePolicyPage.tsx";
 import SpecialistsPage from "./pages/SpecialistsPage.tsx";
 import ConfirmChangeEmailPage from "./pages/ConfirmChangeEmailPage.tsx";
 import {AppProviders} from "./context/AppProviders.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
 
 function AppLayout() {
     return (
@@ -48,10 +49,6 @@ function App() {
             <Routes>
                 <Route path="/rejestracja" element={<RegisterPage/>}/>
                 <Route path="/login" element={<LoginPage/>}/>
-                <Route path="/polityka-prywatnosci" element={<PrivacyPolicyPage/>}/>
-                <Route path="/regulamin" element={<TermsPage/>}/>
-                <Route path="/polityka-cookies" element={<CookiePolicyPage/>}/>
-                <Route path="/faq" element={<FaqPage/>}/>
                 <Route path="/reset-hasla" element={<ResetPasswordPage/>}/>
                 <Route path="/potwierdz-email" element={<ConfirmEmailPage/>}/>
                 <Route path="/zapomnialem-hasla" element={<ForgotPasswordPage/>}/>
@@ -65,10 +62,15 @@ function App() {
                         <Route path="profile" element={<UserProfile/>}/>
                     </Route>
                     <Route path="/specjalisci" element={<SpecialistsPage/>}/>
+                    <Route path="/polityka-prywatnosci" element={<PrivacyPolicyPage/>}/>
+                    <Route path="/regulamin" element={<TermsPage/>}/>
+                    <Route path="/polityka-cookies" element={<CookiePolicyPage/>}/>
+                    <Route path="/faq" element={<FaqPage/>}/>
                 </Route>
                 <Route path="/admin" element={<AdminRoute/>}>
                     <Route index element={<AdminPanel/>}/>
                 </Route>
+                <Route path="*" element={<NotFoundPage/>}/>
             </Routes>
         </AppProviders>
     );

@@ -26,10 +26,11 @@ export default function WhatToLookFor() {
                     {items.map((e, i) => (
                         <div
                             key={i}
-                            className="flex flex-col items-center text-center justify-start p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group h-full"
-                        >
+                            className="flex flex-col items-center text-center
+                            justify-start p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group h-full">
                             <div
-                                className="w-16 h-16 bg-blue-50 text-[#4E61F6] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#4E61F6] group-hover:text-white transition-colors duration-300 shadow-sm">
+                                className="w-16 h-16 bg-blue-50 text-[#4E61F6]
+                                rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#4E61F6] group-hover:text-white transition-colors duration-300 shadow-sm">
                                 <div className="w-8 h-8 [&>svg]:w-full [&>svg]:h-full">
                                     {e.icon}
                                 </div>

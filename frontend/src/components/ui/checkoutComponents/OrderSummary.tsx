@@ -127,7 +127,7 @@ export default function OrderSummary({
                             <span className="text-slate-400">Płatność</span>
                             <span
                                 className={`font-medium ${billingPeriod === 'upfront' ? 'text-green-400' : 'text-blue-300'}`}>
-                                {billingPeriod === 'monthly' ? 'Miesięcznie' : 'Z góry'}
+                                {billingPeriod === 'monthly' ? 'Miesięcznie' : 'Płatność jednorazowa'}
                             </span>
                         </div>
                         {priceIncrease > 0.01 && (

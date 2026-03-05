@@ -23,7 +23,6 @@ export const NotificationProvider = ({children}: { children: ReactNode }) => {
 
     const addNotification = useCallback((message: string, type: TNotificationType) => {
         const id = Date.now();
-
         const newNotification: INotification = {
             id,
             message,
@@ -32,9 +31,7 @@ export const NotificationProvider = ({children}: { children: ReactNode }) => {
             isRead: false,
             createdAt: new Date().toISOString()
         };
-
         setNotifications((prev) => [...prev, newNotification]);
-
         setTimeout(() => {
             removeNotification(id);
         }, 4000);

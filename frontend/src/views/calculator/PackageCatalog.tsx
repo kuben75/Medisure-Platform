@@ -134,7 +134,10 @@ export default function PackageCatalog() {
                                             showYearlyPrice={filters.showYearlyPrice}
                                             isInComparison={isInComparison(pkg.id)}
                                             onToggleComparison={() => isInComparison(pkg.id) ? removeFromComparison(pkg.id) : addToComparison(pkg)}
-                                            onOpenSpecs={(e) => handleOpenSpecs(e, pkg)}
+                                            onOpenSpecs={(e) => {
+
+                                                handleOpenSpecs(e, pkg);
+                                            }}
                                             onOpenDetails={() => handleOpenPackageDetails(pkg)}
                                         />
                                     );
@@ -180,7 +183,7 @@ export default function PackageCatalog() {
                     isOpen={specModalOpen}
                     onClose={() => setSpecModalOpen(false)}
                     packageName={specModalData.name}
-                    includedSpecializations={specModalData.includedSpecs}
+                    includedSpecializations={specModalData.includedSpecializations || []}
                 />
             )}
 

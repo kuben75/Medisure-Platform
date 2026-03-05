@@ -1,6 +1,6 @@
 import {useState, useMemo, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
-import type {IAddressData, IPricingPlan, ISubscriptionOption, TBillingType} from "../types/pricing.types.ts";
+import type { IPricingPlan, ISubscriptionOption, TBillingType} from "../types/pricing.types.ts";
 import {useAuth} from "./useAuth.ts";
 import {useNotification} from "./UseNotification.ts";
 import {useConfirm} from "./UseConfrim.ts";
@@ -129,7 +129,7 @@ export const usePackagePurchase = () => {
         setIsCheckoutOpen(true);
     };
 
-    const finalizePurchase = async (method: string, txId: string, addressData: IAddressData) => {
+    const finalizePurchase = async (method: string, txId: string, addressData: any) => {
         setIsBuying(true);
         try {
             const payload = {
@@ -154,34 +154,20 @@ export const usePackagePurchase = () => {
             }
 
             const data = await response.json();
-
             const returnedUser = data.data || data.Data;
+
             if (user) {
-                if (returnedUser) {
-                    updateUser({
-                        ...user,
-                        pesel: returnedUser.pesel || returnedUser.Pesel || user.pesel,
-                        birthDate: returnedUser.birthDate || returnedUser.BirthDate || user.birthDate,
-                        phoneNumber: returnedUser.phoneNumber || returnedUser.PhoneNumber || user.phoneNumber,
-                        firstName: returnedUser.firstName || returnedUser.FirstName || user.firstName,
-                        lastName: returnedUser.lastName || returnedUser.LastName || user.lastName
-                    });
-                }
-                else {
-                    updateUser({
-                        ...user,
-                        pesel: addressData.pesel || user.pesel || null,
-                        phoneNumber: addressData.phone || user.phoneNumber || null,
-                        birthDate: addressData.birthDate || user.birthDate || null,
-                        roles: user.roles ?? []
-                    });
-                }
+                updateUser({
+                    pesel: addressData.pesel || returnedUser?.pesel || returnedUser?.Pesel || user.pesel,
+                    birthDate: addressData.startDate || addressData.birthDate || returnedUser?.birthDate || returnedUser?.BirthDate || user.birthDate,
+                    phoneNumber: addressData.phone || returnedUser?.phoneNumber || returnedUser?.PhoneNumber || user.phoneNumber
+                } as any);
             }
+
             notify.success("Pakiet zakupiony pomyślnie!");
-            closeModal();
-            navigate('/profile');
         } catch (err) {
             displayApiError(err, notify);
+            throw err;
         } finally {
             setIsBuying(false);
         }

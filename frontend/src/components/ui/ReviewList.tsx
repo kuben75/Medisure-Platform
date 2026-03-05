@@ -14,7 +14,6 @@ export default function ReviewsList({packageId}: { packageId: number }) {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/reviews/package/${packageId}`);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
                     setReviews(data);
                 }
             } catch (error) {

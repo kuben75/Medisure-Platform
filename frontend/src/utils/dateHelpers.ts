@@ -18,3 +18,11 @@ export const formatDate = (dateString: string | Date) => new Date(dateString).to
     year: 'numeric',
     timeZone: 'UTC'
 })
+
+export const formatLogDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return {
+        day: date.toLocaleDateString('pl-PL', {day: '2-digit', month: '2-digit', year: 'numeric'}),
+        time: date.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit', second: '2-digit'})
+    };
+};

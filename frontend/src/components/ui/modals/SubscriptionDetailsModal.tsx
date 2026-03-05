@@ -2,10 +2,9 @@ import Modal from './Modal.tsx';
 import Button from '../Button.tsx';
 import CalendarIcon from '../../icons/CalendarIcon.tsx';
 import LockIcon from '../../icons/LockIcon.tsx';
-import type {ISubscriptionDetailsModalProps} from "../../../types/pricing.types.ts";
+import type {ISubscriptionDetailsModalProps, IUserSubscription} from "../../../types/pricing.types.ts";
 import BriefcaseIcon from "../../icons/BriefcaseIcon.tsx";
 import CheckCircleIcon from "../../icons/CheckCircleIcon.tsx";
-import type {IUserSubscription} from "../../../types/user.types.ts";
 import ClockIcon from "../../icons/ClockIcon.tsx";
 import AlertIcon from "../../icons/AlertIcon.tsx";
 import {useSubscriptionDetails} from "../../../hooks/useSubscriptionDetails.ts";
@@ -26,7 +25,6 @@ export default function SubscriptionDetailsModal({
         isExpired,
         isPending,
         isCancelled,
-        endDate
     } = useSubscriptionDetails({subscription, onRefresh, onClose});
 
     if (!subscription) {
@@ -35,7 +33,21 @@ export default function SubscriptionDetailsModal({
     const featuresList = typeof subscription.features === 'string'
         ? subscription.features.split(';').map(f => f.trim()).filter(Boolean)
         : (Array.isArray(subscription.features) ? subscription.features : []);
+    let displayEndDate = subscription.endDate;
 
+    if (isMonthly && isCancelled) {
+        const start = new Date(subscription.startDate);
+        const now = new Date();
+
+        const cycleEnd = new Date(start);
+
+        while (cycleEnd <= now) {
+            cycleEnd.setMonth(cycleEnd.getMonth() + 1);
+        }
+        if (cycleEnd < new Date(subscription.endDate)) {
+            displayEndDate = cycleEnd.toISOString();
+        }
+    }
     let dateLabel = "Koniec ochrony";
     let dateColorClass = "text-gray-800";
     let badge = null;
@@ -45,7 +57,7 @@ export default function SubscriptionDetailsModal({
         dateColorClass = "text-red-500 font-bold";
         badge = (
             <span
-                className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-500 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+                className="subscription-status bg-gray-100 text-gray-500 ">
                 <ClockIcon className="w-5 h-5"/> Historyczna
             </span>
         );
@@ -55,7 +67,7 @@ export default function SubscriptionDetailsModal({
         dateColorClass = "text-blue-600 font-bold";
         badge = (
             <span
-                className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+                className="subscription-status bg-blue-100 text-blue-700 ">
                 <ClockIcon className="w-5 h-5"/> Oczekująca
             </span>
         );
@@ -65,24 +77,20 @@ export default function SubscriptionDetailsModal({
         dateColorClass = "text-orange-600 font-bold";
         badge = (
             <span
-                className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+                className="subscription-status bg-orange-100 text-orange-700 ">
                 <AlertIcon className="w-5 h-5"/>Wygasa wkrótce
             </span>
         );
     }
     else {
-        if (isMonthly) {
-            dateLabel = "Odnawia się";
-            dateColorClass = "text-green-600 font-bold";
-        }
-        else {
+
             dateLabel = "Koniec umowy";
             dateColorClass = "text-gray-800 font-bold";
-        }
+
 
         badge = (
             <span
-                className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wider mb-3">
+                className="subscription-status bg-green-100 text-green-700 ">
                 <CheckCircleIcon className="w-5 h-5"/> Aktywna Polisa
             </span>
         );
@@ -122,7 +130,7 @@ export default function SubscriptionDetailsModal({
                     <div className="text-right">
                         <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{dateLabel}</p>
                         <p className={`font-medium ${dateColorClass}`}>
-                            {formatDate(subscription.endDate)}
+                            {formatDate(displayEndDate)}
                         </p>
                     </div>
                 </div>
@@ -151,7 +159,9 @@ export default function SubscriptionDetailsModal({
                     )}
 
                     <div className="flex justify-between items-end pt-2 border-t border-slate-200 mt-2">
-                        <span className="text-gray-600 font-bold">Kwota:</span>
+                        <span className="text-gray-600 font-bold">
+                            {isMonthly ? 'Kwota (co miesiąc):' : 'Opłata jednorazowa:'}
+                        </span>
                         <span className="text-xl font-bold text-[#4E61F6]">{subscription.price}</span>
                     </div>
                 </div>
@@ -164,7 +174,7 @@ export default function SubscriptionDetailsModal({
 
                 {featuresList.length > 0 ? (
                     <div className="grid grid-cols-1 gap-2">
-                        {featuresList.map((feature, idx) => (
+                    {featuresList.map((feature, idx) => (
                             <div key={idx}
                                  className={`flex items-center gap-3 text-sm p-2 rounded border transition-colors ${isExpired ? 'bg-gray-100 text-gray-400 border-gray-200' : 'bg-green-50/50 text-gray-700 border-green-100'}`}>
                                 <div className={`w-4 h-4 ${isExpired ? 'text-gray-400' : 'text-green-500'}`}>
@@ -222,7 +232,7 @@ export default function SubscriptionDetailsModal({
                 {isCancelled && !isExpired && (
                     <div
                         className="mt-4 pt-2 text-center text-xs text-orange-600 bg-orange-50 p-2 rounded border border-orange-100">
-                        Twoja subskrypcja została anulowana. Dostęp wygaśnie {formatDate(endDate)}.
+                        Twoja subskrypcja została anulowana. Dostęp wygaśnie {formatDate(displayEndDate)}.
                     </div>
                 )}
             </div>

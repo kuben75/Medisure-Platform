@@ -12,6 +12,7 @@ import DoctorIcon from "../../icons/DoctorIcon.tsx";
 import ToothIcon from "../../icons/ToothIcon.tsx";
 import ClinicIcon from "../../icons/ClinicIcon.tsx";
 import HospitalIcon from "../../icons/HospitalIcon.tsx";
+import {getSpecialistLabel} from "../../../utils/specialistsHelper.ts";
 
 export default function PackageCard({
                                         pkg,
@@ -95,10 +96,13 @@ export default function PackageCard({
 
                 <div className="flex flex-wrap gap-2">
 
-                    <span onClick={onOpenSpecs}
+                    <span onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenSpecs(e);
+                    }}
                           className="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg text-xs font-bold border border-indigo-100 cursor-pointer hover:bg-indigo-100 transition-colors"
                           title="Kliknij, aby zobaczyć listę">
-                        <DoctorIcon/> {realSpecialistsCount} Specjalistów
+                        <DoctorIcon/> {realSpecialistsCount} {getSpecialistLabel(realSpecialistsCount)}
                     </span>
 
                     <span

@@ -4,16 +4,11 @@ import NavbarDrawers from "./NavbarDrawers";
 
 export default function Navbar() {
     const navbarLogic = useNavbar();
-
     return (
         <>
-            <NavbarHeader
-                {...navbarLogic}
-            />
+            <NavbarHeader {...navbarLogic} />
 
-            <NavbarDrawers
-                {...navbarLogic}
-            />
+            <NavbarDrawers {...navbarLogic} />
         </>
     );
 }

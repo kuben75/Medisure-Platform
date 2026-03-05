@@ -1,26 +1,18 @@
 import type {ISystemLog} from "../../../types/dashboard.types.ts";
 
-export const formatLogDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return {
-        day: date.toLocaleDateString('pl-PL', {day: '2-digit', month: '2-digit', year: 'numeric'}),
-        time: date.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit', second: '2-digit'})
-    };
-};
-
 export const LevelBadge = ({level}: { level: string }) => {
     const base = "px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wide inline-block";
     switch (level) {
         case 'Error':
-            return <span className={`${base} bg-red-50 text-red-700 border-red-200`}>Error</span>;
+            return <span className={`${base} bg-red-50 text-red-700 border-red-200`}>Błąd</span>;
         case 'Warning':
-            return <span className={`${base} bg-yellow-50 text-yellow-700 border-yellow-200`}>Warning</span>;
+            return <span className={`${base} bg-yellow-50 text-yellow-700 border-yellow-200`}>Ostrzeżenie</span>;
         case 'Security':
-            return <span className={`${base} bg-purple-50 text-purple-700 border-purple-200`}>Security</span>;
+            return <span className={`${base} bg-purple-50 text-purple-700 border-purple-200`}>Zabezpieczenia</span>;
         case 'Success':
-            return <span className={`${base} bg-green-50 text-green-700 border-green-200`}>Success</span>;
+            return <span className={`${base} bg-green-50 text-green-700 border-green-200`}>Sukces</span>;
         default:
-            return <span className={`${base} bg-blue-50 text-blue-700 border-blue-200`}>Info</span>;
+            return <span className={`${base} bg-blue-50 text-blue-700 border-blue-200`}>Informacja</span>;
     }
 };
 

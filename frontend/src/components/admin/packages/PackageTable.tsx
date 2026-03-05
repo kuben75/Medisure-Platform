@@ -52,8 +52,7 @@ export default function PackageTable({packages, onEdit, onDelete}: IPackageTable
                             )}
                         </td>
                         <td className="py-4 px-6 text-right text-sm font-medium">
-                            <div
-                                className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button onClick={() => onEdit(pkg)}
                                         className="text-indigo-600 bg-indigo-50 p-2 rounded-lg hover:bg-indigo-100"
                                         title="Edytuj">

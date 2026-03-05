@@ -149,7 +149,6 @@ public static class EmailTemplates
     {
         var content = $@"
             <div style='text-align: center;'>
-                <div style='width: 60px; height: 60px; background-color: #FEE2E2; color: #EF4444; border-radius: 50%; line-height: 60px; font-size: 30px; margin: 0 auto 20px auto;'>⛔</div>
                 <h1 style='color: #991B1B; font-size: 24px; margin-bottom: 15px;'>Konto Zablokowane</h1>
                 <p style='color: #4b5563; font-size: 16px; line-height: 1.6;'>
                     Witaj <strong>{firstName}</strong>. Twój dostęp do serwisu Medisure został tymczasowo zablokowany przez administratora.
@@ -168,10 +167,12 @@ public static class EmailTemplates
     {
         var content = $@"
             <div style='text-align: center;'>
-                <div style='width: 60px; height: 60px; background-color: #D1FAE5; color: #059669; border-radius: 50%; line-height: 60px; font-size: 30px; margin: 0 auto 20px auto;'>✓</div>
+                <div style='width: 60px; height: 60px; background-color: #D1FAE5; color: #059669; border-radius: 50%; 
+                    line-height: 60px; font-size: 30px; margin: 0 auto 20px auto;'>✓</div>
                 <h1 style='color: #065F46; font-size: 24px; margin-bottom: 15px;'>Konto Odblokowane</h1>
                 <p style='color: #4b5563; font-size: 16px; line-height: 1.6;'>
-                    Świetne wieści, <strong>{firstName}</strong>! Blokada Twojego konta została zdjęta. Możesz już w pełni korzystać z serwisu.
+                    Świetne wieści, <strong>{firstName}</strong>! Blokada Twojego konta została zdjęta. 
+                    Możesz już w pełni korzystać z serwisu.
                 </p>
                 {GetButton("Zaloguj się teraz", loginLink, "#059669")}
             </div>";

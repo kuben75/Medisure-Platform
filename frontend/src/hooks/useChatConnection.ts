@@ -36,7 +36,6 @@ export const useChatConnection = (hubUrl: string, token: string | null, guestId:
                 await newConnection.start();
 
                 if (isMounted) {
-                    console.log("SignalR Connected ✅");
                     setConnection(newConnection);
                 }
                 else {
@@ -55,7 +54,6 @@ export const useChatConnection = (hubUrl: string, token: string | null, guestId:
             isMounted = false;
             const conn = connectionRef.current;
             if (conn) {
-                console.log("SignalR Cleaning up... 🧹");
                 conn.stop().catch(() => {
                 });
                 setConnection(null);

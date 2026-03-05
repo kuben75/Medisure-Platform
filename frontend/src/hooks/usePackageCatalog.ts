@@ -25,8 +25,7 @@ export const usePackageCatalog = () => {
 
 
     const [specModalOpen, setSpecModalOpen] = useState(false);
-    const [specModalData, setSpecModalData] = useState<{ name: string; includedSpecs: string } | null>(null);
-
+    const [specModalData, setSpecModalData] = useState<IPricingPlan | null>(null);
     const hasScrolledToPackage = useRef(false);
 
 
@@ -64,12 +63,23 @@ export const usePackageCatalog = () => {
             try {
                 setLoading(true);
                 const response = await fetch(API_URL);
-                const data: IPricingPlan[] = await response.json();
-                const cleanData = data.map((p) => ({
+                const data = await response.json();
+
+                const safeParse = (input: any) => {
+                    if (!input) return [];
+                    if (Array.isArray(input)) return input;
+                    if (typeof input === 'string') return input.split(';').map(s => s.trim());
+                    return [];
+                };
+
+                const cleanData: IPricingPlan[] = data.map((p: any) => ({
                     ...p,
+                    includedSpecializations: safeParse(p.includedSpecializations),
+                    features: safeParse(p.features),
                     priceValue: p.priceValue || 0,
                     specialistsCount: p.specialistsCount || 0
                 }));
+
                 setAllPackages(cleanData);
                 setFilteredPackages(cleanData);
             } catch (error) {
@@ -254,15 +264,7 @@ export const usePackageCatalog = () => {
 
     const handleOpenSpecs = (e: React.MouseEvent, pkg: IPricingPlan) => {
         e.stopPropagation();
-        const specsValue = pkg.includedSpecializations;
-        const formattedSpecs = Array.isArray(specsValue)
-            ? specsValue.join('; ')
-            : String(specsValue || '');
-
-        setSpecModalData({
-            name: pkg.name,
-            includedSpecs: formattedSpecs
-        });
+        setSpecModalData(pkg);
         setSpecModalOpen(true);
     };
 

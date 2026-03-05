@@ -48,6 +48,7 @@ export const UserNotificationsProvider = ({children}: { children: ReactNode }) =
 
     const markAsRead = async (id: number) => {
         setNotifications(prev => prev.map(n => n.id === id ? {...n, isRead: true} : n));
+
         try {
             const res = await fetch(`${API_URL}/${id}/read`, {
                 method: 'PUT',

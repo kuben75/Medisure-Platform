@@ -1,9 +1,11 @@
 import {type ReactNode, useEffect, useState, useCallback, useMemo} from 'react';
 import type {IUser} from "../types/user.types";
 import {AuthContext} from "../hooks/useAuth";
-import {extractRolesFromToken, getStoredAuthData, STORAGE_KEYS} from "../utils/authHelpers";
+import {extractRolesFromToken, getStoredAuthData} from "../utils/authHelpers";
 import {displayApiError} from "../utils/apiErrorHandler.ts";
 import {useNotification} from "../hooks/UseNotification.ts";
+
+import {STORAGE_KEYS} from "../constants/auth.constants.ts";
 
 const LOGIN_API_URL = `${import.meta.env.VITE_API_URL}/auth/login`;
 
@@ -47,6 +49,17 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
         setIsLoading(false);
     }, [clearAuthSession]);
 
+    useEffect(() => {
+        const handleUnauthorized = () => {
+            clearAuthSession();
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
+        };
+
+        window.addEventListener('auth:unauthorized', handleUnauthorized);
+        return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    }, [clearAuthSession]);
     useEffect(() => {
         const handleStorageChange = (e: StorageEvent) => {
             if (e.key === STORAGE_KEYS.TOKEN || e.key === STORAGE_KEYS.USER) {

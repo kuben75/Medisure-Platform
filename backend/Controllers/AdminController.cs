@@ -56,7 +56,7 @@ public class AdminController : ControllerBase
         var expiringSubscriptions = await _context.UserPackages
             .Where(up => up.Status == "Active" && up.EndDate > now && up.EndDate <= sevenDaysFromNow)
             .CountAsync();
-
+        
         return Ok(new DashboardStatsDto
         {
             TotalUsers = totalUsers,
@@ -137,7 +137,13 @@ public class AdminController : ControllerBase
             return NotFound(new ErrorResponse { Message = "Nie znaleziono użytkownika.", ErrorCode = (int)ErrorCode.NotFound });
 
         if (user.Id == GetCurrentUserId())
-            return BadRequest(new ErrorResponse { Message = "Nie możesz usunąć własnego konta administratora.", ErrorCode = (int)ErrorCode.BusinessRuleViolation });
+        {
+            return BadRequest(new ErrorResponse
+            {
+                Message = "Nie możesz usunąć własnego konta administratora.",
+                ErrorCode = (int)ErrorCode.BusinessRuleViolation
+            });
+        }
 
         if (!await CanManageUser(user))
             return BadRequest(new ErrorResponse { Message = "Brak uprawnień do usunięcia tego użytkownika.", ErrorCode = (int)ErrorCode.Forbidden });
@@ -158,17 +164,34 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> ChangeUserRole(string id, [FromBody] ChangeRoleDto dto)
     {
         var user = await _userManager.FindByIdAsync(id);
-        if (user == null) 
-            return NotFound(new ErrorResponse { Message = "Nie znaleziono użytkownika.", ErrorCode = (int)ErrorCode.NotFound });
-
-        if (user.Id == GetCurrentUserId()) 
-            return BadRequest(new ErrorResponse { Message = "Nie możesz zmienić własnej roli.", ErrorCode = (int)ErrorCode.BusinessRuleViolation });
-        
+        if (user == null)
+        {
+            return NotFound(new ErrorResponse
+            { Message = "Nie znaleziono użytkownika.", 
+                ErrorCode = (int)ErrorCode.NotFound
+            });
+        }
+        if (user.Id == GetCurrentUserId())
+        {
+            return BadRequest(new ErrorResponse
+            { Message = "Nie możesz zmienić własnej roli.", 
+                ErrorCode = (int)ErrorCode.BusinessRuleViolation
+            });
+        }
         if (!await _roleManager.RoleExistsAsync(dto.NewRole))
-            return BadRequest(new ErrorResponse { Message = $"Rola '{dto.NewRole}' nie istnieje.", ErrorCode = (int)ErrorCode.ValidationError });
-        
+        {
+            return BadRequest(new ErrorResponse
+            { Message = $"Rola '{dto.NewRole}' nie istnieje.", 
+                ErrorCode = (int)ErrorCode.ValidationError
+            });
+        }
         if (await _userManager.IsInRoleAsync(user, "SuperAdmin"))
-            return BadRequest(new ErrorResponse { Message = "Nie można modyfikować uprawnień Głównego Administratora.", ErrorCode = (int)ErrorCode.Forbidden });
+        {
+            return BadRequest(new ErrorResponse
+            { Message = "Nie można modyfikować uprawnień Głównego Administratora.", 
+                ErrorCode = (int)ErrorCode.Forbidden
+            });
+        }
 
         var currentRoles = await _userManager.GetRolesAsync(user);
         await _userManager.RemoveFromRolesAsync(user, currentRoles);
@@ -215,10 +238,18 @@ public class AdminController : ControllerBase
     {
         var user = await _userManager.FindByIdAsync(id);
         if (user == null) 
-            return NotFound(new ErrorResponse { Message = "Nie znaleziono użytkownika.", ErrorCode = (int)ErrorCode.NotFound });
+            return NotFound(new ErrorResponse
+            {
+                Message = "Nie znaleziono użytkownika.", 
+                ErrorCode = (int)ErrorCode.NotFound
+            });
 
         if (!await CanManageUser(user))
-            return BadRequest(new ErrorResponse { Message = "Brak uprawnień do odblokowania tego użytkownika.", ErrorCode = (int)ErrorCode.Forbidden });
+            return BadRequest(new ErrorResponse
+            {
+                Message = "Brak uprawnień do odblokowania tego użytkownika.", 
+                ErrorCode = (int)ErrorCode.Forbidden
+            });
 
         var result = await _userManager.SetLockoutEndDateAsync(user, null);
 
@@ -235,7 +266,11 @@ public class AdminController : ControllerBase
             return Ok(new { Message = "Użytkownik został odblokowany." });
         }
 
-        return BadRequest(new ErrorResponse { Message = "Nie udało się odblokować użytkownika.", ErrorCode = (int)ErrorCode.InternalServerError });
+        return BadRequest(new ErrorResponse
+        {
+            Message = "Nie udało się odblokować użytkownika.", 
+            ErrorCode = (int)ErrorCode.InternalServerError
+        });
     }
     
     [HttpGet("logs")]
@@ -246,7 +281,10 @@ public class AdminController : ControllerBase
 
         var query = _context.SystemLogs.AsQueryable();
 
-        if (!isSuperAdmin) query = query.Where(log => log.IsSensitive == false);
+        if (!isSuperAdmin)
+        {
+            query = query.Where(log => log.IsSensitive == false);
+        }
 
         return Ok(await query.OrderByDescending(l => l.CreatedAt).Take(500).ToListAsync());
     }
@@ -265,8 +303,15 @@ public class AdminController : ControllerBase
         var isTargetAdmin = await _userManager.IsInRoleAsync(targetUser, "Admin");
         var isTargetSuper = await _userManager.IsInRoleAsync(targetUser, "SuperAdmin");
 
-        if (isTargetSuper) return false; 
-        if (!amISuperAdmin && isTargetAdmin) return false; 
+        if (isTargetSuper)
+        {
+            return false;
+        }
+
+        if (!amISuperAdmin && isTargetAdmin)
+        {
+            return false;
+        } 
 
         return true;
     }

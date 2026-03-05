@@ -133,7 +133,10 @@ public class AuthController : ControllerBase
         if (!await _userManager.CheckPasswordAsync(user, loginDto.Password))
         {
             await _userManager.AccessFailedAsync(user);
-            await LogFailedLoginAttempt(loginDto.Email, "błędne hasło", user.Id, await _userManager.IsLockedOutAsync(user));
+            await LogFailedLoginAttempt(loginDto.Email, 
+                "błędne hasło", 
+                user.Id,
+                await _userManager.IsLockedOutAsync(user));
             return Unauthorized(new ErrorResponse 
             { 
                 Success = false, 
@@ -199,7 +202,9 @@ public class AuthController : ControllerBase
     {
         string cacheKey = $"reset_password_cooldown_{dto.Email.ToLower()}";
         if (_cache.TryGetValue(cacheKey, out _))
+        {
             return Ok(new { Message = "Jeśli konto istnieje, wysłaliśmy link resetujący." });
+        }
 
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null)
@@ -271,14 +276,25 @@ public class AuthController : ControllerBase
     {
         
         var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user == null) return Unauthorized(new ErrorResponse { Message = "Błąd autoryzacji.", ErrorCode = (int)ErrorCode.InvalidCredentials });
+        if (user == null)
+        {
+            return Unauthorized(new ErrorResponse { Message = "Błąd autoryzacji.", ErrorCode = (int)ErrorCode.InvalidCredentials });
+        }
         
         if (!string.IsNullOrEmpty(dto.Password)) 
         {
             if (!await _userManager.CheckPasswordAsync(user, dto.Password))
             {
-                await SafeLogAsync("LOGOWANIE_2FA_FAIL", "Błędne hasło przy 2FA", user.Email!, user.Id, "Warning");
-                return Unauthorized(new ErrorResponse { Message = "Błędne hasło.", ErrorCode = (int)ErrorCode.InvalidCredentials });
+                await SafeLogAsync("LOGOWANIE_2FA_FAIL", 
+                    "Błędne hasło przy 2FA", 
+                    user.Email!,
+                    user.Id, 
+                    "Warning");
+                return Unauthorized(new ErrorResponse
+                {
+                    Message = "Błędne hasło.",
+                    ErrorCode = (int)ErrorCode.InvalidCredentials
+                });
             }
         }
         else

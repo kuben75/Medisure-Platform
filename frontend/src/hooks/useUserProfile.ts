@@ -2,8 +2,7 @@ import {useState, useCallback, useEffect, useMemo} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {useAuth} from './useAuth.ts';
 import {useUserNotifications} from './useUserNotifications.ts';
-import type {IUserSubscription} from "../types/user.types.ts";
-import type {IPricingPlan} from "../types/pricing.types.ts";
+import type {IPricingPlan, IUserSubscription} from "../types/pricing.types.ts";
 
 export const useUserProfile = () => {
     const {user, logout, token, roles} = useAuth();

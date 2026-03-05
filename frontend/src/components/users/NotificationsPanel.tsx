@@ -164,7 +164,7 @@ export default function NotificationsPanel() {
                         </div>
 
                         <div className="p-4 md:p-6 border-t border-gray-100 flex justify-between gap-3 bg-white">
-                            <Button variant="danger" onClick={(e) => handleDelete(e, selectedNotification.id)}
+                            <Button variant="secondary" onClick={(e) => handleDelete(e, selectedNotification.id)}
                                     className="!text-xs !py-2 border-red-200 text-red-600 hover:bg-red-50">Usuń</Button>
                             <Button variant="primary" onClick={handleCloseDetails}
                                     className="!text-xs !py-2 hidden md:block">Zamknij szczegóły</Button>

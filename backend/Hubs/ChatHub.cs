@@ -146,33 +146,26 @@ public class ChatHub : Hub
 
     private async Task SaveMessageAsync(string sender, string receiver, string ownerId, string text)
     {
-    try
-    {
-        string? dbUserId = ownerId;
-        
-        if (ownerId.StartsWith("guest_") || ownerId == "System" || ownerId == "Admin")
+        try
         {
-            dbUserId = null; 
+            var chatMsg = new ChatMessage
+            {
+                Sender = sender,
+                Receiver = receiver,
+                UserId = ownerId, 
+                Message = text,
+                Timestamp = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                IsRead = false
+            };
+            
+            _context.ChatMessages.Add(chatMsg);
+            await _context.SaveChangesAsync();
         }
-
-        var chatMsg = new ChatMessage
+        catch (Exception ex)
         {
-            Sender = sender,
-            Receiver = receiver,
-            UserId = dbUserId, 
-            Message = text,
-            Timestamp = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
-            IsRead = false
-        };
-        
-        _context.ChatMessages.Add(chatMsg);
-        await _context.SaveChangesAsync();
+            _logger.LogError(ex, $"[ChatHub] Database save failed for user {ownerId}.");
+        }
     }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, $"[ChatHub] Database save failed for user {ownerId}.");
-    }
-}
 
     private async Task TrySendEmailNotification(string targetUserEmail, string message)
     {
@@ -200,23 +193,17 @@ public class ChatHub : Hub
         }
     }
 
-    private async Task CheckAndSendWelcomeMessage(string userEmail)
+    private async Task CheckAndSendWelcomeMessage(string userId)
     {
-
-        bool hasHistory = false;
-        
-        if (!userEmail.StartsWith("guest_"))
-        {
-            hasHistory = await _context.ChatMessages.AnyAsync(m => m.UserId == userEmail);
-        }
+        bool hasHistory = await _context.ChatMessages.AnyAsync(m => m.UserId == userId);
 
         if (!hasHistory)
         {
             var welcomeText = "Dzień dobry! Witamy w Medisure. W czym możemy Ci dzisiaj pomóc?";
 
-            await SaveMessageAsync("System", userEmail, userEmail, welcomeText);
-            
-            await Clients.Group(userEmail).SendAsync("ReceiveMessage", "System", welcomeText, "AdminToUser", userEmail);
+            await SaveMessageAsync("System", userId, userId, welcomeText);
+        
+            await Clients.Group(userId).SendAsync("ReceiveMessage", "System", welcomeText, "AdminToUser", userId);
         }
     }
 }

@@ -37,8 +37,14 @@ export default function HeroSectionCalculator({onCalculate, isCalculating, initi
             onCalculate({type: packageType, age: 0, companySize: parseInt(companySize), maxPrice});
             return;
         }
+
         if (packageType === 'Rodzinny' && familySize === 'other') {
-            onCalculate({type: 'family_custom', age: 0, familySize: 'other', maxPrice});
+            onCalculate({
+                type: 'family_custom',
+                age: 0,
+                familySize: 'other',
+                maxPrice
+            });
             return;
         }
 

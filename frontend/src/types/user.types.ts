@@ -1,3 +1,5 @@
+import type {IUserSubscription} from "./pricing.types.ts";
+
 export interface IUser {
     email: string;
     firstName: string;
@@ -19,23 +21,6 @@ export interface IUserDto {
     pesel?: string | null;
     roles: string[];
     isLocked: boolean;
-}
-
-export interface IUserSubscription {
-    id: number;
-    packageId: number;
-    packageName: string;
-    price: string;
-    transactionId?: string;
-    paymentMethod?: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-    features: string[] | string;
-    street?: string;
-    houseNumber?: string;
-    city?: string;
-    zipCode?: string;
 }
 
 export interface ISubscriptionsTabProps {
