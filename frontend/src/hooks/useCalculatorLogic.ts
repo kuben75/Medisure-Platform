@@ -83,8 +83,9 @@ export const useCalculatorLogic = () => {
                     return {...p, calculatedPrice: calculated};
                 }).sort((a, b) => a.calculatedPrice - b.calculatedPrice);
 
-                const budgetLimit = data.maxPrice || 100000;
-                const affordablePlans = plansWithRealPrices.filter(p => p.calculatedPrice <= budgetLimit);
+                const budgetLimit = data.maxPrice || 10000;
+                const affordablePlans =
+                    plansWithRealPrices.filter(p => p.calculatedPrice <= budgetLimit);
 
                 if (affordablePlans.length > 0) {
                     recommended = affordablePlans[affordablePlans.length - 1];
@@ -95,7 +96,7 @@ export const useCalculatorLogic = () => {
                 }
 
                 if (recommended) {
-                    basePrice = (recommended as any).calculatedPrice || recommended.priceValue;
+                    basePrice = (recommended).calculatedPrice || recommended.priceValue;
                 }
                 else {
                     basePrice = 59;

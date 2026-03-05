@@ -45,14 +45,19 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserDto updateDto)
     {
         var user = await GetCurrentUserAsync();
-        if (user == null) return Unauthorized(new ErrorResponse { Message = "Brak autoryzacji.", ErrorCode = (int)ErrorCode.Unauthorized });
+        if (user == null)
+        {
+            return Unauthorized(new ErrorResponse { Message = "Brak autoryzacji.", ErrorCode = (int)ErrorCode.Unauthorized });
+        }
 
         bool isEmailChangeRequest = !string.Equals(user.Email, updateDto.Email, StringComparison.OrdinalIgnoreCase);
         
         if (isEmailChangeRequest)
         {
             if (string.IsNullOrEmpty(updateDto.CurrentPassword))
+            {
                 return BadRequest(new ErrorResponse { Message = "Aby zmienić adres e-mail, musisz podać aktualne hasło.", ErrorCode = (int)ErrorCode.ValidationError });
+            }
 
             if (!await _userManager.CheckPasswordAsync(user, updateDto.CurrentPassword))
             {
@@ -77,7 +82,11 @@ public class AccountController : ControllerBase
             }
 
             if (await _userManager.FindByEmailAsync(updateDto.Email) != null)
-                return BadRequest(new ErrorResponse { Message = "Ten adres e-mail jest już zajęty.", ErrorCode = (int)ErrorCode.ValidationError });
+                return BadRequest(new ErrorResponse 
+                {
+                    Message = "Ten adres e-mail jest już zajęty.",
+                    ErrorCode = (int)ErrorCode.ValidationError 
+                });
         }
 
         user.FirstName = updateDto.FirstName;
@@ -92,7 +101,11 @@ public class AccountController : ControllerBase
             {
                 if (updateDto.BirthDate.Value.Date != user.BirthDate!.Value.Date)
                 {
-                    await _logService.LogAsync("BEZPIECZENSTWO", $"Próba zmiany zablokowanej daty urodzenia przez {user.Email}", user.UserName!, user.Id, "Warning");
+                    await _logService.LogAsync("BEZPIECZENSTWO", 
+                        $"Próba zmiany zablokowanej daty urodzenia przez {user.Email}", 
+                        user.UserName!,
+                        user.Id, 
+                        "Warning");
                     
                     return BadRequest(new ErrorResponse 
                     { 

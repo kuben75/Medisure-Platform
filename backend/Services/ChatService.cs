@@ -79,7 +79,11 @@ public class ChatService : IChatService
             }
             else
             {
-                query = query.Where(m => m.UserId == userId || m.Sender == userId || m.Receiver == userId);
+                query = query.Where
+                (
+                      m => m.UserId == userId 
+                      || m.Sender == userId 
+                      || m.Receiver == userId);
             }
 
             var userMessages = await query

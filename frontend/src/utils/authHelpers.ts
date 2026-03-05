@@ -1,13 +1,7 @@
 import type {IUser} from "../types/user.types";
+import {ROLE_CLAIM_TYPE, STORAGE_KEYS} from "../constants/auth.constants.ts";
 
-const ROLE_CLAIM_TYPE = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
-
-export const STORAGE_KEYS = {
-    TOKEN: 'auth_token',
-    USER: 'auth_user'
-};
-
-export const parseJwt = (token: string): any | null => {
+export const parseJwt = (token: string): Record<string, unknown> | null => {
     try {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -19,7 +13,7 @@ export const parseJwt = (token: string): any | null => {
         );
         return JSON.parse(jsonPayload);
     } catch (e) {
-        console.error("JWT Parse Error", e);
+        console.error("Błąd tokena JWT ", e);
         return null;
     }
 };
@@ -29,7 +23,6 @@ export const extractRolesFromToken = (token: string): string[] => {
     if (!decoded) {
         return [];
     }
-
     const roles = decoded[ROLE_CLAIM_TYPE];
 
     if (Array.isArray(roles)) {
@@ -38,7 +31,6 @@ export const extractRolesFromToken = (token: string): string[] => {
     if (typeof roles === 'string') {
         return [roles];
     }
-
     return [];
 };
 
@@ -58,3 +50,13 @@ export const getStoredAuthData = () => {
     }
     return null
 }
+
+export const isTokenExpired = (token: string) => {
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+
+        return (payload.exp * 1000) < Date.now();
+    } catch (e) {
+        return true;
+    }
+};

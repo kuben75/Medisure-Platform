@@ -17,7 +17,7 @@ export default function UserTable({
                                       onBlock,
                                       onUnlock
                                   }: IUserTableProps) {
-    const getHighestRole = (roles: string[]) => roles.includes('SuperAdmin') ? 'SuperAdmin' : roles.includes('Admin') ? 'Admin' : 'User';
+    const getHighestRole = (roles: string[]) => roles.includes('SuperAdmin') ? 'SuperAdmin' : roles.includes('Admin') ? 'Admin' : 'Użytkownik';
 
     const getStyles = (role: string, isLocked: boolean) => {
         if (isLocked) {

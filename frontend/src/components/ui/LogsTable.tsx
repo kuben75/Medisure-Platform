@@ -42,12 +42,12 @@ export default function LogsTable() {
                         className="px-4 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-[#4E61F6] outline-none bg-white cursor-pointer w-full sm:w-auto"
                         value={filters.level} onChange={(e) => filters.setLevel(e.target.value)}
                     >
-                        <option value="All">Wszystkie typy</option>
-                        <option value="Info">Info</option>
-                        <option value="Success">Success</option>
-                        <option value="Warning">Warning</option>
-                        <option value="Error">Error</option>
-                        <option value="Security">Security</option>
+                        <option value="Wszystkie">Wszystkie typy</option>
+                        <option value="Informacje">Info</option>
+                        <option value="Sukces">Success</option>
+                        <option value="Ostrzeżenie">Warning</option>
+                        <option value="Błąd">Error</option>
+                        <option value="Zabezpieczenia">Security</option>
                     </select>
                 </div>
             </div>

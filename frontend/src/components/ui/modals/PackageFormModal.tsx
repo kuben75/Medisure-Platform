@@ -1,16 +1,9 @@
 import Modal from "./Modal.tsx";
 import Button from "../Button.tsx";
 import {usePackageForm} from "../../../hooks/usePackageForm.ts";
-import {SPECIALISTS_LIST} from "../../../constants/specialists.tsx";
 import type {IPackageFormModalProps} from "../../../types/ui.types.ts";
-
-const CheckIcon = () => (
-    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
-    </svg>
-);
-
-const AVAILABLE_CATEGORIES = Array.from(new Set(SPECIALISTS_LIST.map(s => s.category))).sort();
+import CheckIcon from "../../icons/CheckIcon.tsx";
+import {AVAILABLE_CATEGORIES} from "../../../constants/ui.ts";
 
 export const PackageFormModal = ({isOpen, onClose, onPackageAdded, token, packageToEdit}: IPackageFormModalProps) => {
     const isEditMode = !!packageToEdit;
@@ -68,7 +61,7 @@ export const PackageFormModal = ({isOpen, onClose, onPackageAdded, token, packag
                                 <div>
                                     <label className={labelClass}>Nazwa Pakietu</label>
                                     <input name="name" type="text" value={formData.name} onChange={handleChange}
-                                           required className={inputClass} placeholder="np. Pakiet Gold"/>
+                                           required className={inputClass} />
                                 </div>
                                 <div className="grid grid-cols-2 gap-5">
                                     <div>
@@ -97,7 +90,7 @@ export const PackageFormModal = ({isOpen, onClose, onPackageAdded, token, packag
                                     <label className={labelClass}>Krótki Opis</label>
                                     <textarea name="description" value={formData.description} onChange={handleChange}
                                               className={inputClass} rows={3}
-                                              placeholder="Marketingowy opis pakietu..."/>
+                                              />
                                 </div>
                             </div>
                         </div>
@@ -108,7 +101,6 @@ export const PackageFormModal = ({isOpen, onClose, onPackageAdded, token, packag
                                 <textarea
                                     name="features" value={formData.features} onChange={handleChange}
                                     className={`${inputClass} text-sm leading-relaxed min-h-[140px]`}
-                                    placeholder="Lekarz 24h; Badania krwi; E-Recepta..."
                                 />
                                 <div
                                     className="absolute bottom-3 right-3 text-[10px] text-gray-400 bg-white px-2 py-1 rounded-md border border-gray-100 shadow-sm">
@@ -165,7 +157,7 @@ export const PackageFormModal = ({isOpen, onClose, onPackageAdded, token, packag
                                                     }
                                                     `}
                                                 >
-                                                    {isSelected && <CheckIcon/>}
+                                                    {isSelected && <CheckIcon className={"w-4 h-4"}/>}
                                                     {cat}
                                                 </button>
                                             );
@@ -218,7 +210,7 @@ const ModernCheckbox = ({label, desc, name, checked, onChange, variant = 'blue',
 
             <div
                 className={`w-5 h-5 rounded-lg flex items-center justify-center transition-colors flex-shrink-0 text-lg shadow-sm border ${checked ? (isYellow ? "bg-yellow-400 border-yellow-400 text-white" : "bg-[#4E61F6] border-[#4E61F6] text-white") : "bg-white border-gray-200 text-gray-400"}`}>
-                {checked ? <CheckIcon/> : <span>{icon}</span>}
+                {checked ? <CheckIcon className={"w-4 h-4"}/> : <span>{icon}</span>}
             </div>
 
             <div className="flex flex-col">

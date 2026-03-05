@@ -1,4 +1,5 @@
 import type {IPackageFormData} from "../types/packages.types.ts";
+import {SPECIALISTS_LIST} from "./specialists.tsx";
 
 
 export const AVATAR_COLORS = [
@@ -39,3 +40,5 @@ export const NAV_LINKS = [
     {to: "/specjalisci", label: "Specjaliści"},
     {to: "/kontakt", label: "Kontakt"},
 ];
+
+export const AVAILABLE_CATEGORIES = Array.from(new Set(SPECIALISTS_LIST.map(s => s.category))).sort();

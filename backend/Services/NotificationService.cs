@@ -57,7 +57,8 @@ public class NotificationService : INotificationService
         var now = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
         
         await _context.Database.ExecuteSqlRawAsync(
-            "INSERT INTO \"SystemNotifications\" (\"UserId\", \"Title\", \"Message\", \"Type\", \"CreatedAt\", \"IsRead\") " +
+            "INSERT INTO \"SystemNotifications\" (\"UserId\", \"Title\", \"Message\", \"Type\", \"CreatedAt\", \"IsRead\") " 
+            +
             "SELECT \"Id\", {0}, {1}, {2}, {3}, false FROM \"AspNetUsers\"",
             title, message, type, now);
     }

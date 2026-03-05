@@ -56,7 +56,9 @@ public class PackagesController : ControllerBase
     {
         if (!ModelState.IsValid)
         {
-            return BadRequest(new ErrorResponse { Message = "Błąd walidacji danych.", ErrorCode = (int)ErrorCode.ValidationError });
+            return BadRequest(new ErrorResponse { 
+                Message = "Błąd walidacji danych.", 
+                ErrorCode = (int)ErrorCode.ValidationError });
         }
 
         var newPackage = await _packageService.CreatePackageAsync(dto, User.Identity?.Name);
@@ -93,7 +95,9 @@ public class PackagesController : ControllerBase
         }
         catch (KeyNotFoundException)
         {
-            return NotFound(new ErrorResponse { Message = "Nie znaleziono pakietu do usunięcia.", ErrorCode = (int)ErrorCode.NotFound });
+            return NotFound(new ErrorResponse { 
+                Message = "Nie znaleziono pakietu do usunięcia.", 
+                ErrorCode = (int)ErrorCode.NotFound });
         }
     }
 }

@@ -75,7 +75,7 @@ export const useUsers = () => {
 
             notify.success(`Rola zmieniona na ${newRole}.`);
             await fetchUsers();
-        } catch (err: any) {
+        } catch (err) {
             displayApiError(err, notify);
         }
     };
@@ -101,7 +101,7 @@ export const useUsers = () => {
 
             notify.success("Użytkownik usunięty.");
             await fetchUsers();
-        } catch (err: any) {
+        } catch (err) {
             displayApiError(err, notify);
         }
     };
@@ -123,7 +123,7 @@ export const useUsers = () => {
             notify.success("Użytkownik zablokowany.");
             setIsBlockModalOpen(false);
             await fetchUsers();
-        } catch (err: any) {
+        } catch (err) {
             displayApiError(err, notify);
         }
     };
@@ -151,7 +151,7 @@ export const useUsers = () => {
 
             notify.success("Odblokowano.");
             await fetchUsers();
-        } catch (err: any) {
+        } catch (err) {
             displayApiError(err, notify);
         }
     };

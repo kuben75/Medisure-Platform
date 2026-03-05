@@ -40,7 +40,7 @@ export const PREVENTION_GUIDELINES = [
         ]
     },
     {
-        minAge: 18,
+        minAge: 20,
         title: "Dbaj o siebie (20-30 lat)",
         recommendations: [
             "Morfologia krwi, glukoza i badanie ogólne moczu raz w roku.",

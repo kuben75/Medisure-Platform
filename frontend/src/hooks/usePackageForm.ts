@@ -3,6 +3,8 @@ import type {IPricingPlan} from "../types/pricing.types.ts";
 import {INITIAL_STATE} from "../constants/ui.ts";
 import {SPECIALISTS_LIST} from "../constants/specialists.tsx";
 import type {IPackageFormData} from "../types/packages.types.ts";
+import {displayApiError} from "../utils/apiErrorHandler.ts";
+import {useNotification} from "./UseNotification.ts";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/packages`;
 
@@ -18,6 +20,7 @@ export const usePackageForm = (
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const {notify} = useNotification();
 
     useEffect(() => {
         if (isOpen) {
@@ -75,9 +78,7 @@ export const usePackageForm = (
     const handleCategoryToggle = (category: string) => {
         const rawString = formData.includedSpecializations || "";
 
-        let currentSpecs = rawString
-            .split(';')
-            .map((s: string) => s.trim())
+        let currentSpecs = rawString.split(';').map((s: string) => s.trim())
             .filter(Boolean);
 
         if (currentSpecs.includes(category)) {
@@ -89,7 +90,8 @@ export const usePackageForm = (
 
         const uniqueSpecs = [...new Set(currentSpecs)];
         const newSpecString = uniqueSpecs.join(';');
-        const realCount = SPECIALISTS_LIST.filter(s => uniqueSpecs.includes(s.category)).length;
+        const realCount = SPECIALISTS_LIST.filter(s =>
+            uniqueSpecs.includes(s.category)).length;
 
         setFormData((prev: IPackageFormData) => ({
             ...prev,
@@ -134,13 +136,11 @@ export const usePackageForm = (
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.errors ? Object.values(errorData.errors).flat().join(', ') : "Wystąpił błąd zapisu.");
+                throw await response.json();
             }
-
             onSuccess();
         } catch (err) {
-            setError(err instanceof Error ? err.message : String(err));
+            displayApiError(err, notify);
         } finally {
             setIsLoading(false);
         }

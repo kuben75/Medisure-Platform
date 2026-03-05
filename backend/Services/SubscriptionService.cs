@@ -17,8 +17,14 @@ public class SubscriptionService : ISubscriptionService
     private readonly IPricingService _pricingService;
     private readonly IConfiguration _configuration;
 
-    public SubscriptionService(ApplicationDbContext context, ILogService logService, IEmailService emailService,
-        INotificationService notificationService, IPdfService pdfService, IPricingService pricingService, IConfiguration configuration)
+    public SubscriptionService(
+        ApplicationDbContext context, 
+        ILogService logService, 
+        IEmailService emailService,
+        INotificationService notificationService, 
+        IPdfService pdfService, 
+        IPricingService pricingService, 
+        IConfiguration configuration)
     {
         _context = context;
         _logService = logService;
@@ -29,7 +35,8 @@ public class SubscriptionService : ISubscriptionService
         _configuration = configuration;
     }
 
-    public async Task<(bool Success, string Message, object? Data)> SubscribeAsync(int packageId, SubscribeDto dto, string userId, string userEmail)
+    public async Task<(bool Success, string Message, object? Data)> SubscribeAsync(
+        int packageId, SubscribeDto dto, string userId, string userEmail)
 {
     var user = await _context.Users.FindAsync(userId);
     if (user == null) return (false, "Nie znaleziono użytkownika.", null);
@@ -75,7 +82,8 @@ public class SubscriptionService : ISubscriptionService
     if (age > 99) return (false, "Przepraszamy, oferta nie obejmuje osób powyżej 99 roku życia.", null);
 
     
-    var basePrice = _pricingService.CalculateBasePriceWithRiskFactor(package.PriceValue, package.Category, targetBirthDate.Value);
+    var basePrice = _pricingService.CalculateBasePriceWithRiskFactor(
+        package.PriceValue, package.Category, targetBirthDate.Value);
     var finalPrice = _pricingService.CalculateFinalPrice(basePrice, dto.Duration, dto.BillingPeriod);
     
     var startDate = dto.StartDate.HasValue && dto.StartDate > DateTime.UtcNow ? dto.StartDate.Value.ToUniversalTime() : DateTime.UtcNow;
@@ -129,9 +137,12 @@ public class SubscriptionService : ISubscriptionService
     });
 }
 
-    private async Task HandlePostPurchaseActions(ApplicationUser user, Package package, UserPackage sub, SubscribeDto dto, string priceString, DateTime start, DateTime end)
+    private async Task HandlePostPurchaseActions(ApplicationUser user, Package package, 
+        UserPackage sub, SubscribeDto dto, string priceString, DateTime start, DateTime end)
     {
-        await _logService.LogAsync("ZAKUP_SUKCES", $"Zakup: {package.Name}, ID: {sub.Id}", user.Email!, user.Id, "Success");
+        await _logService.LogAsync("ZAKUP_SUKCES", 
+            $"Zakup: {package.Name}, ID: {sub.Id}", 
+            user.Email!, user.Id, "Success");
         
         try
         {
@@ -139,19 +150,28 @@ public class SubscriptionService : ISubscriptionService
             var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:5173"; 
             var emailBody = EmailTemplates.GetPurchaseConfirmation(
                 user.FirstName, dto.TransactionId, dto.PaymentMethod, package.Name, priceString, 
-                start.ToShortDateString(), end.ToShortDateString(), dto.Pesel, dto.Street, dto.HouseNumber, dto.ZipCode, dto.City, 
+                start.ToShortDateString(), end.ToShortDateString(), dto.Pesel, dto.Street, dto.HouseNumber, 
+                dto.ZipCode, dto.City, 
                 $"{frontendUrl}/regulamin", $"{frontendUrl}/polityka-prywatnosci"
             );
 
-            await _emailService.SendEmailAsync(user.Email!, $"Umowa Medisure - {package.Name}", emailBody, pdfBytes, $"Polisa_{sub.TransactionId}.pdf");
+            await _emailService.SendEmailAsync(user.Email!, 
+                $"Umowa Medisure - {package.Name}", emailBody, pdfBytes, 
+                $"Polisa_{sub.TransactionId}.pdf");
             
-            await _notificationService.CreateNotificationAsync(user.Id, "Zakupiono pakiet", $"Twój pakiet {package.Name} aktywny.", "Zakup");
+            await _notificationService.CreateNotificationAsync(user.Id, "Zakupiono pakiet", 
+                $"Twój pakiet {package.Name} aktywny.", 
+                "Zakup");
             
-            await _notificationService.NotifyAllAdminsAsync("Nowa sprzedaż", $"Użytkownik {user.Email} kupił {package.Name}.", "Sales");
+            await _notificationService.NotifyAllAdminsAsync("Nowa sprzedaż", 
+                $"Użytkownik {user.Email} kupił {package.Name}.", "Sales");
         }
         catch (Exception ex)
         {
-            await _logService.LogAsync("EMAIL_BLAD", $"Błąd po zakupie (Mail/PDF): {ex.Message}", "System", null, "Error");
+            await _logService.LogAsync("EMAIL_BLAD", 
+                $"Błąd po zakupie (Mail/PDF): {ex.Message}", 
+                "System", null, 
+                "Error");
         }
     }
 

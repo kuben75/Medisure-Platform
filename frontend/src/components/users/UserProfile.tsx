@@ -85,19 +85,21 @@ export default function UserProfile() {
                                     setSearchTerm={setSearchTerm}
                                     onOpenDetails={modals.setViewingSub}
                                     onOpenReview={modals.openReviewModal}
-                                    onBrowse={() => navigate('/kalkulator')}
-                                />
+                                    onBrowse={() => navigate('/kalkulator')}/>
                             )}
 
                             {activeTab === 'favorites' && (
                                 <div className="space-y-4 animate-fade-in">
-                                    <h2 className="text-xl font-bold text-gray-800 mb-6 border-b border-gray-100 pb-4">Zapisane
-                                        oferty</h2>
+                                    <h2 className="text-xl font-bold text-gray-800
+                                    mb-6 border-b border-gray-100 pb-4">Ulubione oferty</h2>
                                     {favorites.length > 0 ? (
                                         <div className="grid gap-4">
                                             {favorites.map(fav => (
                                                 <div key={fav.id}
-                                                     className="border border-gray-200 bg-white rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-md transition-all hover:border-[#4E61F6]">
+                                                     className="border border-gray-200 bg-white rounded-xl
+                                                     p-5 flex flex-col sm:flex-row justify-between
+                                                     items-start sm:items-center gap-4 hover:shadow-md
+                                                     transition-all hover:border-[#4E61F6]">
                                                     <div>
                                                         <h3 className="text-lg font-bold text-gray-800">{fav.name}</h3>
                                                         <div className="flex items-center gap-2 mt-1">
@@ -110,8 +112,13 @@ export default function UserProfile() {
                                                         <FavoriteButton packageId={fav.id}/>
                                                         <Button variant="primary"
                                                                 className="!text-xs !py-2.5 flex-grow sm:flex-grow-0"
-                                                                onClick={() => navigate('/kalkulator', {state: {highlightPackageId: fav.id}})}>Zobacz
-                                                            ofertę</Button>
+                                                                onClick={() =>
+                                                                    navigate('/kalkulator', {
+                                                                        state: {
+                                                                            highlightPackageId: fav.id
+                                                                        }
+                                                                    }
+                                                                    )}>Zobacz ofertę</Button>
                                                     </div>
                                                 </div>
                                             ))}

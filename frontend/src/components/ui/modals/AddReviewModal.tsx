@@ -26,18 +26,14 @@ export default function AddReviewModal({isOpen, onClose, packageId, packageName}
                         ocena</label>
                     <div
                         className="flex gap-2"
-                        onMouseLeave={() => setHoverRating(0)}
-                    >
+                        onMouseLeave={() => setHoverRating(0)}>
                         {[1, 2, 3, 4, 5].map((star) => (
                             <div
                                 key={star}
                                 onMouseEnter={() => setHoverRating(star)}
-                                className="cursor-pointer transform hover:scale-110 transition-transform"
-                            >
-                                <StarIcon
-                                    filled={star <= (hoverRating || rating)}
-                                    onClick={() => setRating(star)}
-                                />
+                                className="cursor-pointer transform hover:scale-110 transition-transform">
+                                <StarIcon filled={star <= (hoverRating || rating)}
+                                    onClick={() => setRating(star)}/>
                             </div>
                         ))}
                     </div>

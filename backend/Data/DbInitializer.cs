@@ -21,7 +21,7 @@ public static class DbInitializer
             while (retries > 0)
             {
                 if (await dbContext.Database.CanConnectAsync()) break;
-                Console.WriteLine("Oczekiwanie na bazę danych...");
+                Console.WriteLine("Oczekiwanie na bazę danych. ");
                 await Task.Delay(2000);
                 retries--;
             }
@@ -291,7 +291,8 @@ public static class DbInitializer
     private static async Task SeedReviews(ApplicationDbContext dbContext)
     {
         var packages = await dbContext.Packages.ToListAsync();
-        var users = await dbContext.Users.Where(u => !u.Email.StartsWith("admin@")).ToListAsync();
+        var users = await dbContext.Users.Where
+            (u => !u.Email.StartsWith("admin@")).ToListAsync();
         if (!users.Any()) return;
 
         var random = new Random();
@@ -340,7 +341,7 @@ public static class DbInitializer
 
         foreach (var pkg in packages)
         {
-            int reviewsCount = random.Next(11, 21);
+            int reviewsCount = random.Next(10, 21);
             for (int i = 0; i < reviewsCount; i++)
             {
                 var user = users[random.Next(users.Count)];
@@ -375,4 +376,5 @@ public static class DbInitializer
         }
         await dbContext.SaveChangesAsync();
     }
+    
 }

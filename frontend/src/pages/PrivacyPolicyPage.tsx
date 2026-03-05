@@ -37,9 +37,8 @@ export default function PrivacyPolicyPage() {
                                     <p>e-mail: <a href="mailto:kontakt@medisure.pl"
                                                   className="text-[#4E61F6] hover:underline font-medium">kontakt@medisure.pl</a>
                                     </p>
-                                    <p>telefon: <a href="tel:+48123456789"
-                                                   className="text-[#4E61F6] hover:underline font-medium">+48 123 456
-                                        789</a></p>
+                                    <p>telefon: <a href="tel:+48222222222"
+                                                   className="text-[#4E61F6] hover:underline font-medium">+48 222 222 222</a></p>
                                 </div>
                             </div>
                             <p className="mt-4 text-sm text-gray-500">

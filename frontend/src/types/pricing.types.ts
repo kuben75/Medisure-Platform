@@ -1,5 +1,4 @@
 import React, {type FormEvent} from "react";
-import type {IUserSubscription} from "./user.types.ts";
 
 export type TPaymentMethodType = 'card' | 'transfer' | 'paypal' | 'gpay'
 export type TBankOptionType = 'blik' | 'mbank' | 'pko' | 'ing' | 'pekao' | 'millenium' | 'alior'
@@ -89,8 +88,25 @@ export interface ICheckoutOverlayProps {
     onClose: () => void;
     plan: IPricingPlan;
     priceDetails: IPriceDetails;
-    onFinalize: (method: string, txId: string, addressData: IAddressData) => void;
+    onFinalize: (method: string, txId: string, addressData: IAddressData) => Promise<void>;
     billingPeriod?: TBillingType;
+}
+
+export interface IUserSubscription {
+    id: number;
+    packageId: number;
+    packageName: string;
+    price: string;
+    transactionId?: string;
+    paymentMethod?: string;
+    startDate: string;
+    endDate: string;
+    status: string;
+    features: string[] | string;
+    street?: string;
+    houseNumber?: string;
+    city?: string;
+    zipCode?: string;
 }
 
 export interface ISubscriptionDetailsModalProps {
@@ -178,3 +194,7 @@ export interface IPersonalDataFormProps {
 }
 
 export type TUseSubscriptionDetailsProps = Pick<ISubscriptionDetailsModalProps, 'subscription' | 'onClose' | 'onRefresh'>;
+
+export interface ExtendedSubscription extends IUserSubscription {
+    pesel?: string;
+}

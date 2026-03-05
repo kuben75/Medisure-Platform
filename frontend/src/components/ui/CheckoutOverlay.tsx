@@ -101,7 +101,8 @@ export default function CheckoutOverlay({
 
 
     useEffect(() => {
-        if (isOpen && user) {
+        // Zabezpieczamy przed resetowaniem modala w trakcie płatności!
+        if (isOpen && user && !isProcessing && !isSuccess) {
             const userPhone = user.phoneNumber || '';
             let rawBirthDate = user.birthDate || '';
             if (rawBirthDate.includes('T')) {
@@ -110,6 +111,7 @@ export default function CheckoutOverlay({
             const userBirthDate = rawBirthDate;
             const userPesel = user.pesel || '';
             const savedData = localStorage.getItem('saved_billing_data');
+
             let initialData = {
                 firstName: user.firstName || '',
                 lastName: user.lastName || '',
@@ -117,11 +119,7 @@ export default function CheckoutOverlay({
                 phone: userPhone,
                 birthDate: userBirthDate,
                 pesel: userPesel,
-                street: '',
-                houseNumber: '',
-                city: '',
-                zipCode: '',
-                startDate: ''
+                street: '', houseNumber: '', city: '', zipCode: '', startDate: ''
             };
 
             if (savedData) {
@@ -137,17 +135,14 @@ export default function CheckoutOverlay({
                 setSaveInfo(true);
             }
 
-            setFormData(initialData);
+            const hasExistingPesel = Boolean(userPesel && userPesel.trim().length >= 11);
+            const hasExistingBirthDate = Boolean(userBirthDate && userBirthDate.trim().length > 0);
 
-            const hasExistingPesel = Boolean(user.pesel && user.pesel.trim().length >= 11);
-            const hasExistingBirthDate = Boolean(user.birthDate && user.birthDate.trim().length > 0);
             setIsPeselLocked(hasExistingPesel);
             setIsBirthDateLocked(hasExistingBirthDate);
-            setFormData(prev => ({
-                ...prev,
-                pesel: hasExistingPesel ? user.pesel! : prev.pesel,
-                birthDate: hasExistingBirthDate ? (user.birthDate!.split('T')[0]) : prev.birthDate
-            }));
+
+            setFormData(initialData);
+
             setStep(1);
             setIsSuccess(false);
             setCountdown(5);
@@ -158,7 +153,8 @@ export default function CheckoutOverlay({
             setBlikCode('');
             setDynamicTotalContractValue(priceDetails.total);
         }
-    }, [isOpen, user, priceDetails.total]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
 
     const validateStep1 = () => {
         const newErrors: Record<string, string> = {};
@@ -288,28 +284,38 @@ export default function CheckoutOverlay({
         await new Promise(resolve => setTimeout(resolve, 1000));
         setProcessingStatus("Autoryzacja transakcji...");
         await new Promise(resolve => setTimeout(resolve, 800));
+
         const txId = `TX-${Math.floor(Math.random() * 1000000000)}`;
-        setIsProcessing(false);
-        setIsSuccess(true);
 
         let finalMethodName: string = paymentMethod;
         if (paymentMethod === 'card') {
             finalMethodName = 'Karta';
-        }
-        else if (paymentMethod === 'paypal') {
+        } else if (paymentMethod === 'paypal') {
             finalMethodName = 'PayPal';
-        }
-        else if (paymentMethod === 'gpay') {
+        } else if (paymentMethod === 'gpay') {
             finalMethodName = 'Google Pay';
-        }
-        else if (paymentMethod === 'transfer') {
+        } else if (paymentMethod === 'transfer') {
             finalMethodName = selectedBank === 'blik' ? 'BLIK' : `Przelew (${selectedBank?.toUpperCase()})`;
         }
 
-        onFinalize(finalMethodName, txId, {
-            ...formData,
-            startDate: formData.startDate ? new Date(formData.startDate).toISOString() : undefined
-        });
+        try {
+            setProcessingStatus("Przetwarzanie transakcji w systemie...");
+
+            await onFinalize(finalMethodName, txId, {
+                ...formData,
+                startDate: formData.startDate
+                    ? new Date(formData.startDate).toISOString()
+                    : undefined
+            });
+
+            setIsProcessing(false);
+            setIsSuccess(true);
+
+
+        } catch (e) {
+            setIsProcessing(false);
+            setIsSuccess(false);
+        }
     };
 
     const handleErrorsClear = (key: string) => {
@@ -422,5 +428,5 @@ export default function CheckoutOverlay({
                 </div>
             </div>
         </div>
-    )
+    );
 }

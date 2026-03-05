@@ -36,7 +36,8 @@ export const ChatProvider = ({children}: { children: ReactNode }) => {
             return;
         }
 
-        const handleReceiveMessage = (sender: string, message: string, type: string, targetEmail?: string) => {
+        const handleReceiveMessage =
+            (sender: string, message: string, type: string, targetEmail?: string) => {
             const msgType = (type === "AdminToUser" || type === "UserToAdmin")
                 ? type
                 : "UserToAdmin";

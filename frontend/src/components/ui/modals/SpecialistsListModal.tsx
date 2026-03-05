@@ -16,16 +16,21 @@ export default function SpecialistsListModal({
     const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
 
     const allowedCategories = useMemo(() => {
-        if (!includedSpecializations) {
-            return [];
-        }
-        return includedSpecializations.split(';').map(c => c.trim());
-    }, [includedSpecializations]);
+        if (!includedSpecializations) return [];
 
+        let specs: string[] = [];
+        if (Array.isArray(includedSpecializations)) {
+            specs = includedSpecializations;
+        } else if (typeof includedSpecializations === 'string') {
+            specs = includedSpecializations.split(';');
+        }
+
+        return specs.map(c => c.trim().toLowerCase()).filter(Boolean);
+    }, [includedSpecializations]);
     const filteredAndSortedList = useMemo(() => {
         let list = [...SPECIALISTS_LIST];
 
-        const isAvailable = (specCategory: string) => allowedCategories.includes(specCategory);
+        const isAvailable = (specCategory: string) => allowedCategories.includes(specCategory.trim().toLowerCase());
 
         if (showOnlyAvailable) {
             list = list.filter(s => isAvailable(s.category));
@@ -35,12 +40,9 @@ export default function SpecialistsListModal({
             const aAv = isAvailable(a.category);
             const bAv = isAvailable(b.category);
 
-            if (aAv && !bAv) {
-                return -1;
-            }
-            if (!aAv && bAv) {
-                return 1;
-            }
+            if (aAv && !bAv) return -1;
+            if (!aAv && bAv) return 1;
+
             return a.category.localeCompare(b.category);
         });
     }, [allowedCategories, showOnlyAvailable]);
@@ -50,8 +52,9 @@ export default function SpecialistsListModal({
     }
 
     const total = SPECIALISTS_LIST.length;
-    const availableCount = SPECIALISTS_LIST.filter(s => allowedCategories.includes(s.category)).length;
-    const percentage = total > 0 ? Math.round((availableCount / total) * 100) : 0;
+    const availableCount = SPECIALISTS_LIST.filter(s =>
+        allowedCategories.includes(s.category.trim().toLowerCase())
+    ).length;    const percentage = total > 0 ? Math.round((availableCount / total) * 100) : 0;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-5xl">
@@ -106,8 +109,7 @@ export default function SpecialistsListModal({
             <div
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto p-1 custom-scrollbar">
                 {filteredAndSortedList.map((spec) => {
-                    const isAvailable = allowedCategories.includes(spec.category);
-
+                    const isAvailable = allowedCategories.includes(spec.category.trim().toLowerCase());
                     return (
                         <div
                             key={spec.id}

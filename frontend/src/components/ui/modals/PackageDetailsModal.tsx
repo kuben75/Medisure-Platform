@@ -227,7 +227,7 @@ export default function PackageDetailsModal({isOpen, onClose, plan, userAge, sel
                                     </div>
                                     <div>
                                         <div className="flex flex-wrap items-center gap-2">
-                                            <span className="font-bold text-gray-800 text-sm sm:text-base">Płatność z góry</span>
+                                            <span className="font-bold text-gray-800 text-sm sm:text-base">Płatność jednorazowa</span>
 
                                             {hasDiscount && (
                                                 <span

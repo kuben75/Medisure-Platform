@@ -43,7 +43,8 @@ export const useLogs = () => {
     }, [token]);
 
     useEffect(() => {
-        fetchLogs().then(() => console.log("Logi załadowane"));
+        fetchLogs();
+
         const interval = setInterval(fetchLogs, 30000);
         return () => clearInterval(interval);
     }, [fetchLogs]);

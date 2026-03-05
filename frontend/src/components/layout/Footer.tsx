@@ -16,10 +16,10 @@ export default function Footer() {
                         <p className="text-sm text-gray-500">Nasi konsultanci medyczni są do Twojej dyspozycji.</p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <a href="tel:+48123456789"
+                        <a href="tel:+48222222222"
                            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-white text-[#4E61F6] font-bold rounded-full border border-[#4E61F6] hover:bg-[#4E61F6] hover:text-white transition-all shadow-sm active:scale-95 group">
                             <PhoneIcon className={"w-5 h-5"}/> <span
-                            className="group-hover:text-white">+48 123 456 789</span>
+                            className="group-hover:text-white">+48 222 222 222</span>
                         </a>
                         <Link to="/kontakt"
                               className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#4E61F6] text-white font-medium rounded-full hover:bg-blue-700 transition-all shadow-md shadow-blue-200 active:scale-95">
@@ -102,9 +102,6 @@ export default function Footer() {
                     className="container mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
                     <p>© {new Date().getFullYear()} Medisure Sp. z o.o. Wszelkie prawa zastrzeżone.</p>
                     <div className="flex gap-6">
-                        <span className="flex items-center gap-1"><span
-                            className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> SSL Secure</span>
-                        <span>Bezpieczne płatności</span>
                     </div>
                 </div>
             </div>

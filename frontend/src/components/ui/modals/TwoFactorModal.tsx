@@ -52,22 +52,27 @@ export default function TwoFactorModal({isOpen, onClose}: ITwoFactorModalProps) 
                             <div className="flex items-start gap-4">
                                 <div className="bg-white p-2 rounded-lg text-[#4E61F6] shadow-sm shrink-0"><PhoneIcon
                                     className={"w-6 h-6"}/></div>
-                                <div><h4 className="font-bold text-gray-800 text-sm">1. Pobierz aplikację</h4><p
-                                    className="text-xs text-gray-500 mt-1">Google Authenticator lub Microsoft
-                                    Authenticator.</p></div>
+                                <div>
+                                    <h4 className="font-bold text-gray-800 text-sm">1. Pobierz aplikację</h4>
+                                    <p className="text-xs text-gray-500 mt-1">Google Authenticator lub Microsoft
+                                    Authenticator.</p>
+                                </div>
                             </div>
                             <div className="flex items-start gap-4">
                                 <div className="bg-white p-2 rounded-lg text-[#4E61F6] shadow-sm shrink-0"><QrIcon/>
                                 </div>
-                                <div><h4 className="font-bold text-gray-800 text-sm">2. Zeskanuj kod</h4><p
-                                    className="text-xs text-gray-500 mt-1">Zeskanuj kod QR widoczny w następnym
-                                    kroku.</p></div>
+                                <div>
+                                    <h4 className="font-bold text-gray-800 text-sm">2. Zeskanuj kod</h4>
+                                    <p className="text-xs text-gray-500 mt-1">Zeskanuj kod QR widoczny w następnym
+                                    kroku.</p>
+                                </div>
                             </div>
                             <div className="flex items-start gap-4">
                                 <div className="bg-white p-2 rounded-lg text-[#4E61F6] shadow-sm shrink-0"><KeyIcon
                                     className={"w-6 h-6"}/></div>
-                                <div><h4 className="font-bold text-gray-800 text-sm">3. Potwierdź kodem</h4><p
-                                    className="text-xs text-gray-500 mt-1">Wpisz kod z aplikacji, aby aktywować.</p>
+                                <div>
+                                    <h4 className="font-bold text-gray-800 text-sm">3. Potwierdź kodem</h4>
+                                    <p className="text-xs text-gray-500 mt-1">Wpisz kod z aplikacji, aby aktywować.</p>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +102,7 @@ export default function TwoFactorModal({isOpen, onClose}: ITwoFactorModalProps) 
                         <div className="flex gap-3">
                             <Button variant="secondary" onClick={() => setStep('intro')} className="w-1/3">Wróć</Button>
                             <Button variant="primary" className="w-2/3 shadow-lg" onClick={handleEnable}
-                                    disabled={code.length !== 6}>Włącz 2FA</Button>
+                                    disabled={code.length !== 6}>Włącz weryfikację</Button>
                         </div>
                     </div>
                 )}
@@ -105,7 +110,8 @@ export default function TwoFactorModal({isOpen, onClose}: ITwoFactorModalProps) 
                 {step === 'success' && (
                     <div className="animate-fade-in py-8">
                         <div
-                            className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 text-3xl">✓
+                            className="w-16 h-16 bg-green-100 rounded-full flex
+                            items-center justify-center mx-auto mb-4 text-green-600 text-3xl">✓
                         </div>
                         <p className="text-green-700 font-bold text-lg mb-2">Gotowe!</p>
                         <p className="text-gray-500 text-sm">Twoje konto jest teraz podwójnie chronione.</p>

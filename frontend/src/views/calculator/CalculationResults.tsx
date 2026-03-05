@@ -393,6 +393,7 @@ export default function CalculationResults({
                     isOpen={isSpecsModalOpen}
                     onClose={() => setIsSpecsModalOpen(false)}
                     packageName={recommendedPlan.name}
+                    includedSpecializations={recommendedPlan.includedSpecializations || []}
                 />
             )}
         </section>

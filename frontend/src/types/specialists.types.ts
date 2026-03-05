@@ -4,7 +4,7 @@ export interface ISpecialistsListModalProps {
     isOpen: boolean;
     onClose: () => void;
     packageName: string;
-    includedSpecializations?: string;
+    includedSpecializations?: string | string[];
 }
 
 export interface ISpecialist {
