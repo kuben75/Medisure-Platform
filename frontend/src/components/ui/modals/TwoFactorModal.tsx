@@ -132,7 +132,7 @@ export default function TwoFactorModal({isOpen, onClose}: ITwoFactorModalProps) 
                         </p>
                         <Button
                             variant="danger"
-                            className="w-full py-3 border-red-200 text-red-600 hover:bg-red-50"
+                            className="w-full py-3 border-red-200 text-red-600 !bg-red-500 hover:bg-red-50"
                             onClick={() => setStep('disable-auth')}
                         >
                             Wyłącz 2FA

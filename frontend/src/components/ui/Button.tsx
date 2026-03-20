@@ -8,7 +8,7 @@ export default function Button({variant = "primary", className, children, ...res
         primary: "bg-[#4E61F6] text-[#E4E7FE] hover:bg-[#3B4EDC]",
         secondary: "bg-white text-[#232C6F] hover:bg-gray-100 border border-gray-300",
         outline: "bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#4E61F6]",
-        danger: "bg-white border border-red-200 !text-white hover:bg-red-50 hover:border-red-300"
+        danger: "bg-red border border-red-200 !text-white hover:bg-red-50 hover:border-red-300"
     };
     return (
         <button className={`${baseStyles} ${variantStyles[variant]} ${className || " "}`} {...rest}>
