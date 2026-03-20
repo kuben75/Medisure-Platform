@@ -96,8 +96,9 @@ export const usePackagePurchase = () => {
             const effectiveMonthly = finalTotal / months;
 
             return {
-                total: Math.round(finalTotal),
-                originalTotal: Math.round(originalTotal),
+                total: Math.round(finalTotal * 100) / 100,
+                originalTotal: Math.round(originalTotal * 100) / 100,
+
                 monthly: effectiveMonthly,
                 isDiscounted: option.discount > 0,
                 months: months,
