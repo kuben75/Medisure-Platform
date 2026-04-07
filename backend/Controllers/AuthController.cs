@@ -410,7 +410,10 @@ public class AuthController : ControllerBase
 
     private string GetClientIpAddress()
     {
-        if (Request.Headers.ContainsKey("X-Forwarded-For")) return Request.Headers["X-Forwarded-For"].ToString();
+        if (Request.Headers.ContainsKey("X-Forwarded-For"))
+        {
+            return Request.Headers["X-Forwarded-For"].ToString();
+        }
         return HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "Nieznany IP";
     }
 

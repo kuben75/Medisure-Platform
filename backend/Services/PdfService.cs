@@ -157,16 +157,18 @@ public class PdfService : IPdfService
             DrawSectionHeader(col, "ZAKRES ŚWIADCZEŃ");
             col.Item().PaddingTop(5).PaddingBottom(10).Column(c =>
             {
-                if (sub.Package?.Features != null && sub.Package.Features.Any())
+                if (!string.IsNullOrWhiteSpace(sub.Package?.Features))
                 {
-                    foreach (var feature in sub.Package.Features)
+                    var featuresArray = sub.Package.Features.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var feature in featuresArray)
                     {
                         c.Item().PaddingBottom(4).Row(r =>
                         {
                             r.ConstantItem(15).PaddingTop(4).Element(e => 
                                 e.Height(4).Width(4).Background(PrimaryColor).CornerRadius(2)
                             );
-                            r.RelativeItem().Text($"{feature}").FontColor(BlackColor);
+                            r.RelativeItem().Text(feature.Trim()).FontColor(BlackColor);
                         });
                     }
                 }
