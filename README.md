@@ -18,7 +18,7 @@ A comprehensive, full-stack healthcare platform developed to simulate the proces
 
 ##  Screenshots
 
-*(TUTAJ PRZECIĄGNIJ I UPUŚĆ ZDJĘCIA: Panel Pacjenta, Kalkulator Ofert, Czat, Panel Admina)*
+*()*
 
 ##  Tech Stack & Architecture
 
@@ -45,17 +45,19 @@ The entire environment is containerized. To run the project locally:
    git clone [https://github.com/kuben75/Medisure-Healthcare-Platform.git](https://github.com/kuben75/Medisure-Healthcare-Platform.git)
    cd Medisure-Healthcare-Platform
    ```
-2. **Spin up the environment:**
+2. **Configure environment variables:**
+   Copy the `.env.example` file to `.env` and `.appsettings.example.json` to `appsettings.json` in the backend directory, then adjust any necessary values (e.g., database connection strings, JWT secrets)
+3. **Spin up the environment:**
    Make sure you have Docker Desktop running, then execute:
     ```bash
     docker-compose up --build
     ```
    This command will automatically build the React frontend, the .NET backend, spin up the PostgreSQL database, apply Entity Framework migrations, and seed initial dummy data (including the SuperAdmin account).
-3. **Access the application:**
+4. **Access the application:**
    - Frontend / public view: `http://localhost:3000`
    - Backend API / Swagger: `http://localhost:8080/swagger`
    - Seq Dashboard: `http://localhost:5341`
 
-4. **Admin Credentials:**
+5. **Admin Credentials:**
    - Email: `admin@admin.com`
    - Password: `Admin123!`
