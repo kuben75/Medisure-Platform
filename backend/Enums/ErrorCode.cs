@@ -21,4 +21,5 @@ public enum ErrorCode
     
     EmailSendingFailed = 4001,       // SMTP padło
     PdfGenerationFailed = 4002       // Błąd biblioteki PDF
+    
 }

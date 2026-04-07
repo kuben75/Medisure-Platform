@@ -20,6 +20,7 @@ bld/
 # Visual Studio 2015/2017/2019/2022 cache/options directory
 .vs/
 node_modules
+.env
 # User-specific files
 *.rsuser
 *.suo
@@ -34,6 +35,8 @@ node_modules
 project.lock.json
 project.fragment.lock.json
 artifacts/
+obj/
+appsettings.Development.json
 # Raports
 TestResults/
 CoverageReports/
