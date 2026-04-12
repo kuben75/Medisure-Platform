@@ -18,7 +18,49 @@ A comprehensive, full-stack healthcare platform developed to simulate the proces
 
 ##  Screenshots
 
-*()*
+<img width="2505" height="1285" alt="image" src="https://github.com/user-attachments/assets/30420d36-cd5e-4269-a179-de0efd639530" />
+
+<img width="2507" height="1293" alt="image" src="https://github.com/user-attachments/assets/a1e5bbe6-5b9f-4daa-a138-12c18bbf9c39" />
+
+<img width="2504" height="1289" alt="image" src="https://github.com/user-attachments/assets/8804797b-74d7-4690-8919-2bec75c609a6" />
+
+<img width="2506" height="1294" alt="image" src="https://github.com/user-attachments/assets/e0a80bf5-bb09-49d8-9b3b-5c873b4b36bb" />
+
+<img width="2505" height="1200" alt="image" src="https://github.com/user-attachments/assets/07586419-75d2-448b-8181-88d3caad9f7a" />
+
+<img width="2506" height="1290" alt="image" src="https://github.com/user-attachments/assets/149a8bf9-eb2f-4562-bef0-ecb170073be2" />
+
+<img width="2508" height="1093" alt="image" src="https://github.com/user-attachments/assets/abbad031-0c90-486f-8500-c1618e27ee45" />
+
+<img width="2507" height="1291" alt="image" src="https://github.com/user-attachments/assets/c9d533ab-c639-43c6-8558-a67368a5e154" />
+
+<img width="2521" height="1288" alt="image" src="https://github.com/user-attachments/assets/b9a89916-351c-4efd-8cc0-f0077719209f" />
+
+<img width="2510" height="1295" alt="image" src="https://github.com/user-attachments/assets/849bcdf6-75df-4c71-ace5-47b1b37c7fb5" />
+
+<img width="2495" height="1289" alt="image" src="https://github.com/user-attachments/assets/ab33c498-2513-4471-9132-fd5824a0558d" />
+
+<img width="2489" height="1282" alt="image" src="https://github.com/user-attachments/assets/cfae03cf-1fb2-428b-a76f-21f1994324ad" />
+
+<img width="2503" height="1295" alt="image" src="https://github.com/user-attachments/assets/7e909c3a-cc0b-4e1f-8459-d4f75fab5219" />
+
+<img width="2508" height="1292" alt="image" src="https://github.com/user-attachments/assets/176e6230-6d86-41d8-8883-e2fbd7895741" />
+
+<img width="2504" height="1286" alt="image" src="https://github.com/user-attachments/assets/266f2a81-2233-40d1-b608-8b76c1893af2" />
+
+<img width="2504" height="1286" alt="image" src="https://github.com/user-attachments/assets/c139c835-d96c-4d3c-adcd-d645ce33ced1" />
+
+<img width="2521" height="1291" alt="image" src="https://github.com/user-attachments/assets/570f417f-6d1a-4d46-8c47-6f18134e4e9a" />
+
+<img width="2501" height="1288" alt="image" src="https://github.com/user-attachments/assets/3806d215-9d3a-4f4c-bf72-8407ea04b128" />
+
+<img width="2501" height="1287" alt="image" src="https://github.com/user-attachments/assets/2a372d99-cce4-4d07-a087-bbc65f9bbf9c" />
+
+<img width="1247" height="1232" alt="image" src="https://github.com/user-attachments/assets/2541cb9a-6fe5-4941-bbc1-41b935ce2f3f" />
+
+<img width="1217" height="1254" alt="image" src="https://github.com/user-attachments/assets/3900f6d1-69d5-4737-9ecd-f3d70fd3cf42" />
+
+<img width="1226" height="988" alt="image" src="https://github.com/user-attachments/assets/a85e7b32-eef4-4a14-900f-e9578f9a39d5" />
 
 ##  Tech Stack & Architecture
 
