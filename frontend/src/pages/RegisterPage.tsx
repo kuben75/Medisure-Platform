@@ -27,7 +27,12 @@ const  {firstName, setFirstName, lastName, setLastName,
                         <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Utwórz konto</h2>
                         <p className="text-center text-gray-500 mb-8">Dołącz do nas i znajdź najlepszy pakiet
                             medyczny.</p>
-
+                        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                            <p className="text-sm font-bold text-amber-800 mb-1">Wersja demonstracyjna</p>
+                            <p className="text-xs text-amber-700 leading-relaxed">
+                                Prosimy nie używać swoich prawdziwych haseł ani danych osobowych. Możesz wpisać fikcyjne dane lub po prostu użyć gotowego <Link to="/login" className="font-bold underline hover:text-amber-900">konta testowego</Link>.
+                            </p>
+                        </div>
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>

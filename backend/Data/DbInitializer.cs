@@ -248,10 +248,11 @@ public static class DbInitializer
         };
     }
 
-    private static List<(string Email, string First, string Last, string Role)> GetUsersToCreate()
+    public static List<(string Email, string First, string Last, string Role)> GetUsersToCreate()
     {
         return new List<(string Email, string First, string Last, string Role)>
         {
+            ("medisure.admin.demo@test.pl", "Demo", "Medisure", "Admin"),
             ("admin@admin.com", "Admin", "Główny", "Admin"),
             ("admin@admin1.com", "Admin", "Główny", "Admin"),
             ("admin@admin2.com", "Admin", "Główny", "Admin"),
@@ -284,7 +285,8 @@ public static class DbInitializer
                 ("monika.kwiatkowska@test.net", "Monika", "Kwiatkowska", "User"),
                 ("lukasz.stasiak@test.com", "Łukasz", "Stasiak", "User"),
                 ("natalia.adamek@test.pl", "Natalia", "Adamek", "User"),
-                ("rafal.borowiec@test.org", "Rafał", "Borowiec", "User")
+                ("rafal.borowiec@test.org", "Rafał", "Borowiec", "User"),
+                ("medisure.demo@test.pl", "Demo", "Medisure", "User")
         };
     }
 

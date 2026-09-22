@@ -7,6 +7,7 @@ import MenuIcon from "../icons/MenuIcon.tsx";
 import {NAV_LINKS} from "../../constants/ui.ts";
 import BellIcon from "../icons/BellIcon.tsx";
 import type {TNavbarHeaderProps} from "../../types/ui.types.ts";
+import DemoBanner from "../ui/DemoBanner.tsx";
 
 export default function NavbarHeader({
                                          scrolled,
@@ -20,10 +21,11 @@ export default function NavbarHeader({
     const location = useLocation();
 
     return (
-        <header
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md py-3' : 'bg-white py-5'}`}>
-            <nav className="container mx-auto px-4 flex justify-between items-center">
+        <header className="fixed top-0 left-0 w-full z-50 flex flex-col shadow-sm">
+            <DemoBanner />
 
+            <div className={`w-full transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md py-3' : 'bg-white py-5'}`}>
+            <nav className="container mx-auto px-4 flex justify-between items-center">
                 <Link to="/" className="flex items-center gap-2 group">
                     <div
                         className="w-10 h-10 bg-[#4E61F6] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">M
@@ -116,6 +118,7 @@ export default function NavbarHeader({
                     </button>
                 </div>
             </nav>
+            </div>
         </header>
     );
 }

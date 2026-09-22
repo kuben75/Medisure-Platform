@@ -23,13 +23,13 @@ export default function LoginPage() {
         authEmail,
         setStep
     } = useLoginPage();
+
     return (
         <>
             <Navbar/>
             <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4 py-12 pt-24">
                 <div className="w-full max-w-md">
-                    <div
-                        className="bg-white p-8 md:p-10 rounded-2xl shadow-xl border border-gray-200 relative overflow-hidden">
+                    <div className="bg-white p-8 md:p-10 rounded-2xl shadow-xl border border-gray-200 relative overflow-hidden">
 
                         {isLoading && isSuccess && (
                             <div className="absolute top-0 left-0 w-full h-1 bg-blue-100">
@@ -42,8 +42,7 @@ export default function LoginPage() {
                         </h2>
 
                         {lockedError && (
-                            <div
-                                className="mt-4 mb-2 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg flex items-start gap-3 animate-fade-in">
+                            <div className="mt-4 mb-2 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg flex items-start gap-3 animate-fade-in">
                                 <div className="text-red-500 mt-0.5">
                                     <LockIcon className="w-5 h-5"/>
                                 </div>
@@ -58,7 +57,26 @@ export default function LoginPage() {
 
                         {step === 1 && (
                             <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-                                <p className="text-center text-gray-500 mb-6">Wpisz swój email i hasło.</p>
+                                <p className="text-center text-gray-500 mb-4">Wpisz swój email i hasło.</p>
+
+                                <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                                    <p className="text-sm font-semibold text-blue-800 mb-1">Chcesz tylko przetestować?</p>
+                                    <p className="text-xs text-blue-600 mb-3">Nie musisz zakładać konta. Użyj danych testowych.</p>
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => { setEmail('medisure.demo@test.pl'); setPassword('Admin123!'); }}
+                                            className="flex-1 py-2 text-xs font-bold text-[#4E61F6] bg-white border border-[#4E61F6] rounded-lg hover:bg-blue-100 transition-colors">
+                                            Konto Użytkownika
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => { setEmail('medisure.admin.demo@test.pl'); setPassword('Admin123!'); }}
+                                            className="flex-1 py-2 text-xs font-bold text-yellow-600 bg-white border border-yellow-500 rounded-lg hover:bg-yellow-50 transition-colors">
+                                            Konto Administratora
+                                        </button>
+                                    </div>
+                                </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -98,8 +116,7 @@ export default function LoginPage() {
                         {step === 2 && (
                             <form onSubmit={handle2FAVerification} className="space-y-6 animate-fade-in">
                                 <div className="flex justify-center mb-6">
-                                    <div
-                                        className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-[#4E61F6]">
+                                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-[#4E61F6]">
                                         <KeyIcon className="w-8 h-8"/>
                                     </div>
                                 </div>
@@ -108,13 +125,12 @@ export default function LoginPage() {
                                 </p>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Kod
-                                        2FA</label>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Kod 2FA</label>
                                     <input
                                         type="text"
                                         maxLength={6}
                                         value={code2FA}
-                                        onChange={(e) => setCode2FA(e.target.value.replace(/\D/g, ''))} // Tylko cyfry
+                                        onChange={(e) => setCode2FA(e.target.value.replace(/\D/g, ''))}
                                         required
                                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4E61F6] text-center text-xl tracking-widest font-bold"
                                         disabled={isLoading || isSuccess}
@@ -133,9 +149,7 @@ export default function LoginPage() {
                         )}
 
                         <p className="text-center text-sm text-gray-600 mt-8 border-t border-gray-100 pt-6">
-                            Nie masz konta? <Link to="/rejestracja"
-                                                  className="font-medium text-[#4E61F6] hover:text-[#3B4EDC]">Zarejestruj
-                            się</Link>
+                            Nie masz konta? <Link to="/rejestracja" className="font-medium text-[#4E61F6] hover:text-[#3B4EDC]">Zarejestruj się</Link>
                         </p>
                     </div>
                 </div>

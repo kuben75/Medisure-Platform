@@ -53,6 +53,7 @@ try
     builder.Services.AddScoped<IPdfService, PdfService>();
     builder.Services.AddScoped<IPricingService, PricingService>();
     builder.Services.AddHostedService<SubscriptionExpirationWorker>();
+    builder.Services.AddHostedService<DemoDataCleanupWorker>();
     builder.Services.AddSwaggerGen(options =>
     {
         options.SwaggerDoc("v1", new OpenApiInfo { Title = "Moje API", Version = "v1" });
