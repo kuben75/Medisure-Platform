@@ -37,6 +37,7 @@ project.fragment.lock.json
 artifacts/
 obj/
 appsettings.Development.json
+appsettings.json
 # Raports
 TestResults/
 CoverageReports/
@@ -44,3 +45,4 @@ coveragereport/
 #Logs and SEQ
 Logs/
 Seq/
+docker-compose.yml

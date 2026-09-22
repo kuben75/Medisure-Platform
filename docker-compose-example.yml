@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: inzynierka_db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=example
+      - POSTGRES_DB=examplepassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  seq:
+    image: datalust/seq
+    container_name: inzynierka_seq
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=examplepassword
+    ports:
+      - "5341:80"
+  backend:
+    container_name: inzynierka_backend
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Port=5432;Database=InzynierkaDb;User Id=postgres;Password=test;
+      - Jwt__Key=example_key
+      - Jwt__Issuer=http://localhost:8080
+      - Jwt__Audience=http://localhost:8080
+      - FrontendUrl=http://localhost:3000
+      - AllowedHosts=*
+      - Cors__AllowedOrigins=http://localhost:3000,http://localhost:5173
+      - EmailSettings__SmtpServer=smtp.gmail.com
+      - EmailSettings__SmtpPort=587
+      - EmailSettings__SenderEmail=example.mail
+      - EmailSettings__SenderName=Medisure System
+      - EmailSettings__Password=example_password
+      - SEQ_URL=http://seq
+    depends_on:
+      - db
+      - seq
+
+  frontend:
+    container_name: inzynierka_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8080/api
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
