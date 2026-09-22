@@ -36,7 +36,6 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 obj/
-appsettings.Development.json
 appsettings.json
 # Raports
 TestResults/
