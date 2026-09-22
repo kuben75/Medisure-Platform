@@ -27,14 +27,19 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.Host.UseSerilog();
     
+    var frontendUrl = builder.Configuration["FrontendUrl"];
+    
     var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-    var corsOrigins = new[]
+    var corsOrigins = new List<string>()
     {
         "http://localhost:5173",
         "http://localhost:3000",
         "http://localhost:8080"
     };
-    
+    if(!string.IsNullOrWhiteSpace(frontendUrl))
+    {
+        corsOrigins.Add(frontendUrl);
+    }
     builder.Services.AddControllers();
     builder.Services.AddSignalR();
     builder.Services.AddMemoryCache();
@@ -90,7 +95,7 @@ try
             policy =>
             {
                 policy
-                    .WithOrigins(corsOrigins)
+                    .WithOrigins(corsOrigins.ToArray())
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
